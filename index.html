@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cori3D | Catálogo de Modelos & Impresiones 3D</title>
+  
+  <!-- Google Fonts: Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Phosphor Icons CDN -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#ecfdf5',
+              100: '#d1fae5',
+              500: '#10b981',
+              600: '#059669',
+              700: '#047857',
+              900: '#064e3b',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f8fafc;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+    .carousel-slide {
+      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .aspect-product {
+      aspect-ratio: 4 / 3;
+    }
+  </style>
+</head>
+
+<body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
+
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand & Print Volume -->
+      <div class="flex items-center gap-4">
+        <a href="#" class="flex items-center gap-3 group">
+          <div class="w-10 h-10 rounded-2xl bg-slate-950 text-white flex items-center justify-center font-bold text-xl shadow-md group-hover:scale-105 transition-transform duration-200">
+            <i class="ph-bold ph-cube text-brand-500 text-2xl"></i>
+          </div>
+          <div>
+            <span class="text-xl font-black tracking-tight text-slate-900">Cori<span class="text-brand-600">3D</span></span>
+            <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400">Additive Design</span>
+          </div>
+        </a>
+
+        <!-- Indicador de tamaño de impresión -->
+        <div class="hidden lg:flex items-center gap-2 pl-4 border-l border-slate-200 text-xs text-slate-600">
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
+          </span>
+          <span class="font-medium text-slate-500">Tamaño Máximo de Impresión :</span>
+          <span class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">180 × 180 × 180 mm</span>
+        </div>
+      </div>
+
+      <!-- Quick Action -->
+      <div class="flex items-center gap-3">
+        <a href="#catalogo" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs sm:text-sm font-semibold hover:bg-slate-800 transition-all shadow-sm active:scale-95">
+          <span>Ver Catálogo</span>
+          <i class="ph-bold ph-arrow-down"></i>
+        </a>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- Hero Carousel -->
+  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 w-full">
+    <div class="relative bg-slate-950 rounded-3xl overflow-hidden shadow-2xl min-h-[380px] sm:min-h-[420px] md:min-h-[480px] flex items-center">
+      
+      <div id="carouselContainer" class="relative w-full h-full min-h-[380px] sm:min-h-[420px] md:min-h-[480px]">
+        <!-- Inyectado por JS -->
+      </div>
+
+      <!-- Controles de navegación -->
+      <button onclick="prevSlide()" aria-label="Anterior" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 active:scale-95 transition-all shadow-lg">
+        <i class="ph-bold ph-caret-left text-xl"></i>
+      </button>
+      <button onclick="nextSlide()" aria-label="Siguiente" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 active:scale-95 transition-all shadow-lg">
+        <i class="ph-bold ph-caret-right text-xl"></i>
+      </button>
+
+      <div id="carouselDots" class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/35 backdrop-blur-md px-4 py-2 rounded-full">
+        <!-- Dots inyectados por JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- Catálogo -->
+  <main id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 w-full flex-grow">
+    
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+      <div>
+        <div class="flex items-center gap-2">
+          <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Catálogo de Piezas 3D</h2>
+          <span id="productCounterBadge" class="bg-slate-200 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
+        </div>
+        <p class="text-sm text-slate-500 mt-1">Explora modelos fabricados en PLA, PETG y materiales técnicos listos para producción.</p>
+      </div>
+
+      <!-- Buscador -->
+      <div class="relative w-full md:w-80">
+        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+          <i class="ph-bold ph-magnifying-glass text-lg"></i>
+        </span>
+        <input 
+          type="text" 
+          id="searchInput" 
+          placeholder="Buscar pieza, material o detalle..." 
+          class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
+          oninput="handleSearch(this.value)"
+        >
+        <button 
+          id="clearSearchBtn" 
+          onclick="clearSearch()" 
+          class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
+          <i class="ph-bold ph-x-circle text-lg"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Pestañas de categorías fijas -->
+    <div class="flex items-center justify-between gap-4 py-4 flex-wrap">
+      <div class="flex items-center gap-2 overflow-x-auto py-1" id="categoryFilters">
+        <!-- Renderizado por JS -->
+      </div>
+    </div>
+
+    <!-- Mensaje sin resultados -->
+    <div id="noResultsNotice" class="hidden py-16 text-center">
+      <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
+        <i class="ph-duotone ph-cube text-3xl"></i>
+      </div>
+      <h3 class="text-base font-bold text-slate-800">No encontramos coincidencias</h3>
+      <p class="text-xs text-slate-500 mt-1">Prueba con otro término de búsqueda o categoría.</p>
+      <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all">
+        Ver todo el catálogo
+      </button>
+    </div>
+
+    <!-- Grilla de productos -->
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-2">
+      <!-- Renderizado por JS -->
+    </div>
+  </main>
+
+  <!-- Modal de Detalle de Producto -->
+  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300" role="dialog" aria-modal="true">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity" onclick="closeDetailModal()"></div>
+
+    <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh] transform scale-95 transition-transform duration-300" id="detailModalBox">
+      <button 
+        type="button" 
+        onclick="closeDetailModal()" 
+        aria-label="Cerrar modal" 
+        class="absolute top-4 right-4 z-30 w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 flex items-center justify-center backdrop-blur-md transition-all active:scale-95 shadow-md border border-slate-200">
+        <i class="ph-bold ph-x text-xl pointer-events-none"></i>
+      </button>
+
+      <div class="overflow-y-auto p-4 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
+        
+        <!-- Galería izquierda -->
+        <div class="md:col-span-6 flex flex-col gap-3">
+          <div class="relative w-full aspect-product sm:aspect-square bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-inner group">
+            <img 
+              id="modalMainImage" 
+              src="" 
+              alt="Vista del producto 3D" 
+              class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+            >
+            <div id="modalCategoryTag" class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/90 text-slate-800 shadow-sm backdrop-blur-md">
+              Categoría
+            </div>
+            <div id="modalMaterialBadge" class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-black tracking-wider bg-brand-500 text-white shadow-sm">
+              PLA
+            </div>
+          </div>
+
+          <div id="modalThumbnails" class="grid grid-cols-4 gap-2.5 pt-1">
+            <!-- Renderizado por JS -->
+          </div>
+        </div>
+
+        <!-- Información derecha -->
+        <div class="md:col-span-6 flex flex-col justify-between">
+          <div>
+            <div class="flex items-center justify-between gap-2">
+              <span id="modalSku" class="text-xs font-mono font-medium text-slate-400">SKU-0000</span>
+            </div>
+
+            <h3 id="modalTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mt-2 tracking-tight">
+              Nombre de la Pieza
+            </h3>
+
+            <div class="mt-2 text-2xl font-extrabold text-slate-900 flex items-baseline gap-2">
+              <span id="modalPrice">$0.00</span>
+              <span class="text-xs font-normal text-slate-400 uppercase">Cotización estimada</span>
+            </div>
+
+            <p id="modalDescription" class="mt-3 text-sm text-slate-600 leading-relaxed whitespace-pre-line">
+              Descripción del producto.
+            </p>
+
+            <div class="mt-5 pt-4 border-t border-slate-100">
+              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
+                <i class="ph-bold ph-sliders"></i>
+                <span>Parámetros & Dimensiones</span>
+              </h4>
+              <div id="modalSpecs" class="grid grid-cols-2 gap-2 text-xs">
+                <!-- Badges inyectados por JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Botones de acción -->
+          <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-3">
+            <button onclick="handleInquireAction()" class="w-full sm:flex-1 py-3 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition-all shadow-md active:scale-98 flex items-center justify-center gap-2">
+              <i class="ph-bold ph-whatsapp-logo text-lg text-brand-400"></i>
+              <span>Consultar por WhatsApp</span>
+            </button>
+            <button onclick="copyProductLink()" class="w-full sm:w-auto p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center" title="Copiar enlace">
+              <i class="ph-bold ph-share-network text-lg"></i>
+            </button>
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de notificación -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm">
+    <i id="toastIcon" class="ph-bold ph-check-circle text-brand-400 text-lg"></i>
+    <span id="toastMessage">Operación exitosa</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
+      <div class="flex items-center gap-2 font-medium">
+        <i class="ph-fill ph-cube text-slate-700"></i>
+        <span>Cori3D — Catálogo de Piezas & Fabricación Aditiva.</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span>Tamaño Máximo de Impresión : 180 × 180 × 180 mm</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCd-JtST4lQElUnldKjTVYJ7ytOmiH4Bok",
+      authDomain: "cori3d-d5904.firebaseapp.com",
+      projectId: "cori3d-d5904",
+      storageBucket: "cori3d-d5904.firebasestorage.app",
+      messagingSenderId: "250125080972",
+      appId: "1:250125080972:web:8b7eb2ced9d87cc3039ea9",
+      measurementId: "G-PCVLY0WW55"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const productsCol = collection(db, "products");
+
+    // Categorías con Accesorios y Personalizables incluidas
+    const APP_CATEGORIES = [
+      "Todas",
+      "Iluminación",
+      "Herramientas",
+      "Decoración & Hogar",
+      "Exteriores",
+      "Puzzles",
+      "Accesorios",
+      "Personalizables"
+    ];
+
+    // Estado local
+    let products = [];
+    let currentSlideIndex = 0;
+    let autoSlideInterval = null;
+    let activeCategory = "Todas";
+    let activeSearchQuery = "";
+    let activeProductInModal = null;
+    let activeModalImageIndex = 0;
+
+    function getFormattedDimensions(dims) {
+      if (!dims) return "Sin especificar";
+      const l = String(dims.length || "").trim();
+      const w = String(dims.width || "").trim();
+      const h = String(dims.height || "").trim();
+      if (!l || !w || !h || l === "-" || w === "-" || h === "-" || l.toLowerCase() === "sin especificar") {
+        return "Sin especificar";
+      }
+      return `${l}×${w}×${h} mm`;
+    }
+
+    function initRealtimeListener() {
+      onSnapshot(productsCol, (snapshot) => {
+        products = snapshot.docs.map(doc => doc.data());
+        refreshAllViews();
+      }, (error) => {
+        console.error("Error al escuchar Firestore:", error);
+      });
+    }
+
+    function initCarousel() {
+      const container = document.getElementById('carouselContainer');
+      const dotsContainer = document.getElementById('carouselDots');
+      if (!container || !dotsContainer) return;
+
+      container.innerHTML = '';
+      dotsContainer.innerHTML = '';
+
+      const featured = products.filter(p => p.featured);
+      const displaySlides = featured.length > 0 ? featured : products.slice(0, 3);
+
+      if (displaySlides.length === 0) {
+        container.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400">Sin piezas disponibles actualmente</div>';
+        return;
+      }
+
+      displaySlides.forEach((prod, idx) => {
+        const slide = document.createElement('div');
+        slide.className = `carousel-slide absolute inset-0 w-full h-full flex flex-col justify-end p-6 sm:p-12 md:p-16 ${
+          idx === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0 pointer-events-none'
+        }`;
+        slide.id = `hero-slide-${idx}`;
+        
+        slide.innerHTML = `
+          <div class="absolute inset-0 z-0">
+            <img src="${(prod.images && prod.images[0]) || 'https://placehold.co/1200x800/1e293b/ffffff?text=Pieza+3D'}" alt="${prod.title}" class="w-full h-full object-cover object-center filter brightness-[0.62]">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent"></div>
+          </div>
+
+          <div class="relative z-10 max-w-2xl text-white">
+            <div class="flex items-center gap-2 mb-2 flex-wrap">
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-black tracking-wider uppercase bg-brand-500 text-slate-950">
+                ${prod.material || 'PLA'}
+              </span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white">
+                ${prod.category}
+              </span>
+            </div>
+            <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">${prod.title}</h1>
+            <p class="mt-2 text-xs sm:text-sm text-slate-300 line-clamp-2 max-w-xl">${prod.tagline || prod.description}</p>
+            
+            <div class="mt-5 flex items-center gap-4">
+              <button onclick="openDetailModalById(${prod.id})" class="px-5 py-2.5 rounded-2xl bg-white text-slate-950 text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-xl active:scale-95 flex items-center gap-2">
+                <span>Ver Detalles y Fotos</span>
+                <i class="ph-bold ph-arrow-right"></i>
+              </button>
+              <span class="text-lg sm:text-2xl font-extrabold text-white font-mono">${prod.price}</span>
+            </div>
+          </div>
+        `;
+        container.appendChild(slide);
+
+        const dot = document.createElement('button');
+        dot.className = `h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'w-7 bg-brand-400' : 'w-2 bg-white/40 hover:bg-white'}`;
+        dot.setAttribute('aria-label', `Slide ${idx + 1}`);
+        dot.onclick = () => goToSlide(idx);
+        dot.id = `carousel-dot-${idx}`;
+        dotsContainer.appendChild(dot);
+      });
+
+      startAutoSlide(displaySlides.length);
+    }
+
+    function updateSlideDisplay() {
+      const slides = document.querySelectorAll('.carousel-slide');
+      const dots = document.querySelectorAll('#carouselDots button');
+      slides.forEach((slide, idx) => {
+        const dot = dots[idx];
+        if (idx === currentSlideIndex) {
+          slide.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
+          slide.classList.add('opacity-100', 'scale-100', 'z-10');
+          if (dot) {
+            dot.classList.remove('w-2', 'bg-white/40');
+            dot.classList.add('w-7', 'bg-brand-400');
+          }
+        } else {
+          slide.classList.remove('opacity-100', 'scale-100', 'z-10');
+          slide.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
+          if (dot) {
+            dot.classList.remove('w-7', 'bg-brand-400');
+            dot.classList.add('w-2', 'bg-white/40');
+          }
+        }
+      });
+    }
+
+    function nextSlide() {
+      const count = document.querySelectorAll('.carousel-slide').length;
+      if (count <= 1) return;
+      currentSlideIndex = (currentSlideIndex + 1) % count;
+      updateSlideDisplay();
+      resetAutoSlide(count);
+    }
+
+    function prevSlide() {
+      const count = document.querySelectorAll('.carousel-slide').length;
+      if (count <= 1) return;
+      currentSlideIndex = (currentSlideIndex - 1 + count) % count;
+      updateSlideDisplay();
+      resetAutoSlide(count);
+    }
+
+    function goToSlide(index) {
+      currentSlideIndex = index;
+      updateSlideDisplay();
+      const count = document.querySelectorAll('.carousel-slide').length;
+      resetAutoSlide(count);
+    }
+
+    function startAutoSlide(count) {
+      if (count <= 1) return;
+      clearInterval(autoSlideInterval);
+      autoSlideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function resetAutoSlide(count) {
+      clearInterval(autoSlideInterval);
+      startAutoSlide(count);
+    }
+
+    function renderCategoryTabs() {
+      const container = document.getElementById('categoryFilters');
+      if (!container) return;
+      container.innerHTML = '';
+
+      APP_CATEGORIES.forEach(cat => {
+        const btn = document.createElement('button');
+        const isActive = activeCategory === cat;
+        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+          isActive 
+            ? 'bg-slate-900 text-white shadow-sm' 
+            : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+        }`;
+        btn.textContent = cat;
+        btn.onclick = () => {
+          activeCategory = cat;
+          renderCategoryTabs();
+          renderProductGrid();
+        };
+        container.appendChild(btn);
+      });
+    }
+
+    function renderProductGrid() {
+      const grid = document.getElementById('productGrid');
+      const emptyNotice = document.getElementById('noResultsNotice');
+      const counterBadge = document.getElementById('productCounterBadge');
+      if (!grid) return;
+
+      const filtered = products.filter(prod => {
+        const matchesCategory = activeCategory === "Todas" || prod.category === activeCategory;
+        const q = activeSearchQuery.toLowerCase().trim();
+        const matchesQuery = !q || 
+          (prod.title && prod.title.toLowerCase().includes(q)) || 
+          (prod.description && prod.description.toLowerCase().includes(q)) ||
+          (prod.material && prod.material.toLowerCase().includes(q)) ||
+          (prod.specs && prod.specs.some(s => s.value.toLowerCase().includes(q) || s.label.toLowerCase().includes(q)));
+        return matchesCategory && matchesQuery;
+      });
+
+      if (counterBadge) counterBadge.textContent = filtered.length;
+
+      if (filtered.length === 0) {
+        grid.innerHTML = '';
+        if (emptyNotice) emptyNotice.classList.remove('hidden');
+        return;
+      }
+
+      if (emptyNotice) emptyNotice.classList.add('hidden');
+      grid.innerHTML = '';
+
+      filtered.forEach(prod => {
+        const card = document.createElement('article');
+        card.className = "group bg-white rounded-3xl overflow-hidden border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer";
+        card.onclick = () => openDetailModalById(prod.id);
+
+        const mainPhoto = (prod.images && prod.images.length > 0) 
+          ? prod.images[0] 
+          : 'https://placehold.co/600x450/e2e8f0/475569?text=Sin+Foto';
+
+        const dims = getFormattedDimensions(prod.dimensions);
+
+        card.innerHTML = `
+          <div class="relative w-full aspect-product overflow-hidden bg-slate-100">
+            <img 
+              src="${mainPhoto}" 
+              alt="${prod.title}" 
+              loading="lazy"
+              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
+            >
+            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-slate-800 shadow-sm">
+                ${prod.category}
+              </span>
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500 text-slate-950 shadow-sm">
+                ${prod.material || 'PLA'}
+              </span>
+            </div>
+
+            <div class="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+              <span class="px-3.5 py-1.5 rounded-xl bg-white/95 text-slate-900 font-bold text-xs shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
+                <i class="ph-bold ph-eye text-brand-600"></i>
+                Ver Detalles y Medidas
+              </span>
+            </div>
+          </div>
+
+          <div class="p-5 flex flex-col flex-grow justify-between">
+            <div>
+              <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
+                <span>${prod.sku || '3D-MODEL'}</span>
+                <span class="text-slate-600 font-medium text-[11px] bg-slate-100 px-2 py-0.5 rounded-md">
+                  <i class="ph-bold ph-arrows-out-cardinal text-slate-400"></i> ${dims}
+                </span>
+              </div>
+              <h3 class="font-extrabold text-slate-900 group-hover:text-brand-600 transition-colors text-base line-clamp-1">
+                ${prod.title}
+              </h3>
+              <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
+                ${prod.tagline || prod.description}
+              </p>
+            </div>
+
+            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="block text-[10px] uppercase font-bold text-slate-400">Cotización</span>
+                <span class="text-lg font-extrabold text-slate-900">${prod.price || '$0.00'}</span>
+              </div>
+              <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                <i class="ph-bold ph-arrow-right text-sm"></i>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function handleSearch(val) {
+      activeSearchQuery = val;
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (clearBtn) {
+        if (val.trim().length > 0) {
+          clearBtn.classList.remove('hidden');
+        } else {
+          clearBtn.classList.add('hidden');
+        }
+      }
+      renderProductGrid();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('searchInput');
+      if (input) {
+        input.value = '';
+        handleSearch('');
+        input.focus();
+      }
+    }
+
+    function resetFilters() {
+      activeCategory = "Todas";
+      clearSearch();
+      renderCategoryTabs();
+      renderProductGrid();
+    }
+
+    function openDetailModalById(productId) {
+      const product = products.find(p => p.id === productId);
+      if (!product) return;
+
+      activeProductInModal = product;
+      activeModalImageIndex = 0;
+
+      document.getElementById('modalSku').textContent = product.sku || '3D-PIECE';
+      document.getElementById('modalTitle').textContent = product.title;
+      document.getElementById('modalPrice').textContent = product.price || '$0.00';
+      document.getElementById('modalDescription').textContent = product.description || 'Sin descripción detallada.';
+      document.getElementById('modalCategoryTag').textContent = product.category;
+      document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
+
+      const specsContainer = document.getElementById('modalSpecs');
+      specsContainer.innerHTML = '';
+
+      const dimItem = document.createElement('div');
+      dimItem.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col';
+      dimItem.innerHTML = `
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Dimensiones (L × An × Al)</span>
+        <span class="text-xs font-extrabold text-slate-800 mt-0.5">${getFormattedDimensions(product.dimensions)}</span>
+      `;
+      specsContainer.appendChild(dimItem);
+
+      const matItem = document.createElement('div');
+      matItem.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col';
+      matItem.innerHTML = `
+        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Material</span>
+        <span class="text-xs font-extrabold text-slate-800 mt-0.5">${product.material || 'PLA'}</span>
+      `;
+      specsContainer.appendChild(matItem);
+
+      if (product.specs && Array.isArray(product.specs)) {
+        product.specs.forEach(spec => {
+          const item = document.createElement('div');
+          item.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col';
+          item.innerHTML = `
+            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">${spec.label}</span>
+            <span class="text-xs font-bold text-slate-800 mt-0.5 truncate">${spec.value}</span>
+          `;
+          specsContainer.appendChild(item);
+        });
+      }
+
+      updateModalGallery();
+
+      const modal = document.getElementById('detailModal');
+      const box = document.getElementById('detailModalBox');
+
+      modal.classList.remove('opacity-0', 'pointer-events-none');
+      modal.classList.add('opacity-100', 'pointer-events-auto');
+      box.classList.remove('scale-95');
+      box.classList.add('scale-100');
+
+      document.body.style.overflow = 'hidden';
+    }
+
+    function updateModalGallery() {
+      if (!activeProductInModal) return;
+
+      const images = (activeProductInModal.images && activeProductInModal.images.length > 0)
+        ? activeProductInModal.images
+        : ['https://placehold.co/800x800/e2e8f0/475569?text=Sin+Foto'];
+
+      const mainImg = document.getElementById('modalMainImage');
+      mainImg.src = images[activeModalImageIndex] || images[0];
+
+      const thumbsContainer = document.getElementById('modalThumbnails');
+      thumbsContainer.innerHTML = '';
+
+      images.forEach((imgUrl, index) => {
+        const thumbBtn = document.createElement('button');
+        const isSelected = index === activeModalImageIndex;
+        thumbBtn.className = `relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
+          isSelected 
+            ? 'border-slate-900 ring-2 ring-slate-900/20 scale-95' 
+            : 'border-transparent opacity-60 hover:opacity-100'
+        }`;
+        thumbBtn.onclick = () => {
+          activeModalImageIndex = index;
+          updateModalGallery();
+        };
+        thumbBtn.innerHTML = `<img src="${imgUrl}" alt="Vista ${index + 1}" class="w-full h-full object-cover">`;
+        thumbsContainer.appendChild(thumbBtn);
+      });
+    }
+
+    function closeDetailModal() {
+      const modal = document.getElementById('detailModal');
+      const box = document.getElementById('detailModalBox');
+
+      modal.classList.remove('opacity-100', 'pointer-events-auto');
+      modal.classList.add('opacity-0', 'pointer-events-none');
+      box.classList.remove('scale-100');
+      box.classList.add('scale-95');
+
+      document.body.style.overflow = '';
+      activeProductInModal = null;
+    }
+
+    function refreshAllViews() {
+      initCarousel();
+      renderCategoryTabs();
+      renderProductGrid();
+    }
+
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMessage');
+      if (!toast || !toastMsg) return;
+      toastMsg.textContent = message;
+      
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 3200);
+    }
+
+    function handleInquireAction() {
+      if (!activeProductInModal) return;
+      const dims = getFormattedDimensions(activeProductInModal.dimensions);
+      const text = encodeURIComponent(`Hola! Quiero consultar disponibilidad para imprimir: "${activeProductInModal.title}" (${activeProductInModal.material}, Medidas: ${dims})`);
+      window.open(`https://wa.me/5491123539321?text=${text}`, '_blank');
+    }
+
+    function copyProductLink() {
+      if (!activeProductInModal) return;
+      const dummy = document.createElement('input');
+      document.body.appendChild(dummy);
+      dummy.value = `${window.location.origin}${window.location.pathname}#product-${activeProductInModal.id}`;
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+
+      showToast("Enlace copiado al portapapeles");
+    }
+
+    // Exponer al objeto window
+    window.nextSlide = nextSlide;
+    window.prevSlide = prevSlide;
+    window.goToSlide = goToSlide;
+    window.handleSearch = handleSearch;
+    window.clearSearch = clearSearch;
+    window.resetFilters = resetFilters;
+    window.openDetailModalById = openDetailModalById;
+    window.closeDetailModal = closeDetailModal;
+    window.handleInquireAction = handleInquireAction;
+    window.copyProductLink = copyProductLink;
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const detailModal = document.getElementById('detailModal');
+        if (detailModal && detailModal.classList.contains('opacity-100')) {
+          closeDetailModal();
+        }
+      }
+    });
+
+    // Iniciar escucha en tiempo real
+    initRealtimeListener();
+  </script>
+</body>
+</html>
