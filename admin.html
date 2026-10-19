@@ -133,15 +133,16 @@
 
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Categoría</label>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Etiqueta / Categoría</label>
             <select id="formCategory" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white outline-none">
               <option value="Iluminación">Iluminación</option>
               <option value="Herramientas">Herramientas</option>
-              <option value="Decoración & Hogar">Decoración & Hogar</option>
-              <option value="Exteriores">Exteriores</option>
-              <option value="Puzzles">Puzzles</option>
-              <option value="Accesorios">Accesorios</option>
-              <option value="Figuras">Figuras</option>
+              <option value="Decoración">Decoración</option>
+              <option value="Hogar">Hogar</option>
+              <option value="Cocina">Cocina</option>
+              <option value="Baño">Baño</option>
+              <option value="Juguetes">Juguetes</option>
+              <option value="Kit">Kit</option>
             </select>
           </div>
           <div>
@@ -348,7 +349,6 @@
       }
     }
 
-    // Registrar en Histórico garantizando el cálculo del costo
     async function addToHistorySilently(productId) {
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
@@ -356,7 +356,6 @@
       const weight = parseFloat(prod.weightGrams) || 0;
       const costKg = parseFloat(prod.filamentCostPerKg) || 21000;
       
-      // Si el costo vino en 0 pero hay gramos cargados, lo calcula en vivo
       const realCost = (prod.calculatedCost && prod.calculatedCost > 0)
         ? prod.calculatedCost
         : (weight > 0 ? Math.round((weight * costKg) / 1000) : 0);
@@ -521,7 +520,6 @@
       const multiplierVal = document.getElementById('formMultiplier').value;
       const multiplier = multiplierVal === "" ? 5 : (parseFloat(multiplierVal) || 5);
 
-      // Calculamos directamente desde los datos cargados en el modal
       const calculatedCost = (weightGrams > 0 && filamentCostPerKg > 0)
         ? Math.round((weightGrams * filamentCostPerKg) / 1000)
         : 0;
