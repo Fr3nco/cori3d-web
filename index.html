@@ -59,6 +59,13 @@
     .aspect-product {
       aspect-ratio: 4 / 3;
     }
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
   </style>
 </head>
 
@@ -200,17 +207,18 @@
       </div>
     </div>
 
-    <!-- Filtro de Etiquetas (Tags) -->
+    <!-- Barra de Filtro por Etiquetas -->
     <div class="py-4">
       <div class="flex items-center justify-between gap-2 mb-2">
-        <div class="flex items-center gap-1.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
-          <i class="ph-bold ph-tag"></i>
-          <span>Filtrar por Etiqueta</span>
+        <div class="flex items-center gap-1.5 text-xs text-slate-500 font-extrabold uppercase tracking-wider">
+          <i class="ph-bold ph-tag text-brand-600"></i>
+          <span>Filtrar por Etiqueta:</span>
+          <span id="activeTagIndicator" class="text-brand-600 font-bold normal-case">Todo</span>
         </div>
-        <span class="text-[11px] text-slate-400 font-medium">Deslizá para ver más etiquetas &rarr;</span>
+        <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Deslizá lateralmente para más etiquetas &rarr;</span>
       </div>
       <div class="flex items-center gap-2 overflow-x-auto py-2 no-scrollbar" id="categoryFilters">
-        <!-- Renderizado dinámicamente como etiquetas por JS -->
+        <!-- Renderizado dinámicamente como botones tipo etiqueta -->
       </div>
     </div>
 
@@ -220,7 +228,7 @@
         <i class="ph-duotone ph-cube text-3xl"></i>
       </div>
       <h3 class="text-base font-bold text-slate-800">No encontramos coincidencias</h3>
-      <p class="text-xs text-slate-500 mt-1">Prueba con otro término, etiqueta o ajusta el rango de precio.</p>
+      <p class="text-xs text-slate-500 mt-1">Prueba con otra etiqueta, término o ajusta el rango de precio.</p>
       <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all">
         Ver todo el catálogo
       </button>
@@ -290,11 +298,14 @@
             </p>
 
             <!-- Etiquetas asignadas en el modal -->
-            <div class="mt-4 flex flex-wrap gap-1.5" id="modalTagsContainer">
-              <!-- Renderizado por JS -->
+            <div class="mt-4 pt-3 border-t border-slate-100">
+              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Etiquetas del producto:</span>
+              <div class="flex flex-wrap gap-1.5" id="modalTagsContainer">
+                <!-- Renderizado por JS -->
+              </div>
             </div>
 
-            <div class="mt-5 pt-4 border-t border-slate-100">
+            <div class="mt-4 pt-3 border-t border-slate-100">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
                 <i class="ph-bold ph-sliders"></i>
                 <span>Parámetros & Dimensiones</span>
@@ -360,7 +371,7 @@
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
 
-    // Lista oficial de etiquetas completa
+    // Lista completa de etiquetas para filtrado
     const APP_TAGS = [
       "Todo",
       "Decoración",
@@ -431,6 +442,7 @@
       return `${l}×${w}×${h} mm`;
     }
 
+    // Devuelve siempre un arreglo con todas las etiquetas de la pieza
     function getProductTags(prod) {
       if (Array.isArray(prod.tags) && prod.tags.length > 0) {
         return prod.tags;
@@ -572,6 +584,16 @@
       startAutoSlide(count);
     }
 
+    // Filtrar al pulsar una etiqueta
+    function filterByTag(tag) {
+      activeTag = tag;
+      const indicator = document.getElementById('activeTagIndicator');
+      if (indicator) indicator.textContent = tag;
+      renderCategoryTabs();
+      renderProductGrid();
+    }
+
+    // Render de botones tipo etiqueta
     function renderCategoryTabs() {
       const container = document.getElementById('categoryFilters');
       if (!container) return;
@@ -580,21 +602,17 @@
       APP_TAGS.forEach(tag => {
         const btn = document.createElement('button');
         const isActive = activeTag === tag;
-        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 flex-shrink-0 ${
+        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
           isActive 
-            ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-900/20' 
+            ? 'bg-slate-900 text-white shadow-md ring-2 ring-slate-900/30 scale-105' 
             : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
         }`;
         
         btn.innerHTML = `
-          <i class="ph-bold ph-tag text-[10px] ${isActive ? 'text-brand-400' : 'text-slate-400'}"></i>
+          <i class="ph-bold ph-tag text-[11px] ${isActive ? 'text-brand-400' : 'text-slate-400'}"></i>
           <span>${tag}</span>
         `;
-        btn.onclick = () => {
-          activeTag = tag;
-          renderCategoryTabs();
-          renderProductGrid();
-        };
+        btn.onclick = () => filterByTag(tag);
         container.appendChild(btn);
       });
     }
@@ -607,8 +625,11 @@
 
       let filtered = products.filter(prod => {
         const tags = getProductTags(prod);
-        const matchesTag = activeTag === "Todo" || tags.includes(activeTag);
+        
+        // Filtro estricto por etiqueta activa
+        const matchesTag = (activeTag === "Todo") || tags.includes(activeTag);
 
+        // Filtro por texto en título, descripción, material o etiquetas
         const q = activeSearchQuery.toLowerCase().trim();
         const matchesQuery = !q || 
           (prod.title && prod.title.toLowerCase().includes(q)) || 
@@ -631,7 +652,7 @@
         return matchesTag && matchesQuery && matchesMin && matchesMax;
       });
 
-      // Orden por precio
+      // Ordenar por precio si fue seleccionado
       if (activePriceOrder === 'low-to-high') {
         filtered.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
       } else if (activePriceOrder === 'high-to-low') {
@@ -651,8 +672,7 @@
 
       filtered.forEach(prod => {
         const card = document.createElement('article');
-        card.className = "group bg-white rounded-3xl overflow-hidden border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer";
-        card.onclick = () => openDetailModalById(prod.id);
+        card.className = "group bg-white rounded-3xl overflow-hidden border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col";
 
         const mainPhoto = (prod.images && prod.images.length > 0) 
           ? prod.images[0] 
@@ -661,21 +681,31 @@
         const dims = getFormattedDimensions(prod.dimensions);
         const tags = getProductTags(prod);
 
+        // Generar etiquetas clickeables para la tarjeta
+        const tagsHtml = tags.slice(0, 3).map(t => `
+          <button 
+            type="button" 
+            onclick="event.stopPropagation(); filterByTag('${t}')" 
+            class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/95 hover:bg-slate-900 hover:text-white text-slate-800 shadow-sm flex items-center gap-1 transition-colors">
+            <i class="ph-bold ph-tag text-[9px] text-brand-600"></i>
+            ${t}
+          </button>
+        `).join('');
+
+        const extraTagsCount = tags.length > 3 ? `<span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-slate-600 shadow-sm">+${tags.length - 3}</span>` : '';
+
         card.innerHTML = `
-          <div class="relative w-full aspect-product overflow-hidden bg-slate-100">
+          <div class="relative w-full aspect-product overflow-hidden bg-slate-100 cursor-pointer" onclick="openDetailModalById(${prod.id})">
             <img 
               src="${mainPhoto}" 
               alt="${prod.title}" 
               loading="lazy"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
             >
-            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap max-w-[80%]">
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-slate-800 shadow-sm flex items-center gap-1">
-                <i class="ph-bold ph-tag text-[9px] text-brand-600"></i>
-                ${tags[0]}
-              </span>
-              ${tags.length > 1 ? `<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-white/90 text-slate-600 shadow-sm">+${tags.length - 1}</span>` : ''}
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500 text-slate-950 shadow-sm">
+            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap max-w-[85%] z-10">
+              ${tagsHtml}
+              ${extraTagsCount}
+              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500 text-slate-950 shadow-sm">
                 ${prod.material || 'PLA'}
               </span>
             </div>
@@ -688,7 +718,7 @@
             </div>
           </div>
 
-          <div class="p-5 flex flex-col flex-grow justify-between">
+          <div class="p-5 flex flex-col flex-grow justify-between cursor-pointer" onclick="openDetailModalById(${prod.id})">
             <div>
               <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
                 <span>${prod.sku || '3D-MODEL'}</span>
@@ -762,6 +792,9 @@
       activeMinPrice = null;
       activeMaxPrice = null;
 
+      const indicator = document.getElementById('activeTagIndicator');
+      if (indicator) indicator.textContent = "Todo";
+
       const orderSelect = document.getElementById('priceOrderSelect');
       if (orderSelect) orderSelect.value = "all";
 
@@ -791,13 +824,18 @@
       document.getElementById('modalCategoryTag').textContent = tags[0];
       document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
 
-      // Renderizar todas las etiquetas de la pieza en el modal
+      // Renderizar etiquetas en el modal que también pueden filtrarse al hacer click
       const tagsContainer = document.getElementById('modalTagsContainer');
       tagsContainer.innerHTML = '';
       tags.forEach(t => {
-        const badge = document.createElement('span');
-        badge.className = "px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center gap-1 border border-slate-200";
-        badge.innerHTML = `<i class="ph-bold ph-tag text-[10px] text-brand-600"></i> ${t}`;
+        const badge = document.createElement('button');
+        badge.type = "button";
+        badge.className = "px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-200 transition-colors cursor-pointer";
+        badge.innerHTML = `<i class="ph-bold ph-tag text-[10px] text-brand-600"></i> <span>${t}</span>`;
+        badge.onclick = () => {
+          closeDetailModal();
+          filterByTag(t);
+        };
         tagsContainer.appendChild(badge);
       });
 
@@ -931,6 +969,7 @@
     window.nextSlide = nextSlide;
     window.prevSlide = prevSlide;
     window.goToSlide = goToSlide;
+    window.filterByTag = filterByTag;
     window.handleSearch = handleSearch;
     window.handlePriceOrderChange = handlePriceOrderChange;
     window.handleCustomPriceRange = handleCustomPriceRange;
