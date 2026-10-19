@@ -127,7 +127,7 @@
   <!-- Catálogo -->
   <main id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 w-full flex-grow">
     
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-200">
       <div>
         <div class="flex items-center gap-2">
           <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Catálogo de Piezas 3D</h2>
@@ -136,31 +136,49 @@
         <p class="text-sm text-slate-500 mt-1">Explora modelos fabricados en PLA, PETG y materiales técnicos listos para producción.</p>
       </div>
 
-      <!-- Buscador y Filtro por Precio -->
-      <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
-        <!-- Selector de Precio -->
-        <div class="relative w-full sm:w-48">
+      <!-- Buscador y Filtros de Precio -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto flex-wrap">
+        
+        <!-- Orden de Precio -->
+        <div class="relative w-full sm:w-44">
           <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-            <i class="ph-bold ph-arrows-down-up text-sm"></i>
+            <i class="ph-bold ph-arrows-down-up text-xs"></i>
           </span>
           <select 
-            id="priceFilterSelect" 
-            onchange="handlePriceFilter(this.value)" 
-            class="w-full pl-9 pr-8 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm appearance-none cursor-pointer">
+            id="priceOrderSelect" 
+            onchange="handlePriceOrderChange(this.value)" 
+            class="w-full pl-8 pr-7 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm appearance-none cursor-pointer">
             <option value="all">Precio: Todos</option>
             <option value="low-to-high">Menor a Mayor ($)</option>
             <option value="high-to-low">Mayor a Menor ($)</option>
-            <option value="under-5000">Hasta $5.000</option>
-            <option value="under-10000">Hasta $10.000</option>
-            <option value="over-10000">Más de $10.000</option>
           </select>
           <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
             <i class="ph-bold ph-caret-down text-xs"></i>
           </span>
         </div>
 
+        <!-- Rango de Precio Personalizado (Mínimo y Máximo) -->
+        <div class="flex items-center gap-1.5 w-full sm:w-auto bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
+          <span class="text-[11px] font-bold text-slate-400 pl-2">$</span>
+          <input 
+            type="number" 
+            id="minPriceInput" 
+            placeholder="Mín" 
+            oninput="handleCustomPriceRange()"
+            class="w-20 px-2 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-100 outline-none font-mono focus:bg-white focus:ring-1 focus:ring-slate-900"
+          >
+          <span class="text-xs text-slate-300">-</span>
+          <input 
+            type="number" 
+            id="maxPriceInput" 
+            placeholder="Máx" 
+            oninput="handleCustomPriceRange()"
+            class="w-20 px-2 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-100 outline-none font-mono focus:bg-white focus:ring-1 focus:ring-slate-900"
+          >
+        </div>
+
         <!-- Buscador -->
-        <div class="relative w-full sm:w-72">
+        <div class="relative w-full sm:w-64">
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
             <i class="ph-bold ph-magnifying-glass text-lg"></i>
           </span>
@@ -178,16 +196,20 @@
             <i class="ph-bold ph-x-circle text-lg"></i>
           </button>
         </div>
+
       </div>
     </div>
 
     <!-- Filtro de Etiquetas (Tags) -->
     <div class="py-4">
-      <div class="flex items-center gap-1.5 text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider">
-        <i class="ph-bold ph-tag"></i>
-        <span>Filtrar por Etiqueta</span>
+      <div class="flex items-center justify-between gap-2 mb-2">
+        <div class="flex items-center gap-1.5 text-xs text-slate-400 font-bold uppercase tracking-wider">
+          <i class="ph-bold ph-tag"></i>
+          <span>Filtrar por Etiqueta</span>
+        </div>
+        <span class="text-[11px] text-slate-400 font-medium">Deslizá para ver más etiquetas &rarr;</span>
       </div>
-      <div class="flex items-center gap-2 overflow-x-auto py-1" id="categoryFilters">
+      <div class="flex items-center gap-2 overflow-x-auto py-2 no-scrollbar" id="categoryFilters">
         <!-- Renderizado dinámicamente como etiquetas por JS -->
       </div>
     </div>
@@ -198,7 +220,7 @@
         <i class="ph-duotone ph-cube text-3xl"></i>
       </div>
       <h3 class="text-base font-bold text-slate-800">No encontramos coincidencias</h3>
-      <p class="text-xs text-slate-500 mt-1">Prueba con otro término, etiqueta o rango de precio.</p>
+      <p class="text-xs text-slate-500 mt-1">Prueba con otro término, etiqueta o ajusta el rango de precio.</p>
       <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all">
         Ver todo el catálogo
       </button>
@@ -267,6 +289,11 @@
               Descripción del producto.
             </p>
 
+            <!-- Etiquetas asignadas en el modal -->
+            <div class="mt-4 flex flex-wrap gap-1.5" id="modalTagsContainer">
+              <!-- Renderizado por JS -->
+            </div>
+
             <div class="mt-5 pt-4 border-t border-slate-100">
               <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
                 <i class="ph-bold ph-sliders"></i>
@@ -333,15 +360,36 @@
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
 
-    // Nueva lista oficial de etiquetas
+    // Lista oficial de etiquetas completa
     const APP_TAGS = [
       "Todo",
-      "Iluminación",
-      "Herramientas",
       "Decoración",
+      "Accesorios",
+      "Organización",
+      "Utilidades",
+      "Repuestos",
+      "Personalizado",
+      "Modular",
+      "Colección",
       "Hogar",
+      "Oficina",
+      "Tecnología",
+      "Gaming",
+      "Infantil",
+      "Mascotas",
+      "Automotor",
+      "Interior",
+      "Exterior",
       "Cocina",
       "Baño",
+      "Jardín",
+      "Dormitorio",
+      "Living",
+      "Taller",
+      "Viajes",
+      "Almacenamiento",
+      "Iluminación",
+      "Herramientas",
       "Juguetes",
       "Kit"
     ];
@@ -351,7 +399,9 @@
     let autoSlideInterval = null;
     let activeTag = "Todo";
     let activeSearchQuery = "";
-    let activePriceFilter = "all";
+    let activePriceOrder = "all";
+    let activeMinPrice = null;
+    let activeMaxPrice = null;
     let activeProductInModal = null;
     let activeModalImageIndex = 0;
 
@@ -379,6 +429,16 @@
         return "Sin especificar";
       }
       return `${l}×${w}×${h} mm`;
+    }
+
+    function getProductTags(prod) {
+      if (Array.isArray(prod.tags) && prod.tags.length > 0) {
+        return prod.tags;
+      }
+      if (prod.category) {
+        return [prod.category];
+      }
+      return ["General"];
     }
 
     function initRealtimeListener() {
@@ -413,6 +473,8 @@
         }`;
         slide.id = `hero-slide-${idx}`;
         
+        const tags = getProductTags(prod);
+        
         slide.innerHTML = `
           <div class="absolute inset-0 z-0">
             <img src="${(prod.images && prod.images[0]) || 'https://placehold.co/1200x800/1e293b/ffffff?text=Pieza+3D'}" alt="${prod.title}" class="w-full h-full object-cover object-center filter brightness-[0.62]">
@@ -425,7 +487,7 @@
                 ${prod.material || 'PLA'}
               </span>
               <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white">
-                ${prod.category}
+                ${tags[0]}
               </span>
             </div>
             <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">${prod.title}</h1>
@@ -510,7 +572,6 @@
       startAutoSlide(count);
     }
 
-    // Render de etiquetas estilo Tag / Chip
     function renderCategoryTabs() {
       const container = document.getElementById('categoryFilters');
       if (!container) return;
@@ -519,7 +580,7 @@
       APP_TAGS.forEach(tag => {
         const btn = document.createElement('button');
         const isActive = activeTag === tag;
-        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
+        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 flex-shrink-0 ${
           isActive 
             ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-900/20' 
             : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
@@ -545,32 +606,35 @@
       if (!grid) return;
 
       let filtered = products.filter(prod => {
-        const matchesTag = activeTag === "Todo" || prod.category === activeTag;
+        const tags = getProductTags(prod);
+        const matchesTag = activeTag === "Todo" || tags.includes(activeTag);
+
         const q = activeSearchQuery.toLowerCase().trim();
         const matchesQuery = !q || 
           (prod.title && prod.title.toLowerCase().includes(q)) || 
           (prod.description && prod.description.toLowerCase().includes(q)) ||
           (prod.material && prod.material.toLowerCase().includes(q)) ||
-          (prod.category && prod.category.toLowerCase().includes(q));
+          tags.some(t => t.toLowerCase().includes(q));
 
-        // Filtro numérico de precio
+        // Rango de precio personalizado
         const numPrice = parseNumericPrice(prod.price);
-        let matchesPriceRange = true;
-        if (activePriceFilter === 'under-5000') {
-          matchesPriceRange = numPrice <= 5000;
-        } else if (activePriceFilter === 'under-10000') {
-          matchesPriceRange = numPrice <= 10000;
-        } else if (activePriceFilter === 'over-10000') {
-          matchesPriceRange = numPrice > 10000;
+        let matchesMin = true;
+        let matchesMax = true;
+
+        if (activeMinPrice !== null && !isNaN(activeMinPrice)) {
+          matchesMin = numPrice >= activeMinPrice;
+        }
+        if (activeMaxPrice !== null && !isNaN(activeMaxPrice)) {
+          matchesMax = numPrice <= activeMaxPrice;
         }
 
-        return matchesTag && matchesQuery && matchesPriceRange;
+        return matchesTag && matchesQuery && matchesMin && matchesMax;
       });
 
-      // Ordenamiento por precio
-      if (activePriceFilter === 'low-to-high') {
+      // Orden por precio
+      if (activePriceOrder === 'low-to-high') {
         filtered.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
-      } else if (activePriceFilter === 'high-to-low') {
+      } else if (activePriceOrder === 'high-to-low') {
         filtered.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
       }
 
@@ -595,6 +659,7 @@
           : 'https://placehold.co/600x450/e2e8f0/475569?text=Sin+Foto';
 
         const dims = getFormattedDimensions(prod.dimensions);
+        const tags = getProductTags(prod);
 
         card.innerHTML = `
           <div class="relative w-full aspect-product overflow-hidden bg-slate-100">
@@ -604,11 +669,12 @@
               loading="lazy"
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
             >
-            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
+            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap max-w-[80%]">
               <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-slate-800 shadow-sm flex items-center gap-1">
                 <i class="ph-bold ph-tag text-[9px] text-brand-600"></i>
-                ${prod.category || 'General'}
+                ${tags[0]}
               </span>
+              ${tags.length > 1 ? `<span class="px-2 py-1 rounded-full text-[10px] font-bold bg-white/90 text-slate-600 shadow-sm">+${tags.length - 1}</span>` : ''}
               <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500 text-slate-950 shadow-sm">
                 ${prod.material || 'PLA'}
               </span>
@@ -666,8 +732,18 @@
       renderProductGrid();
     }
 
-    function handlePriceFilter(val) {
-      activePriceFilter = val;
+    function handlePriceOrderChange(val) {
+      activePriceOrder = val;
+      renderProductGrid();
+    }
+
+    function handleCustomPriceRange() {
+      const minVal = document.getElementById('minPriceInput').value.trim();
+      const maxVal = document.getElementById('maxPriceInput').value.trim();
+
+      activeMinPrice = minVal !== "" ? parseFloat(minVal) : null;
+      activeMaxPrice = maxVal !== "" ? parseFloat(maxVal) : null;
+
       renderProductGrid();
     }
 
@@ -682,9 +758,18 @@
 
     function resetFilters() {
       activeTag = "Todo";
-      activePriceFilter = "all";
-      const priceSelect = document.getElementById('priceFilterSelect');
-      if (priceSelect) priceSelect.value = "all";
+      activePriceOrder = "all";
+      activeMinPrice = null;
+      activeMaxPrice = null;
+
+      const orderSelect = document.getElementById('priceOrderSelect');
+      if (orderSelect) orderSelect.value = "all";
+
+      const minInput = document.getElementById('minPriceInput');
+      const maxInput = document.getElementById('maxPriceInput');
+      if (minInput) minInput.value = "";
+      if (maxInput) maxInput.value = "";
+
       clearSearch();
       renderCategoryTabs();
       renderProductGrid();
@@ -697,12 +782,24 @@
       activeProductInModal = product;
       activeModalImageIndex = 0;
 
+      const tags = getProductTags(product);
+
       document.getElementById('modalSku').textContent = product.sku || '3D-PIECE';
       document.getElementById('modalTitle').textContent = product.title;
       document.getElementById('modalPrice').textContent = product.price || '$0.00';
       document.getElementById('modalDescription').textContent = product.description || 'Sin descripción detallada.';
-      document.getElementById('modalCategoryTag').textContent = product.category || 'General';
+      document.getElementById('modalCategoryTag').textContent = tags[0];
       document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
+
+      // Renderizar todas las etiquetas de la pieza en el modal
+      const tagsContainer = document.getElementById('modalTagsContainer');
+      tagsContainer.innerHTML = '';
+      tags.forEach(t => {
+        const badge = document.createElement('span');
+        badge.className = "px-2.5 py-1 rounded-lg bg-slate-100 text-slate-700 text-[11px] font-bold flex items-center gap-1 border border-slate-200";
+        badge.innerHTML = `<i class="ph-bold ph-tag text-[10px] text-brand-600"></i> ${t}`;
+        tagsContainer.appendChild(badge);
+      });
 
       const specsContainer = document.getElementById('modalSpecs');
       specsContainer.innerHTML = '';
@@ -835,7 +932,8 @@
     window.prevSlide = prevSlide;
     window.goToSlide = goToSlide;
     window.handleSearch = handleSearch;
-    window.handlePriceFilter = handlePriceFilter;
+    window.handlePriceOrderChange = handlePriceOrderChange;
+    window.handleCustomPriceRange = handleCustomPriceRange;
     window.clearSearch = clearSearch;
     window.resetFilters = resetFilters;
     window.openDetailModalById = openDetailModalById;
