@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cori3D | Panel de Administración</title>
+  <title>Cori3D | Histórico de Pedidos & Ventas</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -28,232 +28,37 @@
 
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-4 sm:p-8">
 
-  <!-- ==================== PANTALLA DE LOGIN ==================== -->
-  <div id="loginSection" class="min-h-[80vh] flex items-center justify-center w-full">
-    <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200 w-full max-w-md">
-      <div class="flex items-center gap-3 mb-6">
-        <div class="w-12 h-12 rounded-2xl bg-slate-900 text-brand-500 flex items-center justify-center text-2xl font-bold">
-          <i class="ph-bold ph-lock-key"></i>
-        </div>
-        <div>
-          <h2 class="text-xl font-black text-slate-900 leading-tight">Cori<span class="text-brand-600">3D</span></h2>
-          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Acceso Restringido</p>
-        </div>
-      </div>
-
-      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
-        <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Correo Electrónico</label>
-          <input type="email" id="loginEmail" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="admin@cori3d.com">
-        </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
-          <input type="password" id="loginPassword" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="••••••••">
-        </div>
-
-        <button type="submit" id="loginBtn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
-          <i class="ph-bold ph-sign-in text-base"></i>
-          <span>Iniciar Sesión</span>
-        </button>
-      </form>
-    </div>
-  </div>
-
-  <!-- ==================== PANEL DE CONTROL ==================== -->
-  <div id="adminPanelSection" class="hidden max-w-5xl mx-auto w-full">
+  <div class="max-w-5xl mx-auto w-full">
     <!-- Barra Superior -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl">
-          <i class="ph-bold ph-wrench"></i>
+        <div class="w-12 h-12 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-2xl font-bold">
+          <i class="ph-bold ph-clock-counter-clockwise"></i>
         </div>
         <div>
-          <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Gestión de Catálogo</h1>
-          <p class="text-xs text-slate-400" id="userEmailBadge">Tamaño Máximo de Impresión : 180 × 180 × 180 mm</p>
+          <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Histórico de Pedidos</h1>
+          <p class="text-xs text-slate-400">Control de producción y cobros</p>
         </div>
       </div>
-      <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-        <button onclick="openProductFormModal(null)" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-2 shadow-md transition-all active:scale-95">
-          <i class="ph-bold ph-plus-circle text-base"></i>
-          <span>Agregar Nueva Pieza</span>
-        </button>
-        <a href="/" target="_blank" class="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-all">
-          <i class="ph-bold ph-arrow-square-out"></i>
-          <span>Ver Tienda</span>
+      <div class="flex items-center gap-3">
+        <a href="/admin" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all">
+          <i class="ph-bold ph-wrench"></i>
+          <span>Volver al Admin</span>
         </a>
-        <button onclick="handleLogout()" class="px-3.5 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold flex items-center gap-1.5 transition-all" title="Cerrar sesión">
-          <i class="ph-bold ph-sign-out"></i>
-          <span>Salir</span>
-        </button>
       </div>
     </div>
 
-    <!-- Lista de Piezas en Firestore -->
+    <!-- Lista de Pedidos -->
     <div class="bg-white rounded-3xl p-6 mt-6 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Piezas Activas en la Nube</h2>
-        <span id="adminCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 piezas</span>
+        <h2 class="text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
+        <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
       </div>
 
-      <div id="adminProductTable" class="divide-y divide-slate-100 mt-2">
-        <p class="text-xs text-slate-400 py-8 text-center">Cargando catálogo...</p>
+      <div id="historyListContainer" class="divide-y divide-slate-100 mt-2">
+        <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
       </div>
     </div>
-  </div>
-
-  <!-- Modal Formulario (Crear / Editar) -->
-  <div id="formModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300">
-    <div class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm" onclick="closeProductFormModal()"></div>
-    
-    <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh]">
-      <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white">
-        <h3 id="formModalTitle" class="text-base font-bold text-slate-900">Editar Pieza</h3>
-        <button onclick="closeProductFormModal()" class="w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center">
-          <i class="ph-bold ph-x text-base"></i>
-        </button>
-      </div>
-
-      <form id="productEditForm" onsubmit="handleSaveProduct(event)" class="overflow-y-auto p-6 space-y-5 flex-grow text-xs">
-        <input type="hidden" id="formProductId">
-
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Nombre de la pieza *</label>
-            <input type="text" id="formTitle" required class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none">
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">SKU / Código</label>
-            <input type="text" id="formSku" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="3D-001">
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Categoría</label>
-            <select id="formCategory" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white outline-none">
-              <option value="Iluminación">Iluminación</option>
-              <option value="Herramientas">Herramientas</option>
-              <option value="Decoración & Hogar">Decoración & Hogar</option>
-              <option value="Exteriores">Exteriores</option>
-              <option value="Puzzles">Puzzles</option>
-              <option value="Accesorios">Accesorios</option>
-              <option value="Figuras">Figuras</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Material</label>
-            <select id="formMaterial" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm bg-white outline-none">
-              <option value="PLA">PLA</option>
-              <option value="PLA+">PLA+</option>
-              <option value="PETG">PETG</option>
-              <option value="TPU (Flexible)">TPU (Flexible)</option>
-              <option value="ABS / ASA">ABS / ASA</option>
-            </select>
-          </div>
-          <div>
-            <label class="block font-bold text-slate-700 uppercase mb-1">Precio Venta Público ($)</label>
-            <input type="text" id="formPrice" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none" placeholder="$3200">
-          </div>
-        </div>
-
-        <!-- ==================== CALCULADORA DE COSTO Y FILAMENTO (SOLO ADMIN) ==================== -->
-        <div class="p-4 bg-amber-50/60 rounded-2xl border border-amber-200/80">
-          <div class="flex items-center justify-between mb-2">
-            <div class="flex items-center gap-2">
-              <i class="ph-bold ph-calculator text-amber-700 text-base"></i>
-              <label class="font-black text-amber-900 uppercase tracking-wide text-[11px]">
-                Costos de Producción & Margen (Privado Admin)
-              </label>
-            </div>
-            <span id="multiplierBadge" class="text-[10px] bg-amber-200/70 text-amber-900 font-bold px-2 py-0.5 rounded-md">Multiplicador x5</span>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
-            <div>
-              <span class="text-[10px] text-slate-600 font-bold block mb-0.5">Peso de la pieza (Gramos)</span>
-              <input type="number" step="any" id="formWeightGrams" oninput="calculateCostAndPrice()" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 bg-white text-sm outline-none font-mono" placeholder="Ej: 30">
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-600 font-bold block mb-0.5">Precio Rollo Filamento ($ por 1000g)</span>
-              <input type="number" step="any" id="formFilamentCostPerKg" oninput="calculateCostAndPrice()" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 bg-white text-sm outline-none font-mono" placeholder="Ej: 21000" value="21000">
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-600 font-bold block mb-0.5">Multiplicador (x)</span>
-              <input type="number" step="any" id="formMultiplier" oninput="calculateCostAndPrice()" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 bg-white text-sm outline-none font-mono" placeholder="5" value="5">
-            </div>
-          </div>
-
-          <!-- Resumen de Costo y Sugerencia -->
-          <div class="bg-white p-3 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div class="flex items-center gap-4">
-              <div>
-                <span class="text-[10px] text-slate-400 uppercase font-bold block">Costo Material (1x)</span>
-                <span id="displayCalculatedCost" class="text-sm font-black text-slate-800 font-mono">$0</span>
-              </div>
-              <div class="h-6 w-px bg-slate-200"></div>
-              <div>
-                <span class="text-[10px] text-slate-400 uppercase font-bold block" id="suggestedPriceLabel">Venta Sugerida (x5 Redondeado)</span>
-                <span id="displaySuggestedPrice" class="text-sm font-black text-brand-600 font-mono">$0</span>
-              </div>
-            </div>
-
-            <button type="button" onclick="applySuggestedPrice()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all self-start sm:self-auto shadow-sm active:scale-95">
-              <i class="ph-bold ph-check"></i>
-              <span>Aplicar a Precio de Venta</span>
-            </button>
-          </div>
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Subtítulo Corto</label>
-          <input type="text" id="formTagline" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none" placeholder="Lámpara de diseño paramétrico con rosca estándar">
-        </div>
-
-        <div>
-          <label class="block font-bold text-slate-700 uppercase mb-1">Descripción</label>
-          <textarea id="formDescription" rows="2" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none"></textarea>
-        </div>
-
-        <!-- Medidas Flexibles (admite texto o vacio para 'Sin especificar') -->
-        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <label class="block font-bold text-slate-700 uppercase mb-1">Dimensiones (Opcional: podés dejar vacío para "Sin especificar")</label>
-          <div class="grid grid-cols-3 gap-3">
-            <input type="text" id="dimLength" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm outline-none" placeholder="Largo (mm)">
-            <input type="text" id="dimWidth" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm outline-none" placeholder="Ancho (mm)">
-            <input type="text" id="dimHeight" class="px-3 py-1.5 rounded-lg border border-slate-200 text-sm outline-none" placeholder="Alto (mm)">
-          </div>
-        </div>
-
-        <!-- Fotos -->
-        <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200">
-          <label class="block font-bold text-slate-700 uppercase mb-1">Fotos (URL Web o Imagen local)</label>
-          <div class="flex gap-2">
-            <input type="url" id="newPhotoUrlInput" placeholder="https://ejemplo.com/foto.jpg" class="flex-grow px-3 py-1.5 rounded-xl border border-slate-200 text-xs outline-none">
-            <button type="button" onclick="addPhotoFromUrl()" class="px-3 py-1.5 bg-slate-900 text-white rounded-xl font-bold">+ URL</button>
-            <label class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold cursor-pointer">
-              Subir Archivo
-              <input type="file" id="localPhotoUploadInput" accept="image/*" class="hidden" onchange="handleLocalImageUpload(event)">
-            </label>
-          </div>
-          <div id="formPhotosList" class="grid grid-cols-4 gap-2 mt-3"></div>
-        </div>
-
-        <!-- Check Destacado -->
-        <div class="flex items-center gap-2 pt-1">
-          <input type="checkbox" id="formFeatured" class="w-4 h-4 rounded text-brand-600 focus:ring-brand-500 border-slate-300">
-          <label for="formFeatured" class="font-semibold text-slate-700 cursor-pointer">Mostrar en el carrusel principal</label>
-        </div>
-
-        <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
-          <button type="button" onclick="closeProductFormModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold">Cancelar</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold shadow-md">Guardar en Firebase</button>
-        </div>
-      </form>
-    </div>
-  </div>
-
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm">
-    <span id="toastMessage">Operación exitosa</span>
   </div>
 
   <!-- Firebase Modular SDK -->
@@ -262,17 +67,10 @@
     import { 
       getFirestore, 
       collection, 
-      setDoc, 
-      deleteDoc, 
       doc, 
+      updateDoc, 
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
-    import { 
-      getAuth, 
-      signInWithEmailAndPassword, 
-      signOut, 
-      onAuthStateChanged 
-    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCd-JtST4lQElUnldKjTVYJ7ytOmiH4Bok",
@@ -286,377 +84,94 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
-    const auth = getAuth(app);
-    const productsCol = collection(db, "products");
+    const historyCol = collection(db, "sales_history");
 
-    let products = [];
-    let formPhotos = [];
-    let unsubscribeSnapshot = null;
-    let latestSuggestedPriceNumber = 0;
+    let historyRecords = [];
 
-    function getFormattedDimensions(dims) {
-      if (!dims) return "Sin especificar";
-      const l = String(dims.length || "").trim();
-      const w = String(dims.width || "").trim();
-      const h = String(dims.height || "").trim();
-      if (!l || !w || !h || l === "-" || w === "-" || h === "-" || l.toLowerCase() === "sin especificar") {
-        return "Sin especificar";
-      }
-      return `${l}×${w}×${h} mm`;
-    }
+    // Escucha en tiempo real de los pedidos
+    onSnapshot(historyCol, (snapshot) => {
+      historyRecords = snapshot.docs.map(d => d.data());
+      // Ordenar: los más recientes arriba
+      historyRecords.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      renderHistoryList();
 
-    // Regla de 3 simple y cálculo con multiplicador dinámico
-    function calculateCostAndPrice() {
-      const grams = parseFloat(document.getElementById('formWeightGrams').value) || 0;
-      const costKg = parseFloat(document.getElementById('formFilamentCostPerKg').value) || 0;
-      const multiplierInput = document.getElementById('formMultiplier').value;
-      const multiplier = multiplierInput === "" ? 5 : (parseFloat(multiplierInput) || 0);
-
-      // Actualizar badges visuales
-      const multiplierBadge = document.getElementById('multiplierBadge');
-      const suggestedLabel = document.getElementById('suggestedPriceLabel');
-      if (multiplierBadge) multiplierBadge.textContent = `Multiplicador x${multiplier}`;
-      if (suggestedLabel) suggestedLabel.textContent = `Venta Sugerida (x${multiplier} Redondeado)`;
-
-      if (grams <= 0 || costKg <= 0 || multiplier <= 0) {
-        document.getElementById('displayCalculatedCost').textContent = "$0";
-        document.getElementById('displaySuggestedPrice').textContent = "$0";
-        latestSuggestedPriceNumber = 0;
-        return;
-      }
-
-      // Costo Real = (Gramos * CostoKg) / 1000
-      const rawCost = (grams * costKg) / 1000;
-      // Venta = Costo Real * Multiplicador
-      const rawPrice = rawCost * multiplier;
-
-      // Redondeo hacia arriba al número que termine en 0
-      let finalPrice;
-      if (rawPrice >= 500) {
-        finalPrice = Math.ceil(rawPrice / 100) * 100;
-      } else {
-        finalPrice = Math.ceil(rawPrice / 10) * 10;
-      }
-
-      latestSuggestedPriceNumber = finalPrice;
-      document.getElementById('displayCalculatedCost').textContent = `$${Math.round(rawCost)}`;
-      document.getElementById('displaySuggestedPrice').textContent = `$${finalPrice}`;
-    }
-
-    function applySuggestedPrice() {
-      if (latestSuggestedPriceNumber > 0) {
-        document.getElementById('formPrice').value = `$${latestSuggestedPriceNumber}`;
-        showToast(`Precio aplicado: $${latestSuggestedPriceNumber}`);
-      }
-    }
-
-    onAuthStateChanged(auth, (user) => {
-      const loginSection = document.getElementById('loginSection');
-      const adminSection = document.getElementById('adminPanelSection');
-      const emailBadge = document.getElementById('userEmailBadge');
-
-      if (user) {
-        loginSection.classList.add('hidden');
-        adminSection.classList.remove('hidden');
-        if (emailBadge) emailBadge.textContent = `Sesión: ${user.email}`;
-
-        if (!unsubscribeSnapshot) {
-          unsubscribeSnapshot = onSnapshot(productsCol, (snapshot) => {
-            products = snapshot.docs.map(d => d.data());
-            renderAdminProductTable();
-            const badge = document.getElementById('adminCountBadge');
-            if (badge) badge.textContent = `${products.length} piezas`;
-          }, (err) => {
-            console.error("Error al escuchar Firestore:", err);
-            showToast("Error de permisos en Firebase");
-          });
-        }
-      } else {
-        if (unsubscribeSnapshot) {
-          unsubscribeSnapshot();
-          unsubscribeSnapshot = null;
-        }
-        products = [];
-        adminSection.classList.add('hidden');
-        loginSection.classList.remove('hidden');
-      }
+      const badge = document.getElementById('ordersCountBadge');
+      if (badge) badge.textContent = `${historyRecords.length} registros`;
+    }, (err) => {
+      console.error("Error al escuchar histórico:", err);
     });
 
-    async function handleLogin(e) {
-      e.preventDefault();
-      const email = document.getElementById('loginEmail').value.trim();
-      const pass = document.getElementById('loginPassword').value;
-      const btn = document.getElementById('loginBtn');
-
-      try {
-        btn.disabled = true;
-        btn.innerHTML = '<span>Verificando...</span>';
-        await signInWithEmailAndPassword(auth, email, pass);
-        showToast("¡Bienvenido al panel!");
-      } catch (err) {
-        console.error("Error al iniciar sesión:", err);
-        showToast("Credenciales inválidas o no autorizadas");
-      } finally {
-        btn.disabled = false;
-        btn.innerHTML = '<i class="ph-bold ph-sign-in text-base"></i><span>Iniciar Sesión</span>';
-      }
-    }
-
-    async function handleLogout() {
-      try {
-        await signOut(auth);
-        showToast("Sesión cerrada");
-      } catch (err) {
-        console.error("Error al salir:", err);
-      }
-    }
-
-    function renderAdminProductTable() {
-      const container = document.getElementById('adminProductTable');
+    function renderHistoryList() {
+      const container = document.getElementById('historyListContainer');
       if (!container) return;
       container.innerHTML = '';
 
-      if (products.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay piezas cargadas en la nube. ¡Agrega la primera!</p>';
+      if (historyRecords.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">Aún no hay piezas registradas en el histórico.</p>';
         return;
       }
 
-      products.forEach(prod => {
+      historyRecords.forEach(item => {
         const row = document.createElement('div');
-        row.className = "py-3 flex items-center justify-between gap-4";
-        const photo = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://placehold.co/100x100?text=3D';
-        const dims = getFormattedDimensions(prod.dimensions);
+        row.className = "py-3.5 flex items-center justify-between gap-4";
 
-        const costBadge = (prod.calculatedCost && prod.calculatedCost > 0)
-          ? `<span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded text-[11px] font-bold font-mono">Costo: $${prod.calculatedCost} (${prod.weightGrams || 0}g)</span>`
-          : '';
+        const isDone = item.status === "completed";
+        const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', {
+          day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : '';
 
         row.innerHTML = `
           <div class="flex items-center gap-3 min-w-0">
-            <img src="${photo}" class="w-12 h-12 rounded-xl object-cover border border-slate-200 flex-shrink-0" alt="">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 ${
+              isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+            }">
+              <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
+            </div>
             <div class="truncate">
               <div class="flex items-center gap-2">
-                <h4 class="text-sm font-bold text-slate-800 truncate">${prod.title}</h4>
-                <span class="text-xs font-black text-slate-900 font-mono">${prod.price || '$0.00'}</span>
+                <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
+                <span class="text-xs font-black text-slate-900 font-mono">${item.price}</span>
               </div>
               <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
-                <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${prod.sku || 'SKU'}</span>
+                <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${item.sku}</span>
                 <span>•</span>
-                <span class="text-brand-700 font-bold">${prod.category || 'Categoría'}</span>
-                <span>•</span>
-                <span class="text-slate-600 font-medium">${prod.material || 'PLA'}</span>
-                <span>•</span>
-                <span>${dims}</span>
-                ${costBadge}
-                ${prod.featured ? '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.5 rounded text-[10px] font-bold">Destacado</span>' : ''}
+                <span>${dateStr}</span>
+                ${item.calculatedCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${item.calculatedCost}</span>` : ''}
+                ${isDone ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
               </div>
             </div>
           </div>
 
           <div class="flex items-center gap-2 flex-shrink-0">
-            <button onclick="openProductFormModal(${prod.id})" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700" title="Editar">
-              <i class="ph-bold ph-pencil-simple text-base pointer-events-none"></i>
-            </button>
-            <button onclick="handleDeleteProduct(${prod.id})" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600" title="Eliminar">
-              <i class="ph-bold ph-trash text-base pointer-events-none"></i>
-            </button>
+            ${
+              !isDone 
+                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
+                     <i class="ph-bold ph-check"></i>
+                     <span>Listo</span>
+                   </button>`
+                : `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                     <i class="ph-bold ph-check-double text-base"></i>
+                     <span>Cobrado</span>
+                   </span>`
+            }
           </div>
         `;
         container.appendChild(row);
       });
     }
 
-    async function handleSaveProduct(e) {
-      e.preventDefault();
-
-      const existingId = document.getElementById('formProductId').value;
-      const targetId = existingId ? String(existingId) : String(Date.now());
-
-      const rawL = document.getElementById('dimLength').value.trim();
-      const rawW = document.getElementById('dimWidth').value.trim();
-      const rawH = document.getElementById('dimHeight').value.trim();
-
-      const dimensions = (!rawL && !rawW && !rawH) || rawL === "-"
-        ? { length: "Sin especificar", width: "Sin especificar", height: "Sin especificar" }
-        : { length: rawL || "-", width: rawW || "-", height: rawH || "-" };
-
-      const weightGrams = parseFloat(document.getElementById('formWeightGrams').value) || 0;
-      const filamentCostPerKg = parseFloat(document.getElementById('formFilamentCostPerKg').value) || 21000;
-      const multiplierVal = document.getElementById('formMultiplier').value;
-      const multiplier = multiplierVal === "" ? 5 : (parseFloat(multiplierVal) || 5);
-
-      const calculatedCost = (weightGrams > 0 && filamentCostPerKg > 0)
-        ? Math.round((weightGrams * filamentCostPerKg) / 1000)
-        : 0;
-
-      const productObject = {
-        id: parseInt(targetId, 10),
-        sku: document.getElementById('formSku').value.trim() || `3D-${Math.floor(100 + Math.random() * 900)}`,
-        title: document.getElementById('formTitle').value.trim(),
-        category: document.getElementById('formCategory').value,
-        material: document.getElementById('formMaterial').value,
-        price: document.getElementById('formPrice').value.trim() || '$0.00',
-        featured: document.getElementById('formFeatured').checked,
-        tagline: document.getElementById('formTagline').value.trim(),
-        description: document.getElementById('formDescription').value.trim(),
-        dimensions: dimensions,
-        // Datos para cálculo e histórico
-        weightGrams: weightGrams,
-        filamentCostPerKg: filamentCostPerKg,
-        multiplier: multiplier,
-        calculatedCost: calculatedCost,
-        updatedAt: Date.now(),
-        specs: [{ label: "Material", value: document.getElementById('formMaterial').value }],
-        images: formPhotos.length > 0 ? formPhotos : ["https://placehold.co/800x600/e2e8f0/475569?text=Modelo+3D"]
-      };
-
+    async function markAsCompleted(recordId) {
       try {
-        await setDoc(doc(db, "products", targetId), productObject);
-        showToast("¡Guardado con éxito en Firebase!");
-        closeProductFormModal();
+        await updateDoc(doc(db, "sales_history", String(recordId)), {
+          status: "completed",
+          finishedAt: Date.now()
+        });
       } catch (err) {
-        console.error("Error al guardar:", err);
-        showToast("Permiso denegado: iniciá sesión");
+        console.error("Error al marcar como terminado:", err);
       }
     }
 
-    async function handleDeleteProduct(productId) {
-      const prod = products.find(p => p.id === productId);
-      if (!prod) return;
-
-      if (confirm(`¿Eliminar permanentemente "${prod.title}" de Firebase?`)) {
-        try {
-          await deleteDoc(doc(db, "products", String(productId)));
-          showToast("Pieza eliminada de Firebase");
-        } catch (err) {
-          console.error("Error al eliminar:", err);
-          showToast("Error de permisos al borrar");
-        }
-      }
-    }
-
-    function openProductFormModal(productId = null) {
-      const formTitle = document.getElementById('formModalTitle');
-      const idInput = document.getElementById('formProductId');
-
-      if (productId) {
-        const prod = products.find(p => p.id === productId);
-        if (!prod) return;
-
-        formTitle.textContent = `Editar: ${prod.title}`;
-        idInput.value = prod.id;
-        document.getElementById('formTitle').value = prod.title || '';
-        document.getElementById('formSku').value = prod.sku || '';
-        document.getElementById('formCategory').value = prod.category || 'Iluminación';
-        document.getElementById('formMaterial').value = prod.material || 'PLA';
-        document.getElementById('formPrice').value = prod.price || '';
-        document.getElementById('formTagline').value = prod.tagline || '';
-        document.getElementById('formDescription').value = prod.description || '';
-        document.getElementById('formFeatured').checked = !!prod.featured;
-
-        // Cargar peso, costo y multiplicador guardado (por defecto 5)
-        document.getElementById('formWeightGrams').value = prod.weightGrams || '';
-        document.getElementById('formFilamentCostPerKg').value = prod.filamentCostPerKg || 21000;
-        document.getElementById('formMultiplier').value = prod.multiplier !== undefined ? prod.multiplier : 5;
-        calculateCostAndPrice();
-
-        const hasDims = prod.dimensions && prod.dimensions.length !== "Sin especificar" && prod.dimensions.length !== "-";
-        document.getElementById('dimLength').value = hasDims ? prod.dimensions.length : '';
-        document.getElementById('dimWidth').value = hasDims ? prod.dimensions.width : '';
-        document.getElementById('dimHeight').value = hasDims ? prod.dimensions.height : '';
-
-        formPhotos = prod.images ? [...prod.images] : [];
-      } else {
-        formTitle.textContent = 'Agregar Nueva Pieza';
-        idInput.value = '';
-        document.getElementById('productEditForm').reset();
-        document.getElementById('formWeightGrams').value = '';
-        document.getElementById('formFilamentCostPerKg').value = 21000;
-        document.getElementById('formMultiplier').value = 5;
-        calculateCostAndPrice();
-        document.getElementById('dimLength').value = '';
-        document.getElementById('dimWidth').value = '';
-        document.getElementById('dimHeight').value = '';
-        formPhotos = ["https://images.unsplash.com/photo-1581605405669-fcdf81165afa?q=80&w=1200&auto=format&fit=crop"];
-      }
-
-      renderFormPhotos();
-      const modal = document.getElementById('formModal');
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      modal.classList.add('opacity-100', 'pointer-events-auto');
-    }
-
-    function closeProductFormModal() {
-      const modal = document.getElementById('formModal');
-      modal.classList.remove('opacity-100', 'pointer-events-auto');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-    }
-
-    function renderFormPhotos() {
-      const container = document.getElementById('formPhotosList');
-      container.innerHTML = '';
-      formPhotos.forEach((imgUrl, index) => {
-        const item = document.createElement('div');
-        item.className = "relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-100";
-        item.innerHTML = `
-          <img src="${imgUrl}" class="w-full h-full object-cover">
-          <button type="button" onclick="removePhotoFromForm(${index})" class="absolute top-1 right-1 w-5 h-5 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">×</button>
-        `;
-        container.appendChild(item);
-      });
-    }
-
-    function addPhotoFromUrl() {
-      const input = document.getElementById('newPhotoUrlInput');
-      const val = input.value.trim();
-      if (!val) return;
-      formPhotos.push(val);
-      input.value = '';
-      renderFormPhotos();
-    }
-
-    function handleLocalImageUpload(e) {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        formPhotos.push(event.target.result);
-        renderFormPhotos();
-      };
-      reader.readAsDataURL(file);
-      e.target.value = '';
-    }
-
-    function removePhotoFromForm(index) {
-      formPhotos.splice(index, 1);
-      renderFormPhotos();
-    }
-
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMessage');
-      if (!toast || !toastMsg) return;
-      toastMsg.textContent = message;
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3000);
-    }
-
-    // Exponer a window
-    window.handleLogin = handleLogin;
-    window.handleLogout = handleLogout;
-    window.openProductFormModal = openProductFormModal;
-    window.closeProductFormModal = closeProductFormModal;
-    window.handleSaveProduct = handleSaveProduct;
-    window.handleDeleteProduct = handleDeleteProduct;
-    window.addPhotoFromUrl = addPhotoFromUrl;
-    window.handleLocalImageUpload = handleLocalImageUpload;
-    window.removePhotoFromForm = removePhotoFromForm;
-    window.calculateCostAndPrice = calculateCostAndPrice;
-    window.applySuggestedPrice = applySuggestedPrice;
+    window.markAsCompleted = markAsCompleted;
   </script>
 </body>
 </html>
