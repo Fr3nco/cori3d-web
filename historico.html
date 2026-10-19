@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Cori3D | Histórico de Pedidos & Ventas</title>
+  <title>Cori3D | Histórico & Ganancias</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,11 +33,11 @@
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-2xl font-bold">
-          <i class="ph-bold ph-clock-counter-clockwise"></i>
+          <i class="ph-bold ph-chart-line-up"></i>
         </div>
         <div>
-          <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Histórico de Pedidos</h1>
-          <p class="text-xs text-slate-400">Control de producción y cobros</p>
+          <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Control Financiero</h1>
+          <p class="text-xs text-slate-400">Seguimiento de pedidos y balance de ganancias</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -48,8 +48,27 @@
       </div>
     </div>
 
-    <!-- Lista de Pedidos -->
-    <div class="bg-white rounded-3xl p-6 mt-6 shadow-sm border border-slate-200">
+    <!-- Navegación por Solapas -->
+    <div class="flex items-center gap-2 mt-6">
+      <button 
+        id="tabBtnHistory" 
+        onclick="switchTab('history')" 
+        class="px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2">
+        <i class="ph-bold ph-clock-counter-clockwise text-sm"></i>
+        <span>Histórico de Pedidos</span>
+      </button>
+
+      <button 
+        id="tabBtnProfits" 
+        onclick="switchTab('profits')" 
+        class="px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2">
+        <i class="ph-bold ph-currency-dollar text-sm text-brand-600"></i>
+        <span>Ganancias</span>
+      </button>
+    </div>
+
+    <!-- ==================== CONTENIDO SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
+    <div id="sectionHistory" class="bg-white rounded-3xl p-6 mt-4 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100">
         <h2 class="text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
         <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
@@ -59,6 +78,50 @@
         <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
       </div>
     </div>
+
+    <!-- ==================== CONTENIDO SOLAPA 2: GANANCIAS ==================== -->
+    <div id="sectionProfits" class="hidden mt-4 space-y-4">
+      <!-- Tarjetas de Resumen Financiero -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        
+        <!-- Ganancia Neta -->
+        <div class="bg-emerald-600 text-white p-5 rounded-3xl shadow-sm border border-emerald-500">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Ganancia Neta Total</span>
+          <span id="displayNetProfit" class="text-2xl font-black font-mono block mt-1">$0</span>
+          <span class="text-[10px] text-emerald-100 mt-1 block">Total Venta cobrada menos Costo de Filamento</span>
+        </div>
+
+        <!-- Total Ventas Cobradas -->
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
+          <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-1">$0</span>
+          <span class="text-[10px] text-slate-500 mt-1 block">Suma del precio de venta de piezas terminadas</span>
+        </div>
+
+        <!-- Total Costo de Material -->
+        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
+          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Costo Filamento Invertido</span>
+          <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-1">$0</span>
+          <span class="text-[10px] text-slate-500 mt-1 block">Gasto de material en piezas completadas</span>
+        </div>
+      </div>
+
+      <!-- Tabla Detallada de Ganancias por Pieza -->
+      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <div>
+            <h2 class="text-base font-bold text-slate-900">Desglose de Ganancias por Pieza Terminada</h2>
+            <p class="text-xs text-slate-400">Detalle individual de cada trabajo completado</p>
+          </div>
+          <span id="completedCountBadge" class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">0 piezas</span>
+        </div>
+
+        <div id="profitsListContainer" class="divide-y divide-slate-100 mt-2">
+          <p class="text-xs text-slate-400 py-8 text-center">Calculando balances...</p>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Firebase Modular SDK -->
@@ -87,13 +150,23 @@
     const historyCol = collection(db, "sales_history");
 
     let historyRecords = [];
+    let currentTab = "history";
 
-    // Escucha en tiempo real de los pedidos
+    // Función auxiliar para limpiar precios tipo "$3200" a número entero
+    function parseCurrency(str) {
+      if (!str) return 0;
+      const clean = String(str).replace(/[^0-9.]/g, '');
+      return parseFloat(clean) || 0;
+    }
+
+    // Escucha en tiempo real de Firestore
     onSnapshot(historyCol, (snapshot) => {
       historyRecords = snapshot.docs.map(d => d.data());
-      // Ordenar: los más recientes arriba
+      // Ordenar: más recientes primero
       historyRecords.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
       renderHistoryList();
+      renderProfitsDashboard();
 
       const badge = document.getElementById('ordersCountBadge');
       if (badge) badge.textContent = `${historyRecords.length} registros`;
@@ -101,6 +174,7 @@
       console.error("Error al escuchar histórico:", err);
     });
 
+    // Renderizado de la Solapa 1 (Histórico)
     function renderHistoryList() {
       const container = document.getElementById('historyListContainer');
       if (!container) return;
@@ -137,7 +211,9 @@
                 <span>•</span>
                 <span>${dateStr}</span>
                 ${item.calculatedCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${item.calculatedCost}</span>` : ''}
-                ${isDone ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
+                ${isDone 
+                  ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' 
+                  : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
               </div>
             </div>
           </div>
@@ -160,6 +236,69 @@
       });
     }
 
+    // Renderizado de la Solapa 2 (Ganancias: solo piezas terminadas)
+    function renderProfitsDashboard() {
+      const container = document.getElementById('profitsListContainer');
+      const badgeCompleted = document.getElementById('completedCountBadge');
+      if (!container) return;
+      container.innerHTML = '';
+
+      // Filtrar únicamente los productos terminados
+      const completedItems = historyRecords.filter(item => item.status === "completed");
+
+      if (badgeCompleted) badgeCompleted.textContent = `${completedItems.length} piezas`;
+
+      let totalGross = 0;
+      let totalCost = 0;
+
+      if (completedItems.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay ventas marcadas como "Listo" todavía. Al completar pedidos en el histórico, aparecerán aquí.</p>';
+        document.getElementById('displayNetProfit').textContent = "$0";
+        document.getElementById('displayGrossRevenue').textContent = "$0";
+        document.getElementById('displayTotalCost').textContent = "$0";
+        return;
+      }
+
+      completedItems.forEach(item => {
+        const salePrice = parseCurrency(item.price);
+        const itemCost = item.calculatedCost || 0;
+        const itemProfit = salePrice - itemCost;
+
+        totalGross += salePrice;
+        totalCost += itemCost;
+
+        const dateDone = item.finishedAt ? new Date(item.finishedAt).toLocaleDateString('es-AR', {
+          day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : 'Fecha no registrada';
+
+        const row = document.createElement('div');
+        row.className = "py-3 flex items-center justify-between gap-4";
+        row.innerHTML = `
+          <div class="truncate">
+            <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
+            <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+              <span class="font-mono">${item.sku}</span>
+              <span>•</span>
+              <span>Cobrado el ${dateDone}</span>
+            </div>
+          </div>
+
+          <div class="text-right flex-shrink-0">
+            <span class="text-sm font-extrabold text-emerald-600 font-mono block">+$${itemProfit}</span>
+            <span class="text-[11px] text-slate-400 font-mono block">Venta: $${salePrice} | Costo: $${itemCost}</span>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+
+      const netProfit = totalGross - totalCost;
+
+      // Actualizar tarjetas resumen
+      document.getElementById('displayNetProfit').textContent = `$${netProfit}`;
+      document.getElementById('displayGrossRevenue').textContent = `$${totalGross}`;
+      document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
+    }
+
     async function markAsCompleted(recordId) {
       try {
         await updateDoc(doc(db, "sales_history", String(recordId)), {
@@ -171,7 +310,29 @@
       }
     }
 
+    // Alternar entre solapas
+    function switchTab(tab) {
+      currentTab = tab;
+      const tabHistory = document.getElementById('tabBtnHistory');
+      const tabProfits = document.getElementById('tabBtnProfits');
+      const sectionHistory = document.getElementById('sectionHistory');
+      const sectionProfits = document.getElementById('sectionProfits');
+
+      if (tab === 'history') {
+        tabHistory.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2";
+        tabProfits.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2";
+        sectionHistory.classList.remove('hidden');
+        sectionProfits.classList.add('hidden');
+      } else {
+        tabProfits.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2";
+        tabHistory.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2";
+        sectionProfits.classList.remove('hidden');
+        sectionHistory.classList.add('hidden');
+      }
+    }
+
     window.markAsCompleted = markAsCompleted;
+    window.switchTab = switchTab;
   </script>
 </body>
 </html>
