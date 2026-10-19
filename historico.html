@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cori3D | Histórico de Pedidos & Ventas</title>
+  
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: { sans: ['Inter', 'sans-serif'] },
+          colors: {
+            brand: { 50: '#ecfdf5', 500: '#10b981', 600: '#059669', 700: '#047857' }
+          }
+        }
+      }
+    }
+  </script>
+</head>
+
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-4 sm:p-8">
+
+  <div class="max-w-5xl mx-auto w-full">
+    <!-- Barra Superior -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
+      <div class="flex items-center gap-3">
+        <div class="w-12 h-12 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-2xl font-bold">
+          <i class="ph-bold ph-clock-counter-clockwise"></i>
+        </div>
+        <div>
+          <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Histórico de Pedidos</h1>
+          <p class="text-xs text-slate-400">Control de producción y cobros</p>
+        </div>
+      </div>
+      <div class="flex items-center gap-3">
+        <a href="/admin" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all">
+          <i class="ph-bold ph-wrench"></i>
+          <span>Volver al Admin</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Lista de Pedidos -->
+    <div class="bg-white rounded-3xl p-6 mt-6 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+        <h2 class="text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
+        <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
+      </div>
+
+      <div id="historyListContainer" class="divide-y divide-slate-100 mt-2">
+        <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase Modular SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+    import { 
+      getFirestore, 
+      collection, 
+      doc, 
+      updateDoc, 
+      onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCd-JtST4lQElUnldKjTVYJ7ytOmiH4Bok",
+      authDomain: "cori3d-d5904.firebaseapp.com",
+      projectId: "cori3d-d5904",
+      storageBucket: "cori3d-d5904.firebasestorage.app",
+      messagingSenderId: "250125080972",
+      appId: "1:250125080972:web:8b7eb2ced9d87cc3039ea9",
+      measurementId: "G-PCVLY0WW55"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const historyCol = collection(db, "sales_history");
+
+    let historyRecords = [];
+
+    // Escucha en tiempo real de los pedidos
+    onSnapshot(historyCol, (snapshot) => {
+      historyRecords = snapshot.docs.map(d => d.data());
+      // Ordenar: los más recientes arriba
+      historyRecords.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      renderHistoryList();
+
+      const badge = document.getElementById('ordersCountBadge');
+      if (badge) badge.textContent = `${historyRecords.length} registros`;
+    }, (err) => {
+      console.error("Error al escuchar histórico:", err);
+    });
+
+    function renderHistoryList() {
+      const container = document.getElementById('historyListContainer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      if (historyRecords.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">Aún no hay piezas registradas en el histórico.</p>';
+        return;
+      }
+
+      historyRecords.forEach(item => {
+        const row = document.createElement('div');
+        row.className = "py-3.5 flex items-center justify-between gap-4";
+
+        const isDone = item.status === "completed";
+        const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', {
+          day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : '';
+
+        row.innerHTML = `
+          <div class="flex items-center gap-3 min-w-0">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 ${
+              isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
+            }">
+              <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
+            </div>
+            <div class="truncate">
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
+                <span class="text-xs font-black text-slate-900 font-mono">${item.price}</span>
+              </div>
+              <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
+                <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${item.sku}</span>
+                <span>•</span>
+                <span>${dateStr}</span>
+                ${item.calculatedCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${item.calculatedCost}</span>` : ''}
+                ${isDone ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0">
+            ${
+              !isDone 
+                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
+                     <i class="ph-bold ph-check"></i>
+                     <span>Listo</span>
+                   </button>`
+                : `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                     <i class="ph-bold ph-check-double text-base"></i>
+                     <span>Cobrado</span>
+                   </span>`
+            }
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    async function markAsCompleted(recordId) {
+      try {
+        await updateDoc(doc(db, "sales_history", String(recordId)), {
+          status: "completed",
+          finishedAt: Date.now()
+        });
+      } catch (err) {
+        console.error("Error al marcar como terminado:", err);
+      }
+    }
+
+    window.markAsCompleted = markAsCompleted;
+  </script>
+</body>
+</html>
