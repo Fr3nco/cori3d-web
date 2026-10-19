@@ -132,6 +132,7 @@
       collection, 
       doc, 
       updateDoc, 
+      deleteDoc,
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
@@ -152,17 +153,14 @@
     let historyRecords = [];
     let currentTab = "history";
 
-    // Función auxiliar para limpiar precios tipo "$3200" a número entero
     function parseCurrency(str) {
       if (!str) return 0;
       const clean = String(str).replace(/[^0-9.]/g, '');
       return parseFloat(clean) || 0;
     }
 
-    // Escucha en tiempo real de Firestore
     onSnapshot(historyCol, (snapshot) => {
       historyRecords = snapshot.docs.map(d => d.data());
-      // Ordenar: más recientes primero
       historyRecords.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
 
       renderHistoryList();
@@ -174,7 +172,6 @@
       console.error("Error al escuchar histórico:", err);
     });
 
-    // Renderizado de la Solapa 1 (Histórico)
     function renderHistoryList() {
       const container = document.getElementById('historyListContainer');
       if (!container) return;
@@ -221,29 +218,30 @@
           <div class="flex items-center gap-2 flex-shrink-0">
             ${
               !isDone 
-                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all">
+                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" title="Marcar como Terminado y Cobrado">
                      <i class="ph-bold ph-check"></i>
                      <span>Listo</span>
                    </button>`
-                : `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                : `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1 px-1">
                      <i class="ph-bold ph-check-double text-base"></i>
                      <span>Cobrado</span>
                    </span>`
             }
+            <button onclick="deleteHistoryRecord('${item.id}')" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all" title="Eliminar registro">
+              <i class="ph-bold ph-trash text-base pointer-events-none"></i>
+            </button>
           </div>
         `;
         container.appendChild(row);
       });
     }
 
-    // Renderizado de la Solapa 2 (Ganancias: solo piezas terminadas)
     function renderProfitsDashboard() {
       const container = document.getElementById('profitsListContainer');
       const badgeCompleted = document.getElementById('completedCountBadge');
       if (!container) return;
       container.innerHTML = '';
 
-      // Filtrar únicamente los productos terminados
       const completedItems = historyRecords.filter(item => item.status === "completed");
 
       if (badgeCompleted) badgeCompleted.textContent = `${completedItems.length} piezas`;
@@ -293,7 +291,6 @@
 
       const netProfit = totalGross - totalCost;
 
-      // Actualizar tarjetas resumen
       document.getElementById('displayNetProfit').textContent = `$${netProfit}`;
       document.getElementById('displayGrossRevenue').textContent = `$${totalGross}`;
       document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
@@ -310,7 +307,14 @@
       }
     }
 
-    // Alternar entre solapas
+    async function deleteHistoryRecord(recordId) {
+      try {
+        await deleteDoc(doc(db, "sales_history", String(recordId)));
+      } catch (err) {
+        console.error("Error al borrar del histórico:", err);
+      }
+    }
+
     function switchTab(tab) {
       currentTab = tab;
       const tabHistory = document.getElementById('tabBtnHistory');
@@ -332,6 +336,7 @@
     }
 
     window.markAsCompleted = markAsCompleted;
+    window.deleteHistoryRecord = deleteHistoryRecord;
     window.switchTab = switchTab;
   </script>
 </body>
