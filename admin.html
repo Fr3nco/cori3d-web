@@ -156,7 +156,7 @@
           </div>
           <div>
             <label class="block font-bold text-slate-700 uppercase mb-1">Precio Venta Público ($)</label>
-            <input type="text" id="formPrice" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none" placeholder="$3200">
+            <input type="text" id="formPrice" class="w-full px-3 py-2 rounded-xl border border-slate-200 text-sm outline-none font-bold text-slate-900" placeholder="$3200">
           </div>
         </div>
 
@@ -348,10 +348,18 @@
       }
     }
 
-    // Registrar en Histórico sin alertas
+    // Registrar en Histórico garantizando el cálculo del costo
     async function addToHistorySilently(productId) {
       const prod = products.find(p => p.id === productId);
       if (!prod) return;
+
+      const weight = parseFloat(prod.weightGrams) || 0;
+      const costKg = parseFloat(prod.filamentCostPerKg) || 21000;
+      
+      // Si el costo vino en 0 pero hay gramos cargados, lo calcula en vivo
+      const realCost = (prod.calculatedCost && prod.calculatedCost > 0)
+        ? prod.calculatedCost
+        : (weight > 0 ? Math.round((weight * costKg) / 1000) : 0);
 
       const saleId = String(Date.now());
       const saleRecord = {
@@ -360,9 +368,9 @@
         title: prod.title,
         sku: prod.sku || '3D-MODEL',
         price: prod.price || '$0.00',
-        weightGrams: prod.weightGrams || 0,
-        calculatedCost: prod.calculatedCost || 0,
-        status: "pending", // pendiente de entrega / cobro
+        weightGrams: weight,
+        calculatedCost: realCost,
+        status: "pending",
         createdAt: Date.now(),
         finishedAt: null
       };
@@ -448,8 +456,12 @@
         const photo = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://placehold.co/100x100?text=3D';
         const dims = getFormattedDimensions(prod.dimensions);
 
-        const costBadge = (prod.calculatedCost && prod.calculatedCost > 0)
-          ? `<span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded text-[11px] font-bold font-mono">Costo: $${prod.calculatedCost} (${prod.weightGrams || 0}g)</span>`
+        const costVal = (prod.calculatedCost && prod.calculatedCost > 0)
+          ? prod.calculatedCost
+          : ((prod.weightGrams && prod.weightGrams > 0) ? Math.round((prod.weightGrams * (prod.filamentCostPerKg || 21000)) / 1000) : 0);
+
+        const costBadge = (costVal > 0)
+          ? `<span class="bg-amber-100 text-amber-900 px-1.5 py-0.5 rounded text-[11px] font-bold font-mono">Costo: $${costVal} (${prod.weightGrams || 0}g)</span>`
           : '';
 
         row.innerHTML = `
@@ -481,7 +493,7 @@
             <button onclick="handleDeleteProduct(${prod.id})" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600" title="Eliminar">
               <i class="ph-bold ph-trash text-base pointer-events-none"></i>
             </button>
-            <button onclick="addToHistorySilently(${prod.id})" class="p-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 active:scale-95 transition-all" title="Registrar en Histórico">
+            <button onclick="addToHistorySilently(${prod.id})" class="p-2 rounded-xl bg-brand-50 hover:bg-brand-100 text-brand-700 active:scale-95 transition-all" title="Registrar venta en Histórico">
               <i class="ph-bold ph-plus text-base pointer-events-none"></i>
             </button>
           </div>
@@ -509,6 +521,7 @@
       const multiplierVal = document.getElementById('formMultiplier').value;
       const multiplier = multiplierVal === "" ? 5 : (parseFloat(multiplierVal) || 5);
 
+      // Calculamos directamente desde los datos cargados en el modal
       const calculatedCost = (weightGrams > 0 && filamentCostPerKg > 0)
         ? Math.round((weightGrams * filamentCostPerKg) / 1000)
         : 0;
