@@ -153,10 +153,22 @@
     let historyRecords = [];
     let currentTab = "history";
 
+    // Función que limpia precios sin romper números con puntos de miles (ej: $3.000 -> 3000)
     function parseCurrency(str) {
       if (!str) return 0;
-      const clean = String(str).replace(/[^0-9.]/g, '');
-      return parseFloat(clean) || 0;
+      let clean = String(str).replace(/[^0-9,\.]/g, '').trim();
+
+      if (clean.includes('.')) {
+        if (clean.includes(',')) {
+          clean = clean.replace(/\./g, '').replace(',', '.');
+        } else {
+          clean = clean.replace(/\./g, '');
+        }
+      } else if (clean.includes(',')) {
+        clean = clean.replace(',', '.');
+      }
+
+      return Math.round(parseFloat(clean)) || 0;
     }
 
     onSnapshot(historyCol, (snapshot) => {
@@ -191,6 +203,8 @@
           day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
         }) : '';
 
+        const itemCost = item.calculatedCost || (item.weightGrams ? Math.round((item.weightGrams * 21000) / 1000) : 0);
+
         row.innerHTML = `
           <div class="flex items-center gap-3 min-w-0">
             <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 ${
@@ -207,7 +221,7 @@
                 <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${item.sku}</span>
                 <span>•</span>
                 <span>${dateStr}</span>
-                ${item.calculatedCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${item.calculatedCost}</span>` : ''}
+                ${itemCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${itemCost}</span>` : ''}
                 ${isDone 
                   ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' 
                   : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
@@ -259,7 +273,13 @@
 
       completedItems.forEach(item => {
         const salePrice = parseCurrency(item.price);
-        const itemCost = item.calculatedCost || 0;
+        
+        // Toma el costo guardado o lo calcula con el peso si viniera vacío
+        let itemCost = item.calculatedCost || 0;
+        if (itemCost === 0 && item.weightGrams > 0) {
+          itemCost = Math.round((item.weightGrams * 21000) / 1000);
+        }
+
         const itemProfit = salePrice - itemCost;
 
         totalGross += salePrice;
