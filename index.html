@@ -59,13 +59,6 @@
     .aspect-product {
       aspect-ratio: 4 / 3;
     }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
   </style>
 </head>
 
@@ -134,7 +127,8 @@
   <!-- Catálogo -->
   <main id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 w-full flex-grow">
     
-    <div class="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+    <!-- Barra Principal: Título, Buscador y Botón de Filtros -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
       <div>
         <div class="flex items-center gap-2">
           <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Catálogo de Piezas 3D</h2>
@@ -143,56 +137,16 @@
         <p class="text-sm text-slate-500 mt-1">Explora modelos fabricados en PLA, PETG y materiales técnicos listos para producción.</p>
       </div>
 
-      <!-- Buscador y Filtros de Precio -->
-      <div class="flex flex-col sm:flex-row items-center gap-3 w-full lg:w-auto flex-wrap">
-        
-        <!-- Orden de Precio -->
-        <div class="relative w-full sm:w-44">
-          <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
-            <i class="ph-bold ph-arrows-down-up text-xs"></i>
-          </span>
-          <select 
-            id="priceOrderSelect" 
-            onchange="handlePriceOrderChange(this.value)" 
-            class="w-full pl-8 pr-7 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm appearance-none cursor-pointer">
-            <option value="all">Precio: Todos</option>
-            <option value="low-to-high">Menor a Mayor ($)</option>
-            <option value="high-to-low">Mayor a Menor ($)</option>
-          </select>
-          <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
-            <i class="ph-bold ph-caret-down text-xs"></i>
-          </span>
-        </div>
-
-        <!-- Rango de Precio Personalizado (Mínimo y Máximo) -->
-        <div class="flex items-center gap-1.5 w-full sm:w-auto bg-white p-1 rounded-2xl border border-slate-200 shadow-sm">
-          <span class="text-[11px] font-bold text-slate-400 pl-2">$</span>
-          <input 
-            type="number" 
-            id="minPriceInput" 
-            placeholder="Mín" 
-            oninput="handleCustomPriceRange()"
-            class="w-20 px-2 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-100 outline-none font-mono focus:bg-white focus:ring-1 focus:ring-slate-900"
-          >
-          <span class="text-xs text-slate-300">-</span>
-          <input 
-            type="number" 
-            id="maxPriceInput" 
-            placeholder="Máx" 
-            oninput="handleCustomPriceRange()"
-            class="w-20 px-2 py-1.5 text-xs rounded-xl bg-slate-50 border border-slate-100 outline-none font-mono focus:bg-white focus:ring-1 focus:ring-slate-900"
-          >
-        </div>
-
+      <div class="flex items-center gap-3 w-full md:w-auto">
         <!-- Buscador -->
-        <div class="relative w-full sm:w-64">
+        <div class="relative flex-grow md:w-72">
           <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
             <i class="ph-bold ph-magnifying-glass text-lg"></i>
           </span>
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="Buscar pieza o detalle..." 
+            placeholder="Buscar pieza o material..." 
             class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
             oninput="handleSearch(this.value)"
           >
@@ -204,22 +158,101 @@
           </button>
         </div>
 
+        <!-- Botón Desplegable de Filtros -->
+        <button 
+          id="toggleFiltersBtn"
+          onclick="toggleFilterPanel()" 
+          class="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 text-slate-800 text-sm font-bold shadow-sm transition-all active:scale-95 flex-shrink-0">
+          <i class="ph-bold ph-sliders-horizontal text-brand-600 text-base"></i>
+          <span>Filtros</span>
+          <span id="activeFiltersBadge" class="hidden w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] items-center justify-center font-bold">0</span>
+          <i id="filtersCaretIcon" class="ph-bold ph-caret-down text-xs transition-transform duration-200"></i>
+        </button>
       </div>
     </div>
 
-    <!-- Barra de Filtro por Etiquetas -->
-    <div class="py-4">
-      <div class="flex items-center justify-between gap-2 mb-2">
-        <div class="flex items-center gap-1.5 text-xs text-slate-500 font-extrabold uppercase tracking-wider">
-          <i class="ph-bold ph-tag text-brand-600"></i>
-          <span>Filtrar por Etiqueta:</span>
-          <span id="activeTagIndicator" class="text-brand-600 font-bold normal-case">Todo</span>
+    <!-- ==================== PANEL DESPLEGABLE DE FILTROS ==================== -->
+    <div id="filterPanel" class="hidden mt-4 p-5 bg-white rounded-3xl border border-slate-200 shadow-md space-y-5 transition-all">
+      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
+        <div class="flex items-center gap-2">
+          <i class="ph-bold ph-funnel text-slate-700"></i>
+          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Configurar Filtros</h3>
         </div>
-        <span class="text-[11px] text-slate-400 font-medium hidden sm:inline">Deslizá lateralmente para más etiquetas &rarr;</span>
+        <button onclick="resetFilters()" class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors">
+          <i class="ph-bold ph-trash"></i>
+          <span>Limpiar filtros</span>
+        </button>
       </div>
-      <div class="flex items-center gap-2 overflow-x-auto py-2 no-scrollbar" id="categoryFilters">
-        <!-- Renderizado dinámicamente como botones tipo etiqueta -->
+
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        
+        <!-- Bloque 1: Filtros de Precio -->
+        <div class="md:col-span-4 space-y-3">
+          <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+            <i class="ph-bold ph-currency-dollar text-brand-600"></i>
+            <span>Filtros de Precio</span>
+          </label>
+
+          <!-- Orden -->
+          <div>
+            <span class="text-[11px] text-slate-400 font-bold block mb-1">Ordenar por:</span>
+            <select 
+              id="priceOrderSelect" 
+              onchange="handlePriceOrderChange(this.value)" 
+              class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-slate-900">
+              <option value="all">Por defecto</option>
+              <option value="low-to-high">Menor a Mayor ($)</option>
+              <option value="high-to-low">Mayor a Menor ($)</option>
+            </select>
+          </div>
+
+          <!-- Rango personalizado -->
+          <div>
+            <span class="text-[11px] text-slate-400 font-bold block mb-1">Rango personalizado ($):</span>
+            <div class="flex items-center gap-2">
+              <input 
+                type="number" 
+                id="minPriceInput" 
+                placeholder="Mínimo (ej: 5000)" 
+                oninput="handleCustomPriceRange()"
+                class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none font-mono focus:ring-2 focus:ring-slate-900"
+              >
+              <span class="text-slate-300 font-bold">-</span>
+              <input 
+                type="number" 
+                id="maxPriceInput" 
+                placeholder="Máximo (ej: 7000)" 
+                oninput="handleCustomPriceRange()"
+                class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none font-mono focus:ring-2 focus:ring-slate-900"
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Bloque 2: Filtro por Varias Etiquetas -->
+        <div class="md:col-span-8 space-y-2 border-t md:border-t-0 md:border-l border-slate-100 md:pl-6 pt-4 md:pt-0">
+          <div class="flex items-center justify-between mb-1">
+            <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
+              <i class="ph-bold ph-tag text-brand-600"></i>
+              <span>Filtrar por Etiquetas (Podés marcar varias)</span>
+            </label>
+            <span id="selectedTagsCountLabel" class="text-[10px] font-bold text-slate-400">0 seleccionadas</span>
+          </div>
+
+          <!-- Grilla de Chips de Etiquetas -->
+          <div id="filterTagsGrid" class="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-100">
+            <!-- Inyectado por JS -->
+          </div>
+        </div>
+
       </div>
+    </div>
+
+    <!-- Barra de Filtros Activos (Chips rápidos para ver qué está filtrando) -->
+    <div id="activeFiltersSummary" class="hidden py-3 flex items-center gap-2 flex-wrap text-xs">
+      <span class="text-slate-400 font-bold uppercase text-[10px]">Filtros aplicados:</span>
+      <div id="activeChipsContainer" class="flex items-center gap-1.5 flex-wrap"></div>
+      <button onclick="resetFilters()" class="text-[11px] font-bold text-slate-500 hover:text-slate-800 underline ml-2">Borrar todos</button>
     </div>
 
     <!-- Mensaje sin resultados -->
@@ -228,14 +261,14 @@
         <i class="ph-duotone ph-cube text-3xl"></i>
       </div>
       <h3 class="text-base font-bold text-slate-800">No encontramos coincidencias</h3>
-      <p class="text-xs text-slate-500 mt-1">Prueba con otra etiqueta, término o ajusta el rango de precio.</p>
+      <p class="text-xs text-slate-500 mt-1">Prueba quitando alguna etiqueta o modificando el rango de precio.</p>
       <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all">
-        Ver todo el catálogo
+        Restablecer filtros
       </button>
     </div>
 
     <!-- Grilla de productos -->
-    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-2">
+    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-4">
       <!-- Renderizado por JS -->
     </div>
   </main>
@@ -371,44 +404,20 @@
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
 
-    // Lista completa de etiquetas para filtrado
-    const APP_TAGS = [
-      "Todo",
-      "Decoración",
-      "Accesorios",
-      "Organización",
-      "Utilidades",
-      "Repuestos",
-      "Personalizado",
-      "Modular",
-      "Colección",
-      "Hogar",
-      "Oficina",
-      "Tecnología",
-      "Gaming",
-      "Infantil",
-      "Mascotas",
-      "Automotor",
-      "Interior",
-      "Exterior",
-      "Cocina",
-      "Baño",
-      "Jardín",
-      "Dormitorio",
-      "Living",
-      "Taller",
-      "Viajes",
-      "Almacenamiento",
-      "Iluminación",
-      "Herramientas",
-      "Juguetes",
-      "Kit"
+    // Lista de todas las etiquetas disponibles
+    const ALL_TAGS = [
+      "Decoración", "Accesorios", "Organización", "Utilidades", "Repuestos",
+      "Personalizado", "Modular", "Colección", "Hogar", "Oficina",
+      "Tecnología", "Gaming", "Infantil", "Mascotas", "Automotor",
+      "Interior", "Exterior", "Cocina", "Baño", "Jardín",
+      "Dormitorio", "Living", "Taller", "Viajes", "Almacenamiento",
+      "Iluminación", "Herramientas", "Juguetes", "Kit"
     ];
 
     let products = [];
     let currentSlideIndex = 0;
     let autoSlideInterval = null;
-    let activeTag = "Todo";
+    let selectedFilterTags = []; // Array de etiquetas seleccionadas
     let activeSearchQuery = "";
     let activePriceOrder = "all";
     let activeMinPrice = null;
@@ -442,7 +451,6 @@
       return `${l}×${w}×${h} mm`;
     }
 
-    // Devuelve siempre un arreglo con todas las etiquetas de la pieza
     function getProductTags(prod) {
       if (Array.isArray(prod.tags) && prod.tags.length > 0) {
         return prod.tags;
@@ -584,37 +592,137 @@
       startAutoSlide(count);
     }
 
-    // Filtrar al pulsar una etiqueta
-    function filterByTag(tag) {
-      activeTag = tag;
-      const indicator = document.getElementById('activeTagIndicator');
-      if (indicator) indicator.textContent = tag;
-      renderCategoryTabs();
+    // Toggle para abrir/cerrar el panel de filtros
+    function toggleFilterPanel() {
+      const panel = document.getElementById('filterPanel');
+      const caret = document.getElementById('filtersCaretIcon');
+      if (!panel) return;
+
+      const isHidden = panel.classList.contains('hidden');
+      if (isHidden) {
+        panel.classList.remove('hidden');
+        if (caret) caret.classList.add('rotate-180');
+      } else {
+        panel.classList.add('hidden');
+        if (caret) caret.classList.remove('rotate-180');
+      }
+    }
+
+    // Renderiza la lista de etiquetas dentro del panel de filtros
+    function renderFilterTagsGrid() {
+      const container = document.getElementById('filterTagsGrid');
+      const counterLabel = document.getElementById('selectedTagsCountLabel');
+      if (!container) return;
+
+      container.innerHTML = '';
+      if (counterLabel) counterLabel.textContent = `${selectedFilterTags.length} seleccionadas`;
+
+      ALL_TAGS.forEach(tag => {
+        const isSelected = selectedFilterTags.includes(tag);
+        const chip = document.createElement('button');
+        chip.type = "button";
+        chip.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
+          isSelected 
+            ? 'bg-slate-900 text-white shadow-sm ring-1 ring-slate-900' 
+            : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200'
+        }`;
+        chip.innerHTML = `
+          <i class="ph-bold ${isSelected ? 'ph-check-circle text-brand-400' : 'ph-tag text-slate-300'} text-xs"></i>
+          <span>${tag}</span>
+        `;
+        chip.onclick = () => toggleFilterTag(tag);
+        container.appendChild(chip);
+      });
+
+      updateActiveFiltersBadge();
+      renderActiveChipsBar();
+    }
+
+    function toggleFilterTag(tag) {
+      if (selectedFilterTags.includes(tag)) {
+        selectedFilterTags = selectedFilterTags.filter(t => t !== tag);
+      } else {
+        selectedFilterTags.push(tag);
+      }
+      renderFilterTagsGrid();
       renderProductGrid();
     }
 
-    // Render de botones tipo etiqueta
-    function renderCategoryTabs() {
-      const container = document.getElementById('categoryFilters');
-      if (!container) return;
-      container.innerHTML = '';
+    function removeFilterTag(tag) {
+      selectedFilterTags = selectedFilterTags.filter(t => t !== tag);
+      renderFilterTagsGrid();
+      renderProductGrid();
+    }
 
-      APP_TAGS.forEach(tag => {
-        const btn = document.createElement('button');
-        const isActive = activeTag === tag;
-        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 flex-shrink-0 cursor-pointer ${
-          isActive 
-            ? 'bg-slate-900 text-white shadow-md ring-2 ring-slate-900/30 scale-105' 
-            : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
-        }`;
-        
-        btn.innerHTML = `
-          <i class="ph-bold ph-tag text-[11px] ${isActive ? 'text-brand-400' : 'text-slate-400'}"></i>
+    // Barra de resumen de filtros aplicados
+    function renderActiveChipsBar() {
+      const summaryBar = document.getElementById('activeFiltersSummary');
+      const container = document.getElementById('activeChipsContainer');
+      if (!summaryBar || !container) return;
+
+      container.innerHTML = '';
+      let hasFilters = false;
+
+      // Chips de etiquetas
+      selectedFilterTags.forEach(tag => {
+        hasFilters = true;
+        const chip = document.createElement('span');
+        chip.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 text-white font-bold text-xs";
+        chip.innerHTML = `
           <span>${tag}</span>
+          <button type="button" onclick="removeFilterTag('${tag}')" class="hover:text-red-400 font-bold ml-1">×</button>
         `;
-        btn.onclick = () => filterByTag(tag);
-        container.appendChild(btn);
+        container.appendChild(chip);
       });
+
+      // Chip de rango de precio
+      if ((activeMinPrice !== null && !isNaN(activeMinPrice)) || (activeMaxPrice !== null && !isNaN(activeMaxPrice))) {
+        hasFilters = true;
+        const priceChip = document.createElement('span');
+        priceChip.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-50 text-brand-900 border border-brand-200 font-bold text-xs";
+        const minText = activeMinPrice !== null ? `$${activeMinPrice}` : '$0';
+        const maxText = activeMaxPrice !== null ? `$${activeMaxPrice}` : '∞';
+        priceChip.innerHTML = `
+          <span>${minText} - ${maxText}</span>
+          <button type="button" onclick="clearPriceRange()" class="hover:text-red-500 font-bold ml-1">×</button>
+        `;
+        container.appendChild(priceChip);
+      }
+
+      if (hasFilters) {
+        summaryBar.classList.remove('hidden');
+      } else {
+        summaryBar.classList.add('hidden');
+      }
+    }
+
+    function clearPriceRange() {
+      activeMinPrice = null;
+      activeMaxPrice = null;
+      document.getElementById('minPriceInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
+      renderActiveChipsBar();
+      updateActiveFiltersBadge();
+      renderProductGrid();
+    }
+
+    function updateActiveFiltersBadge() {
+      const badge = document.getElementById('activeFiltersBadge');
+      if (!badge) return;
+
+      let count = selectedFilterTags.length;
+      if ((activeMinPrice !== null && !isNaN(activeMinPrice)) || (activeMaxPrice !== null && !isNaN(activeMaxPrice))) {
+        count += 1;
+      }
+
+      if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+        badge.classList.add('flex');
+      } else {
+        badge.classList.add('hidden');
+        badge.classList.remove('flex');
+      }
     }
 
     function renderProductGrid() {
@@ -624,18 +732,21 @@
       if (!grid) return;
 
       let filtered = products.filter(prod => {
-        const tags = getProductTags(prod);
+        const prodTags = getProductTags(prod);
         
-        // Filtro estricto por etiqueta activa
-        const matchesTag = (activeTag === "Todo") || tags.includes(activeTag);
+        // Coincidencia con las etiquetas seleccionadas (si hay etiquetas marcadas, el producto debe contener al menos una)
+        let matchesTags = true;
+        if (selectedFilterTags.length > 0) {
+          matchesTags = selectedFilterTags.some(t => prodTags.includes(t));
+        }
 
-        // Filtro por texto en título, descripción, material o etiquetas
+        // Búsqueda por texto
         const q = activeSearchQuery.toLowerCase().trim();
         const matchesQuery = !q || 
           (prod.title && prod.title.toLowerCase().includes(q)) || 
           (prod.description && prod.description.toLowerCase().includes(q)) ||
           (prod.material && prod.material.toLowerCase().includes(q)) ||
-          tags.some(t => t.toLowerCase().includes(q));
+          prodTags.some(t => t.toLowerCase().includes(q));
 
         // Rango de precio personalizado
         const numPrice = parseNumericPrice(prod.price);
@@ -649,10 +760,10 @@
           matchesMax = numPrice <= activeMaxPrice;
         }
 
-        return matchesTag && matchesQuery && matchesMin && matchesMax;
+        return matchesTags && matchesQuery && matchesMin && matchesMax;
       });
 
-      // Ordenar por precio si fue seleccionado
+      // Ordenar por precio
       if (activePriceOrder === 'low-to-high') {
         filtered.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
       } else if (activePriceOrder === 'high-to-low') {
@@ -681,11 +792,11 @@
         const dims = getFormattedDimensions(prod.dimensions);
         const tags = getProductTags(prod);
 
-        // Generar etiquetas clickeables para la tarjeta
+        // Tags en la tarjeta (al hacer clic en uno, se agrega a los filtros)
         const tagsHtml = tags.slice(0, 3).map(t => `
           <button 
             type="button" 
-            onclick="event.stopPropagation(); filterByTag('${t}')" 
+            onclick="event.stopPropagation(); toggleFilterTag('${t}')" 
             class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/95 hover:bg-slate-900 hover:text-white text-slate-800 shadow-sm flex items-center gap-1 transition-colors">
             <i class="ph-bold ph-tag text-[9px] text-brand-600"></i>
             ${t}
@@ -774,6 +885,8 @@
       activeMinPrice = minVal !== "" ? parseFloat(minVal) : null;
       activeMaxPrice = maxVal !== "" ? parseFloat(maxVal) : null;
 
+      updateActiveFiltersBadge();
+      renderActiveChipsBar();
       renderProductGrid();
     }
 
@@ -787,13 +900,10 @@
     }
 
     function resetFilters() {
-      activeTag = "Todo";
+      selectedFilterTags = [];
       activePriceOrder = "all";
       activeMinPrice = null;
       activeMaxPrice = null;
-
-      const indicator = document.getElementById('activeTagIndicator');
-      if (indicator) indicator.textContent = "Todo";
 
       const orderSelect = document.getElementById('priceOrderSelect');
       if (orderSelect) orderSelect.value = "all";
@@ -804,7 +914,7 @@
       if (maxInput) maxInput.value = "";
 
       clearSearch();
-      renderCategoryTabs();
+      renderFilterTagsGrid();
       renderProductGrid();
     }
 
@@ -824,7 +934,6 @@
       document.getElementById('modalCategoryTag').textContent = tags[0];
       document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
 
-      // Renderizar etiquetas en el modal que también pueden filtrarse al hacer click
       const tagsContainer = document.getElementById('modalTagsContainer');
       tagsContainer.innerHTML = '';
       tags.forEach(t => {
@@ -834,7 +943,11 @@
         badge.innerHTML = `<i class="ph-bold ph-tag text-[10px] text-brand-600"></i> <span>${t}</span>`;
         badge.onclick = () => {
           closeDetailModal();
-          filterByTag(t);
+          if (!selectedFilterTags.includes(t)) {
+            selectedFilterTags.push(t);
+            renderFilterTagsGrid();
+            renderProductGrid();
+          }
         };
         tagsContainer.appendChild(badge);
       });
@@ -928,7 +1041,7 @@
 
     function refreshAllViews() {
       initCarousel();
-      renderCategoryTabs();
+      renderFilterTagsGrid();
       renderProductGrid();
     }
 
@@ -969,7 +1082,10 @@
     window.nextSlide = nextSlide;
     window.prevSlide = prevSlide;
     window.goToSlide = goToSlide;
-    window.filterByTag = filterByTag;
+    window.toggleFilterPanel = toggleFilterPanel;
+    window.toggleFilterTag = toggleFilterTag;
+    window.removeFilterTag = removeFilterTag;
+    window.clearPriceRange = clearPriceRange;
     window.handleSearch = handleSearch;
     window.handlePriceOrderChange = handlePriceOrderChange;
     window.handleCustomPriceRange = handleCustomPriceRange;
