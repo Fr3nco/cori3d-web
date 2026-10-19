@@ -136,31 +136,59 @@
         <p class="text-sm text-slate-500 mt-1">Explora modelos fabricados en PLA, PETG y materiales técnicos listos para producción.</p>
       </div>
 
-      <!-- Buscador -->
-      <div class="relative w-full md:w-80">
-        <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-          <i class="ph-bold ph-magnifying-glass text-lg"></i>
-        </span>
-        <input 
-          type="text" 
-          id="searchInput" 
-          placeholder="Buscar pieza, material o detalle..." 
-          class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
-          oninput="handleSearch(this.value)"
-        >
-        <button 
-          id="clearSearchBtn" 
-          onclick="clearSearch()" 
-          class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
-          <i class="ph-bold ph-x-circle text-lg"></i>
-        </button>
+      <!-- Buscador y Filtro por Precio -->
+      <div class="flex flex-col sm:flex-row items-center gap-3 w-full md:w-auto">
+        <!-- Selector de Precio -->
+        <div class="relative w-full sm:w-48">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <i class="ph-bold ph-arrows-down-up text-sm"></i>
+          </span>
+          <select 
+            id="priceFilterSelect" 
+            onchange="handlePriceFilter(this.value)" 
+            class="w-full pl-9 pr-8 py-2.5 rounded-2xl bg-white border border-slate-200 text-xs font-semibold text-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm appearance-none cursor-pointer">
+            <option value="all">Precio: Todos</option>
+            <option value="low-to-high">Menor a Mayor ($)</option>
+            <option value="high-to-low">Mayor a Menor ($)</option>
+            <option value="under-5000">Hasta $5.000</option>
+            <option value="under-10000">Hasta $10.000</option>
+            <option value="over-10000">Más de $10.000</option>
+          </select>
+          <span class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none text-slate-400">
+            <i class="ph-bold ph-caret-down text-xs"></i>
+          </span>
+        </div>
+
+        <!-- Buscador -->
+        <div class="relative w-full sm:w-72">
+          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
+            <i class="ph-bold ph-magnifying-glass text-lg"></i>
+          </span>
+          <input 
+            type="text" 
+            id="searchInput" 
+            placeholder="Buscar pieza o detalle..." 
+            class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
+            oninput="handleSearch(this.value)"
+          >
+          <button 
+            id="clearSearchBtn" 
+            onclick="clearSearch()" 
+            class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
+            <i class="ph-bold ph-x-circle text-lg"></i>
+          </button>
+        </div>
       </div>
     </div>
 
-    <!-- Pestañas de categorías fijas -->
-    <div class="flex items-center justify-between gap-4 py-4 flex-wrap">
+    <!-- Filtro de Etiquetas (Tags) -->
+    <div class="py-4">
+      <div class="flex items-center gap-1.5 text-xs text-slate-400 mb-2 font-bold uppercase tracking-wider">
+        <i class="ph-bold ph-tag"></i>
+        <span>Filtrar por Etiqueta</span>
+      </div>
       <div class="flex items-center gap-2 overflow-x-auto py-1" id="categoryFilters">
-        <!-- Renderizado por JS -->
+        <!-- Renderizado dinámicamente como etiquetas por JS -->
       </div>
     </div>
 
@@ -170,7 +198,7 @@
         <i class="ph-duotone ph-cube text-3xl"></i>
       </div>
       <h3 class="text-base font-bold text-slate-800">No encontramos coincidencias</h3>
-      <p class="text-xs text-slate-500 mt-1">Prueba con otro término de búsqueda o categoría.</p>
+      <p class="text-xs text-slate-500 mt-1">Prueba con otro término, etiqueta o rango de precio.</p>
       <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all">
         Ver todo el catálogo
       </button>
@@ -305,26 +333,42 @@
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
 
-    // Categorías con Accesorios y Personalizables incluidas
-    const APP_CATEGORIES = [
-      "Todas",
+    // Nueva lista oficial de etiquetas
+    const APP_TAGS = [
+      "Todo",
       "Iluminación",
       "Herramientas",
-      "Decoración & Hogar",
-      "Exteriores",
-      "Puzzles",
-      "Accesorios",
-      "Personalizables"
+      "Decoración",
+      "Hogar",
+      "Cocina",
+      "Baño",
+      "Juguetes",
+      "Kit"
     ];
 
-    // Estado local
     let products = [];
     let currentSlideIndex = 0;
     let autoSlideInterval = null;
-    let activeCategory = "Todas";
+    let activeTag = "Todo";
     let activeSearchQuery = "";
+    let activePriceFilter = "all";
     let activeProductInModal = null;
     let activeModalImageIndex = 0;
+
+    function parseNumericPrice(priceStr) {
+      if (!priceStr) return 0;
+      let clean = String(priceStr).replace(/[^0-9,\.]/g, '').trim();
+      if (clean.includes('.')) {
+        if (clean.includes(',')) {
+          clean = clean.replace(/\./g, '').replace(',', '.');
+        } else {
+          clean = clean.replace(/\./g, '');
+        }
+      } else if (clean.includes(',')) {
+        clean = clean.replace(',', '.');
+      }
+      return parseFloat(clean) || 0;
+    }
 
     function getFormattedDimensions(dims) {
       if (!dims) return "Sin especificar";
@@ -466,22 +510,27 @@
       startAutoSlide(count);
     }
 
+    // Render de etiquetas estilo Tag / Chip
     function renderCategoryTabs() {
       const container = document.getElementById('categoryFilters');
       if (!container) return;
       container.innerHTML = '';
 
-      APP_CATEGORIES.forEach(cat => {
+      APP_TAGS.forEach(tag => {
         const btn = document.createElement('button');
-        const isActive = activeCategory === cat;
-        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all duration-200 ${
+        const isActive = activeTag === tag;
+        btn.className = `whitespace-nowrap px-3.5 py-1.5 rounded-full text-xs font-bold transition-all duration-200 flex items-center gap-1.5 ${
           isActive 
-            ? 'bg-slate-900 text-white shadow-sm' 
-            : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            ? 'bg-slate-900 text-white shadow-sm ring-2 ring-slate-900/20' 
+            : 'bg-white text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-slate-200'
         }`;
-        btn.textContent = cat;
+        
+        btn.innerHTML = `
+          <i class="ph-bold ph-tag text-[10px] ${isActive ? 'text-brand-400' : 'text-slate-400'}"></i>
+          <span>${tag}</span>
+        `;
         btn.onclick = () => {
-          activeCategory = cat;
+          activeTag = tag;
           renderCategoryTabs();
           renderProductGrid();
         };
@@ -495,16 +544,35 @@
       const counterBadge = document.getElementById('productCounterBadge');
       if (!grid) return;
 
-      const filtered = products.filter(prod => {
-        const matchesCategory = activeCategory === "Todas" || prod.category === activeCategory;
+      let filtered = products.filter(prod => {
+        const matchesTag = activeTag === "Todo" || prod.category === activeTag;
         const q = activeSearchQuery.toLowerCase().trim();
         const matchesQuery = !q || 
           (prod.title && prod.title.toLowerCase().includes(q)) || 
           (prod.description && prod.description.toLowerCase().includes(q)) ||
           (prod.material && prod.material.toLowerCase().includes(q)) ||
-          (prod.specs && prod.specs.some(s => s.value.toLowerCase().includes(q) || s.label.toLowerCase().includes(q)));
-        return matchesCategory && matchesQuery;
+          (prod.category && prod.category.toLowerCase().includes(q));
+
+        // Filtro numérico de precio
+        const numPrice = parseNumericPrice(prod.price);
+        let matchesPriceRange = true;
+        if (activePriceFilter === 'under-5000') {
+          matchesPriceRange = numPrice <= 5000;
+        } else if (activePriceFilter === 'under-10000') {
+          matchesPriceRange = numPrice <= 10000;
+        } else if (activePriceFilter === 'over-10000') {
+          matchesPriceRange = numPrice > 10000;
+        }
+
+        return matchesTag && matchesQuery && matchesPriceRange;
       });
+
+      // Ordenamiento por precio
+      if (activePriceFilter === 'low-to-high') {
+        filtered.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
+      } else if (activePriceFilter === 'high-to-low') {
+        filtered.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
+      }
 
       if (counterBadge) counterBadge.textContent = filtered.length;
 
@@ -537,8 +605,9 @@
               class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
             >
             <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap">
-              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-slate-800 shadow-sm">
-                ${prod.category}
+              <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-white/95 text-slate-800 shadow-sm flex items-center gap-1">
+                <i class="ph-bold ph-tag text-[9px] text-brand-600"></i>
+                ${prod.category || 'General'}
               </span>
               <span class="px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500 text-slate-950 shadow-sm">
                 ${prod.material || 'PLA'}
@@ -597,6 +666,11 @@
       renderProductGrid();
     }
 
+    function handlePriceFilter(val) {
+      activePriceFilter = val;
+      renderProductGrid();
+    }
+
     function clearSearch() {
       const input = document.getElementById('searchInput');
       if (input) {
@@ -607,7 +681,10 @@
     }
 
     function resetFilters() {
-      activeCategory = "Todas";
+      activeTag = "Todo";
+      activePriceFilter = "all";
+      const priceSelect = document.getElementById('priceFilterSelect');
+      if (priceSelect) priceSelect.value = "all";
       clearSearch();
       renderCategoryTabs();
       renderProductGrid();
@@ -624,7 +701,7 @@
       document.getElementById('modalTitle').textContent = product.title;
       document.getElementById('modalPrice').textContent = product.price || '$0.00';
       document.getElementById('modalDescription').textContent = product.description || 'Sin descripción detallada.';
-      document.getElementById('modalCategoryTag').textContent = product.category;
+      document.getElementById('modalCategoryTag').textContent = product.category || 'General';
       document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
 
       const specsContainer = document.getElementById('modalSpecs');
@@ -754,11 +831,11 @@
       showToast("Enlace copiado al portapapeles");
     }
 
-    // Exponer al objeto window
     window.nextSlide = nextSlide;
     window.prevSlide = prevSlide;
     window.goToSlide = goToSlide;
     window.handleSearch = handleSearch;
+    window.handlePriceFilter = handlePriceFilter;
     window.clearSearch = clearSearch;
     window.resetFilters = resetFilters;
     window.openDetailModalById = openDetailModalById;
@@ -775,7 +852,6 @@
       }
     });
 
-    // Iniciar escucha en tiempo real
     initRealtimeListener();
   </script>
 </body>
