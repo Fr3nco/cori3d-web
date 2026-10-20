@@ -37,7 +37,7 @@
         </div>
         <div>
           <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Control Financiero</h1>
-          <p class="text-xs text-slate-400">Seguimiento de pedidos y balance de ganancias</p>
+          <p class="text-xs text-slate-400">Seguimiento de pedidos, balance de ganancias y ventas manuales</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -84,6 +84,7 @@
 
     <!-- ==================== CONTENIDO SOLAPA 2: GANANCIAS ==================== -->
     <div id="sectionProfits" class="hidden mt-4 space-y-4">
+      
       <!-- Tarjetas de Resumen Financiero -->
       <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
         
@@ -98,7 +99,7 @@
         <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
           <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
           <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-1">$0</span>
-          <span class="text-[10px] text-slate-500 mt-1 block">Suma del precio de venta de piezas terminadas</span>
+          <span class="text-[10px] text-slate-500 mt-1 block">Suma del precio cobrado en todas las piezas</span>
         </div>
 
         <!-- Total Costo de Material -->
@@ -107,6 +108,47 @@
           <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-1">$0</span>
           <span class="text-[10px] text-slate-500 mt-1 block">Gasto de material en piezas completadas</span>
         </div>
+      </div>
+
+      <!-- FORMULARIO DE VENTA MANUAL -->
+      <div class="bg-amber-50/60 rounded-3xl p-6 border border-amber-200 shadow-sm">
+        <div class="flex items-center gap-2 mb-3">
+          <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold">
+            <i class="ph-bold ph-plus-circle text-lg"></i>
+          </div>
+          <div>
+            <h3 class="text-sm font-black text-amber-950 uppercase tracking-wide">Cargar Venta Manual / Fuera de Catálogo</h3>
+            <p class="text-xs text-amber-800">Para trabajos personalizados, impresiones a medida o precios especiales</p>
+          </div>
+        </div>
+
+        <form id="manualSaleForm" onsubmit="handleManualSaleSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs pt-1">
+          <div class="sm:col-span-4">
+            <label class="block font-bold text-slate-700 uppercase mb-1">Nombre o descripción del artículo *</label>
+            <input type="text" id="manualTitle" required placeholder="Ej: Soporte especial para auricular" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-700 uppercase mb-1">Precio Cobrado ($) *</label>
+            <input type="number" step="any" id="manualPrice" required placeholder="Ej: 4500" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block font-bold text-slate-700 uppercase mb-1">Costo Filamento ($)</label>
+            <input type="number" step="any" id="manualCost" placeholder="Ej: 750" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
+          </div>
+
+          <div class="sm:col-span-4">
+            <label class="block font-bold text-slate-700 uppercase mb-1">Cliente / Nota</label>
+            <div class="flex gap-2">
+              <input type="text" id="manualNote" placeholder="Ej: Yamila - pago en mano" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
+              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 flex-shrink-0 transition-all">
+                <i class="ph-bold ph-check"></i>
+                <span>Cargar</span>
+              </button>
+            </div>
+          </div>
+        </form>
       </div>
 
       <!-- Tabla Detallada de Ganancias por Pieza -->
@@ -133,6 +175,7 @@
     import { 
       getFirestore, 
       collection, 
+      setDoc,
       doc, 
       updateDoc, 
       deleteDoc,
@@ -207,6 +250,7 @@
 
         const itemCost = item.calculatedCost || (item.weightGrams ? Math.round((item.weightGrams * 21000) / 1000) : 0);
         const currentNote = item.note || '';
+        const isManual = item.isManual === true;
 
         row.innerHTML = `
           <div class="flex items-start gap-3 min-w-0 flex-grow">
@@ -216,9 +260,10 @@
               <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
             </div>
             <div class="truncate flex-grow">
-              <div class="flex items-center gap-2">
+              <div class="flex items-center gap-2 flex-wrap">
                 <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
                 <span class="text-xs font-black text-slate-900 font-mono">${item.price}</span>
+                ${isManual ? '<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[10px] font-bold">Venta Manual</span>' : ''}
               </div>
               <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
                 <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${item.sku}</span>
@@ -280,7 +325,7 @@
       let totalCost = 0;
 
       if (completedItems.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay ventas marcadas como "Listo" todavía. Al completar pedidos en el histórico, aparecerán aquí.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay ventas marcadas como "Listo" todavía. Al completar pedidos en el histórico o cargar una venta manual, aparecerán aquí.</p>';
         document.getElementById('displayNetProfit').textContent = "$0";
         document.getElementById('displayGrossRevenue').textContent = "$0";
         document.getElementById('displayTotalCost').textContent = "$0";
@@ -302,15 +347,19 @@
 
         const dateDone = item.finishedAt ? new Date(item.finishedAt).toLocaleDateString('es-AR', {
           day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
-        }) : 'Fecha no registrada';
+        }) : (item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }) : 'Hoy');
 
         const clientInfo = item.note ? `<span class="text-slate-700 font-semibold">• Cliente: ${item.note}</span>` : '';
+        const isManual = item.isManual === true;
 
         const row = document.createElement('div');
         row.className = "py-3 flex items-center justify-between gap-4";
         row.innerHTML = `
           <div class="truncate">
-            <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
+            <div class="flex items-center gap-2">
+              <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
+              ${isManual ? '<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[10px] font-bold">Manual</span>' : ''}
+            </div>
             <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5 flex-wrap">
               <span class="font-mono">${item.sku}</span>
               <span>•</span>
@@ -319,9 +368,14 @@
             </div>
           </div>
 
-          <div class="text-right flex-shrink-0">
-            <span class="text-sm font-extrabold text-emerald-600 font-mono block">+$${itemProfit}</span>
-            <span class="text-[11px] text-slate-400 font-mono block">Venta: $${salePrice} | Costo: $${itemCost}</span>
+          <div class="flex items-center gap-3 flex-shrink-0">
+            <div class="text-right">
+              <span class="text-sm font-extrabold text-emerald-600 font-mono block">+$${itemProfit}</span>
+              <span class="text-[11px] text-slate-400 font-mono block">Venta: $${salePrice} | Costo: $${itemCost}</span>
+            </div>
+            <button onclick="deleteHistoryRecord('${item.id}')" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all" title="Eliminar registro">
+              <i class="ph-bold ph-trash text-base pointer-events-none"></i>
+            </button>
           </div>
         `;
         container.appendChild(row);
@@ -332,6 +386,43 @@
       document.getElementById('displayNetProfit').textContent = `$${netProfit}`;
       document.getElementById('displayGrossRevenue').textContent = `$${totalGross}`;
       document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
+    }
+
+    // Guardar venta manual
+    async function handleManualSaleSubmit(e) {
+      e.preventDefault();
+
+      const title = document.getElementById('manualTitle').value.trim();
+      const priceRaw = parseFloat(document.getElementById('manualPrice').value) || 0;
+      const costRaw = parseFloat(document.getElementById('manualCost').value) || 0;
+      const note = document.getElementById('manualNote').value.trim();
+
+      if (!title || priceRaw <= 0) return;
+
+      const saleId = String(Date.now());
+      const now = Date.now();
+
+      const manualRecord = {
+        id: saleId,
+        productId: null,
+        title: title,
+        sku: `MANUAL-${Math.floor(100 + Math.random() * 900)}`,
+        price: `$${priceRaw}`,
+        weightGrams: 0,
+        calculatedCost: costRaw,
+        note: note,
+        isManual: true,
+        status: "completed", // Las ventas manuales entran directamente como cobradas
+        createdAt: now,
+        finishedAt: now
+      };
+
+      try {
+        await setDoc(doc(db, "sales_history", saleId), manualRecord);
+        document.getElementById('manualSaleForm').reset();
+      } catch (err) {
+        console.error("Error al registrar venta manual:", err);
+      }
     }
 
     async function updateRecordNote(recordId, newNote) {
@@ -383,6 +474,7 @@
       }
     }
 
+    window.handleManualSaleSubmit = handleManualSaleSubmit;
     window.updateRecordNote = updateRecordNote;
     window.markAsCompleted = markAsCompleted;
     window.deleteHistoryRecord = deleteHistoryRecord;
