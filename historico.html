@@ -70,7 +70,10 @@
     <!-- ==================== CONTENIDO SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
     <div id="sectionHistory" class="bg-white rounded-3xl p-6 mt-4 shadow-sm border border-slate-200">
       <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
+        <div>
+          <h2 class="text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
+          <p class="text-xs text-slate-400">Podés agregar una nota o nombre de cliente en cada pedido</p>
+        </div>
         <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
       </div>
 
@@ -153,7 +156,6 @@
     let historyRecords = [];
     let currentTab = "history";
 
-    // Función que limpia precios sin romper números con puntos de miles (ej: $3.000 -> 3000)
     function parseCurrency(str) {
       if (!str) return 0;
       let clean = String(str).replace(/[^0-9,\.]/g, '').trim();
@@ -196,7 +198,7 @@
 
       historyRecords.forEach(item => {
         const row = document.createElement('div');
-        row.className = "py-3.5 flex items-center justify-between gap-4";
+        row.className = "py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
 
         const isDone = item.status === "completed";
         const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', {
@@ -204,15 +206,16 @@
         }) : '';
 
         const itemCost = item.calculatedCost || (item.weightGrams ? Math.round((item.weightGrams * 21000) / 1000) : 0);
+        const currentNote = item.note || '';
 
         row.innerHTML = `
-          <div class="flex items-center gap-3 min-w-0">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 ${
+          <div class="flex items-start gap-3 min-w-0 flex-grow">
+            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 mt-0.5 ${
               isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
             }">
               <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
             </div>
-            <div class="truncate">
+            <div class="truncate flex-grow">
               <div class="flex items-center gap-2">
                 <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
                 <span class="text-xs font-black text-slate-900 font-mono">${item.price}</span>
@@ -226,10 +229,23 @@
                   ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' 
                   : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
               </div>
+
+              <!-- Campo de Nota / Cliente -->
+              <div class="mt-2 flex items-center gap-1.5 max-w-md">
+                <i class="ph-bold ph-user text-slate-400 text-xs"></i>
+                <input 
+                  type="text" 
+                  value="${currentNote}" 
+                  placeholder="¿Quién lo pidió? (Escribí y presioná Enter)..." 
+                  onblur="updateRecordNote('${item.id}', this.value)"
+                  onkeydown="if(event.key === 'Enter') { this.blur(); }"
+                  class="w-full text-xs px-2.5 py-1 rounded-lg border border-slate-200 bg-slate-50 focus:bg-white focus:ring-1 focus:ring-slate-900 outline-none text-slate-700 placeholder-slate-400"
+                >
+              </div>
             </div>
           </div>
 
-          <div class="flex items-center gap-2 flex-shrink-0">
+          <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
             ${
               !isDone 
                 ? `<button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" title="Marcar como Terminado y Cobrado">
@@ -274,7 +290,6 @@
       completedItems.forEach(item => {
         const salePrice = parseCurrency(item.price);
         
-        // Toma el costo guardado o lo calcula con el peso si viniera vacío
         let itemCost = item.calculatedCost || 0;
         if (itemCost === 0 && item.weightGrams > 0) {
           itemCost = Math.round((item.weightGrams * 21000) / 1000);
@@ -289,15 +304,18 @@
           day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
         }) : 'Fecha no registrada';
 
+        const clientInfo = item.note ? `<span class="text-slate-700 font-semibold">• Cliente: ${item.note}</span>` : '';
+
         const row = document.createElement('div');
         row.className = "py-3 flex items-center justify-between gap-4";
         row.innerHTML = `
           <div class="truncate">
             <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
-            <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+            <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5 flex-wrap">
               <span class="font-mono">${item.sku}</span>
               <span>•</span>
               <span>Cobrado el ${dateDone}</span>
+              ${clientInfo}
             </div>
           </div>
 
@@ -314,6 +332,16 @@
       document.getElementById('displayNetProfit').textContent = `$${netProfit}`;
       document.getElementById('displayGrossRevenue').textContent = `$${totalGross}`;
       document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
+    }
+
+    async function updateRecordNote(recordId, newNote) {
+      try {
+        await updateDoc(doc(db, "sales_history", String(recordId)), {
+          note: newNote.trim()
+        });
+      } catch (err) {
+        console.error("Error al guardar nota:", err);
+      }
     }
 
     async function markAsCompleted(recordId) {
@@ -355,6 +383,7 @@
       }
     }
 
+    window.updateRecordNote = updateRecordNote;
     window.markAsCompleted = markAsCompleted;
     window.deleteHistoryRecord = deleteHistoryRecord;
     window.switchTab = switchTab;
