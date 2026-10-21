@@ -171,7 +171,7 @@
       </div>
     </div>
 
-    <!-- ==================== PANEL DESPLEGABLE DE FILTROS ==================== -->
+    <!-- PANEL DESPLEGABLE DE FILTROS -->
     <div id="filterPanel" class="hidden mt-4 p-5 bg-white rounded-3xl border border-slate-200 shadow-md space-y-5 transition-all">
       <div class="flex items-center justify-between pb-3 border-b border-slate-100">
         <div class="flex items-center gap-2">
@@ -240,7 +240,7 @@
           </div>
 
           <!-- Grilla de Chips de Etiquetas -->
-          <div id="filterTagsGrid" class="flex flex-wrap gap-1.5 max-h-48 overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-100">
+          <div id="filterTagsGrid" class="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-100">
             <!-- Inyectado por JS -->
           </div>
         </div>
@@ -248,7 +248,7 @@
       </div>
     </div>
 
-    <!-- Barra de Filtros Activos (Chips rápidos para ver qué está filtrando) -->
+    <!-- Barra de Filtros Activos -->
     <div id="activeFiltersSummary" class="hidden py-3 flex items-center gap-2 flex-wrap text-xs">
       <span class="text-slate-400 font-bold uppercase text-[10px]">Filtros aplicados:</span>
       <div id="activeChipsContainer" class="flex items-center gap-1.5 flex-wrap"></div>
@@ -404,8 +404,9 @@
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
 
-    // Lista de todas las etiquetas disponibles
+    // Lista oficial de etiquetas completa con las nuevas agregadas
     const ALL_TAGS = [
+      "Antiestrés", "Maquillaje", "ASMR", "Personal", "Juegos de Mesa", "Artístico",
       "Decoración", "Accesorios", "Organización", "Utilidades", "Repuestos",
       "Personalizado", "Modular", "Colección", "Hogar", "Oficina",
       "Tecnología", "Gaming", "Infantil", "Mascotas", "Automotor",
@@ -417,7 +418,7 @@
     let products = [];
     let currentSlideIndex = 0;
     let autoSlideInterval = null;
-    let selectedFilterTags = []; // Array de etiquetas seleccionadas
+    let selectedFilterTags = [];
     let activeSearchQuery = "";
     let activePriceOrder = "all";
     let activeMinPrice = null;
@@ -592,7 +593,6 @@
       startAutoSlide(count);
     }
 
-    // Toggle para abrir/cerrar el panel de filtros
     function toggleFilterPanel() {
       const panel = document.getElementById('filterPanel');
       const caret = document.getElementById('filtersCaretIcon');
@@ -608,7 +608,6 @@
       }
     }
 
-    // Renderiza la lista de etiquetas dentro del panel de filtros
     function renderFilterTagsGrid() {
       const container = document.getElementById('filterTagsGrid');
       const counterLabel = document.getElementById('selectedTagsCountLabel');
@@ -654,7 +653,6 @@
       renderProductGrid();
     }
 
-    // Barra de resumen de filtros aplicados
     function renderActiveChipsBar() {
       const summaryBar = document.getElementById('activeFiltersSummary');
       const container = document.getElementById('activeChipsContainer');
@@ -663,7 +661,6 @@
       container.innerHTML = '';
       let hasFilters = false;
 
-      // Chips de etiquetas
       selectedFilterTags.forEach(tag => {
         hasFilters = true;
         const chip = document.createElement('span');
@@ -675,7 +672,6 @@
         container.appendChild(chip);
       });
 
-      // Chip de rango de precio
       if ((activeMinPrice !== null && !isNaN(activeMinPrice)) || (activeMaxPrice !== null && !isNaN(activeMaxPrice))) {
         hasFilters = true;
         const priceChip = document.createElement('span');
@@ -734,13 +730,11 @@
       let filtered = products.filter(prod => {
         const prodTags = getProductTags(prod);
         
-        // Coincidencia con las etiquetas seleccionadas (si hay etiquetas marcadas, el producto debe contener al menos una)
         let matchesTags = true;
         if (selectedFilterTags.length > 0) {
           matchesTags = selectedFilterTags.some(t => prodTags.includes(t));
         }
 
-        // Búsqueda por texto
         const q = activeSearchQuery.toLowerCase().trim();
         const matchesQuery = !q || 
           (prod.title && prod.title.toLowerCase().includes(q)) || 
@@ -748,7 +742,6 @@
           (prod.material && prod.material.toLowerCase().includes(q)) ||
           prodTags.some(t => t.toLowerCase().includes(q));
 
-        // Rango de precio personalizado
         const numPrice = parseNumericPrice(prod.price);
         let matchesMin = true;
         let matchesMax = true;
@@ -763,7 +756,6 @@
         return matchesTags && matchesQuery && matchesMin && matchesMax;
       });
 
-      // Ordenar por precio
       if (activePriceOrder === 'low-to-high') {
         filtered.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
       } else if (activePriceOrder === 'high-to-low') {
@@ -792,7 +784,6 @@
         const dims = getFormattedDimensions(prod.dimensions);
         const tags = getProductTags(prod);
 
-        // Tags en la tarjeta (al hacer clic en uno, se agrega a los filtros)
         const tagsHtml = tags.slice(0, 3).map(t => `
           <button 
             type="button" 
