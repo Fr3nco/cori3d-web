@@ -137,8 +137,8 @@
             <label class="block font-bold text-slate-700 uppercase">Etiquetas Asociadas (Marcá o desmarcá con un clic) *</label>
             <span class="text-[10px] text-slate-400 font-semibold" id="selectedTagsCounter">0 seleccionadas</span>
           </div>
-          <p class="text-[11px] text-slate-400 mb-2">Hacé clic en cualquier etiqueta para activarla o desactivarla. Las etiquetas antiguas que ya tenía la pieza aparecen resaltadas para que puedas quitarlas si querés.</p>
-          <div id="tagsSelectionGrid" class="flex flex-wrap gap-1.5 p-3 rounded-2xl border border-slate-200 bg-slate-50 max-h-52 overflow-y-auto">
+          <p class="text-[11px] text-slate-400 mb-2">Hacé clic en cualquier etiqueta para activarla o desactivarla.</p>
+          <div id="tagsSelectionGrid" class="flex flex-wrap gap-1.5 p-3 rounded-2xl border border-slate-200 bg-slate-50 max-h-56 overflow-y-auto">
             <!-- Renderizado dinámicamente por JS -->
           </div>
         </div>
@@ -292,8 +292,9 @@
     const auth = getAuth(app);
     const productsCol = collection(db, "products");
 
-    // Lista de etiquetas oficiales actuales
+    // Lista de todas las etiquetas disponibles en el Admin
     const ALL_AVAILABLE_TAGS = [
+      "Antiestrés", "Maquillaje", "ASMR", "Personal", "Juegos de Mesa", "Artístico",
       "Decoración", "Accesorios", "Organización", "Utilidades", "Repuestos",
       "Personalizado", "Modular", "Colección", "Hogar", "Oficina",
       "Tecnología", "Gaming", "Infantil", "Mascotas", "Automotor",
@@ -319,7 +320,6 @@
       return `${l}×${w}×${h} mm`;
     }
 
-    // Renderiza la lista combinando las etiquetas oficiales con cualquier etiqueta heredada que ya tuviera la pieza
     function renderTagsSelector() {
       const container = document.getElementById('tagsSelectionGrid');
       const counter = document.getElementById('selectedTagsCounter');
@@ -328,7 +328,6 @@
       container.innerHTML = '';
       if (counter) counter.textContent = `${selectedFormTags.length} seleccionadas`;
 
-      // Conjunto único: etiquetas estándar + cualquier etiqueta previa que tenga el producto
       const tagsToDisplay = Array.from(new Set([...selectedFormTags, ...ALL_AVAILABLE_TAGS]));
 
       tagsToDisplay.forEach(tag => {
@@ -341,7 +340,7 @@
         let chipClasses = "px-2.5 py-1 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ";
         if (isSelected) {
           chipClasses += isLegacy 
-            ? "bg-amber-600 text-white shadow-sm ring-1 ring-amber-700" // Alerta visual para etiquetas viejas
+            ? "bg-amber-600 text-white shadow-sm ring-1 ring-amber-700" 
             : "bg-slate-900 text-white shadow-sm ring-1 ring-slate-900";
         } else {
           chipClasses += "bg-white text-slate-600 hover:bg-slate-200 border border-slate-200";
@@ -646,7 +645,6 @@
         document.getElementById('formTitle').value = prod.title || '';
         document.getElementById('formSku').value = prod.sku || '';
 
-        // Cargar etiquetas existentes (soporta tanto tags múltiples como category previa)
         if (Array.isArray(prod.tags) && prod.tags.length > 0) {
           selectedFormTags = [...prod.tags];
         } else if (prod.category) {
