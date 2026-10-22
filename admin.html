@@ -110,7 +110,7 @@
     <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[94vh]">
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white">
         <h3 id="formModalTitle" class="text-base font-bold text-slate-900">Editar Pieza</h3>
-        <button onclick="closeProductFormModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer">
+        <button type="button" onclick="closeProductFormModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer">
           <i class="ph-bold ph-x text-base"></i>
         </button>
       </div>
@@ -460,9 +460,9 @@
             </div>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
-            <button onclick="openProductFormModal(${prod.id})" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"><i class="ph-bold ph-pencil-simple"></i></button>
-            <button onclick="handleDeleteProduct(${prod.id})" class="p-2 rounded-xl bg-red-50 text-red-600 cursor-pointer"><i class="ph-bold ph-trash"></i></button>
-            <button onclick="addToHistorySilently(${prod.id})" class="p-2 rounded-xl bg-brand-50 text-brand-700 cursor-pointer"><i class="ph-bold ph-plus"></i></button>
+            <button type="button" onclick="openProductFormModal(${prod.id})" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"><i class="ph-bold ph-pencil-simple"></i></button>
+            <button type="button" onclick="handleDeleteProduct(${prod.id})" class="p-2 rounded-xl bg-red-50 text-red-600 cursor-pointer"><i class="ph-bold ph-trash"></i></button>
+            <button type="button" onclick="addToHistorySilently(${prod.id})" class="p-2 rounded-xl bg-brand-50 text-brand-700 cursor-pointer"><i class="ph-bold ph-plus"></i></button>
           </div>
         `;
         container.appendChild(row);
@@ -576,7 +576,7 @@
         document.getElementById('formFilamentCostPerKg').value = 21000;
         document.getElementById('formMultiplier').value = 5;
         selectedFormTags = ["Decoración"];
-        formPhotos = []; // Lista de fotos vacía por defecto
+        formPhotos = []; // Lista vacía
         calculateCostAndPrice();
       }
 
@@ -589,28 +589,49 @@
       document.getElementById('formModal').classList.add('opacity-0', 'pointer-events-none');
     }
 
+    function removePhotoFromForm(index) {
+      if (index >= 0 && index < formPhotos.length) {
+        formPhotos.splice(index, 1);
+        renderFormPhotos();
+      }
+    }
+
     function renderFormPhotos() {
       const container = document.getElementById('formPhotosList');
+      if (!container) return;
       container.innerHTML = '';
       formPhotos.forEach((imgUrl, i) => {
         const item = document.createElement('div');
-        item.className = "relative aspect-square rounded-xl overflow-hidden border border-slate-200";
-        item.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover"><button type="button" onclick="formPhotos.splice(${i}, 1); renderFormPhotos();" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-xs cursor-pointer">×</button>`;
+        item.className = "relative aspect-square rounded-xl overflow-hidden border border-slate-200 bg-slate-50";
+        item.innerHTML = `
+          <img src="${imgUrl}" class="w-full h-full object-cover">
+          <button type="button" onclick="removePhotoFromForm(${i})" class="absolute top-1 right-1 w-6 h-6 rounded-full bg-red-600 hover:bg-red-700 text-white flex items-center justify-center text-xs font-bold shadow-md cursor-pointer transition-transform active:scale-90" title="Eliminar foto">
+            ✕
+          </button>
+        `;
         container.appendChild(item);
       });
     }
 
     function addPhotoFromUrl() {
       const input = document.getElementById('newPhotoUrlInput');
-      if (input.value.trim()) { formPhotos.push(input.value.trim()); input.value = ''; renderFormPhotos(); }
+      if (input.value.trim()) { 
+        formPhotos.push(input.value.trim()); 
+        input.value = ''; 
+        renderFormPhotos(); 
+      }
     }
 
     function handleLocalImageUpload(e) {
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
-      reader.onload = (evt) => { formPhotos.push(evt.target.result); renderFormPhotos(); };
+      reader.onload = (evt) => { 
+        formPhotos.push(evt.target.result); 
+        renderFormPhotos(); 
+      };
       reader.readAsDataURL(file);
+      e.target.value = '';
     }
 
     function showToast(msg) {
@@ -629,6 +650,7 @@
     window.addToHistorySilently = addToHistorySilently;
     window.addPhotoFromUrl = addPhotoFromUrl;
     window.handleLocalImageUpload = handleLocalImageUpload;
+    window.removePhotoFromForm = removePhotoFromForm;
     window.calculateCostAndPrice = calculateCostAndPrice;
     window.applySuggestedPrice = applySuggestedPrice;
     window.addPriceVariantRow = addPriceVariantRow;
