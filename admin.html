@@ -157,6 +157,53 @@
           </div>
         </div>
 
+        <!-- CALCULADORA DE COSTOS, MULTIPLICADOR Y REDONDEO -->
+        <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80">
+          <div class="flex items-center justify-between mb-2">
+            <div class="flex items-center gap-2">
+              <i class="ph-bold ph-calculator text-amber-700 text-base"></i>
+              <label class="font-black text-amber-900 uppercase tracking-wide text-[11px]">
+                Costos de Producción & Margen (Privado Admin)
+              </label>
+            </div>
+            <span id="multiplierBadge" class="text-[10px] bg-amber-200/80 text-amber-950 font-bold px-2 py-0.5 rounded-md">Multiplicador x5</span>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-3">
+            <div>
+              <span class="text-[10px] text-slate-600 font-bold block mb-0.5">Peso de la pieza (Gramos)</span>
+              <input type="number" step="any" id="formWeightGrams" oninput="calculateCostAndPrice()" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 bg-white text-sm outline-none font-mono" placeholder="Ej: 30">
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-600 font-bold block mb-0.5">Precio Rollo Filamento ($/kg)</span>
+              <input type="number" step="any" id="formFilamentCostPerKg" oninput="calculateCostAndPrice()" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 bg-white text-sm outline-none font-mono" placeholder="21000" value="21000">
+            </div>
+            <div>
+              <span class="text-[10px] text-slate-600 font-bold block mb-0.5">Multiplicador (x)</span>
+              <input type="number" step="any" id="formMultiplier" oninput="calculateCostAndPrice()" class="w-full px-3 py-1.5 rounded-lg border border-amber-200 bg-white text-sm outline-none font-mono" placeholder="5" value="5">
+            </div>
+          </div>
+
+          <div class="bg-white p-3 rounded-xl border border-amber-200 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div class="flex items-center gap-4">
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block">Costo Material (1x)</span>
+                <span id="displayCalculatedCost" class="text-sm font-black text-slate-800 font-mono">$0</span>
+              </div>
+              <div class="h-6 w-px bg-slate-200"></div>
+              <div>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block" id="suggestedPriceLabel">Venta Sugerida (Redondeada)</span>
+                <span id="displaySuggestedPrice" class="text-sm font-black text-brand-600 font-mono">$0</span>
+              </div>
+            </div>
+
+            <button type="button" onclick="applySuggestedPrice()" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs flex items-center gap-1.5 transition-all self-start sm:self-auto shadow-sm active:scale-95 cursor-pointer">
+              <i class="ph-bold ph-check"></i>
+              <span>Aplicar a Precio de Venta</span>
+            </button>
+          </div>
+        </div>
+
         <!-- MÚLTIPLES PRECIOS Y VARIANTES -->
         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
           <div class="flex items-center justify-between">
@@ -164,39 +211,13 @@
               <i class="ph-bold ph-list-numbers text-slate-700 text-base"></i>
               <label class="font-extrabold text-slate-900 uppercase text-[11px]">Variantes de Precios / Tamaños (Opcional)</label>
             </div>
-            <button type="button" onclick="addPriceVariantRow('', '')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] flex items-center gap-1 shadow-xs">
+            <button type="button" onclick="addPriceVariantRow('', '')" class="px-2.5 py-1 rounded-lg bg-slate-900 hover:bg-slate-800 text-white font-bold text-[11px] flex items-center gap-1 shadow-xs cursor-pointer">
               <i class="ph-bold ph-plus"></i>
               <span>+ Agregar Variante</span>
             </button>
           </div>
-          <p class="text-[11px] text-slate-500">Ideal para ofrecer distintas medidas (*Chico 10cm, Grande 20cm*) o kits. Los clientes podrán ver cada opción y su valor exacto de forma ordenada.</p>
-          <div id="priceVariantsContainer" class="space-y-2">
-            <!-- Filas dinámicas -->
-          </div>
-        </div>
-
-        <!-- CALCULADORA DE COSTO (Privado) -->
-        <div class="p-3.5 bg-amber-50/70 rounded-2xl border border-amber-200/80">
-          <div class="flex items-center justify-between mb-2">
-            <span class="font-black text-amber-950 uppercase text-[11px] flex items-center gap-1.5">
-              <i class="ph-bold ph-calculator text-amber-700"></i> Costo y Margen Interno
-            </span>
-            <span id="multiplierBadge" class="text-[10px] bg-amber-200 text-amber-900 font-bold px-1.5 py-0.5 rounded">Multiplicador x5</span>
-          </div>
-          <div class="grid grid-cols-3 gap-2">
-            <div>
-              <span class="text-[10px] text-slate-600 block">Peso (Gramos)</span>
-              <input type="number" step="any" id="formWeightGrams" oninput="calculateCostAndPrice()" class="w-full px-2 py-1 rounded border border-amber-200 bg-white font-mono" placeholder="30">
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-600 block">$/kg Filamento</span>
-              <input type="number" step="any" id="formFilamentCostPerKg" oninput="calculateCostAndPrice()" class="w-full px-2 py-1 rounded border border-amber-200 bg-white font-mono" value="21000">
-            </div>
-            <div>
-              <span class="text-[10px] text-slate-600 block">Costo Material (1x)</span>
-              <span id="displayCalculatedCost" class="block font-black text-slate-800 font-mono mt-1">$0</span>
-            </div>
-          </div>
+          <p class="text-[11px] text-slate-500">Agrega tamaños o versiones (ej: *Chico 10cm*, *Grande 20cm*). Los clientes podrán seleccionarlas de forma prolija en el catálogo.</p>
+          <div id="priceVariantsContainer" class="space-y-2"></div>
         </div>
 
         <div>
@@ -239,8 +260,8 @@
         </div>
 
         <div class="pt-3 border-t border-slate-200 flex items-center justify-end gap-2">
-          <button type="button" onclick="closeProductFormModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold">Cancelar</button>
-          <button type="submit" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold shadow-md">Guardar en Firebase</button>
+          <button type="button" onclick="closeProductFormModal()" class="px-4 py-2 rounded-xl bg-slate-100 text-slate-700 font-bold cursor-pointer">Cancelar</button>
+          <button type="submit" class="px-5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-extrabold shadow-md cursor-pointer">Guardar en Firebase</button>
         </div>
       </form>
     </div>
@@ -285,6 +306,7 @@
     let formPhotos = [];
     let selectedFormTags = [];
     let unsubscribeSnapshot = null;
+    let latestSuggestedPriceNumber = 0;
 
     function renderTagsSelector() {
       const container = document.getElementById('tagsSelectionGrid');
@@ -311,6 +333,47 @@
       });
     }
 
+    // CALCULADORA DE COSTO Y PRECIO CON REDONDEO
+    function calculateCostAndPrice() {
+      const grams = parseFloat(document.getElementById('formWeightGrams').value) || 0;
+      const costKg = parseFloat(document.getElementById('formFilamentCostPerKg').value) || 0;
+      const multiplierInput = document.getElementById('formMultiplier').value;
+      const multiplier = multiplierInput === "" ? 5 : (parseFloat(multiplierInput) || 0);
+
+      const multiplierBadge = document.getElementById('multiplierBadge');
+      const suggestedLabel = document.getElementById('suggestedPriceLabel');
+      if (multiplierBadge) multiplierBadge.textContent = `Multiplicador x${multiplier}`;
+      if (suggestedLabel) suggestedLabel.textContent = `Venta Sugerida (x${multiplier} Redondeado)`;
+
+      if (grams <= 0 || costKg <= 0 || multiplier <= 0) {
+        document.getElementById('displayCalculatedCost').textContent = "$0";
+        document.getElementById('displaySuggestedPrice').textContent = "$0";
+        latestSuggestedPriceNumber = 0;
+        return;
+      }
+
+      const rawCost = (grams * costKg) / 1000;
+      const rawPrice = rawCost * multiplier;
+
+      let finalPrice;
+      if (rawPrice >= 500) {
+        finalPrice = Math.ceil(rawPrice / 100) * 100;
+      } else {
+        finalPrice = Math.ceil(rawPrice / 10) * 10;
+      }
+
+      latestSuggestedPriceNumber = finalPrice;
+      document.getElementById('displayCalculatedCost').textContent = `$${Math.round(rawCost)}`;
+      document.getElementById('displaySuggestedPrice').textContent = `$${finalPrice}`;
+    }
+
+    function applySuggestedPrice() {
+      if (latestSuggestedPriceNumber > 0) {
+        document.getElementById('formPrice').value = `$${latestSuggestedPriceNumber}`;
+        showToast(`Precio aplicado: $${latestSuggestedPriceNumber}`);
+      }
+    }
+
     // GESTIÓN DE FILAS DE VARIANTES DE PRECIOS
     function addPriceVariantRow(name = '', price = '') {
       const container = document.getElementById('priceVariantsContainer');
@@ -321,7 +384,7 @@
       row.innerHTML = `
         <input type="text" placeholder="Opción / Tamaño (Ej: Mediano 15cm)" value="${name}" class="variant-name-input flex-grow px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs outline-none focus:ring-1 focus:ring-slate-900">
         <input type="text" placeholder="Precio ($3500)" value="${price}" class="variant-price-input w-28 px-2.5 py-1.5 rounded-xl border border-slate-200 bg-white text-xs font-mono font-bold outline-none focus:ring-1 focus:ring-slate-900">
-        <button type="button" onclick="this.parentElement.remove()" class="p-1.5 rounded-xl text-red-500 hover:bg-red-50" title="Quitar opción">
+        <button type="button" onclick="this.parentElement.remove()" class="p-1.5 rounded-xl text-red-500 hover:bg-red-50 cursor-pointer" title="Quitar opción">
           <i class="ph-bold ph-trash text-sm"></i>
         </button>
       `;
@@ -340,17 +403,6 @@
         }
       });
       return variants;
-    }
-
-    function calculateCostAndPrice() {
-      const grams = parseFloat(document.getElementById('formWeightGrams').value) || 0;
-      const costKg = parseFloat(document.getElementById('formFilamentCostPerKg').value) || 0;
-      if (grams <= 0 || costKg <= 0) {
-        document.getElementById('displayCalculatedCost').textContent = "$0";
-        return;
-      }
-      const rawCost = Math.round((grams * costKg) / 1000);
-      document.getElementById('displayCalculatedCost').textContent = `$${rawCost}`;
     }
 
     onAuthStateChanged(auth, (user) => {
@@ -410,9 +462,9 @@
             </div>
           </div>
           <div class="flex items-center gap-2 flex-shrink-0">
-            <button onclick="openProductFormModal(${prod.id})" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700"><i class="ph-bold ph-pencil-simple"></i></button>
-            <button onclick="handleDeleteProduct(${prod.id})" class="p-2 rounded-xl bg-red-50 text-red-600"><i class="ph-bold ph-trash"></i></button>
-            <button onclick="addToHistorySilently(${prod.id})" class="p-2 rounded-xl bg-brand-50 text-brand-700"><i class="ph-bold ph-plus"></i></button>
+            <button onclick="openProductFormModal(${prod.id})" class="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 cursor-pointer"><i class="ph-bold ph-pencil-simple"></i></button>
+            <button onclick="handleDeleteProduct(${prod.id})" class="p-2 rounded-xl bg-red-50 text-red-600 cursor-pointer"><i class="ph-bold ph-trash"></i></button>
+            <button onclick="addToHistorySilently(${prod.id})" class="p-2 rounded-xl bg-brand-50 text-brand-700 cursor-pointer"><i class="ph-bold ph-plus"></i></button>
           </div>
         `;
         container.appendChild(row);
@@ -426,6 +478,9 @@
 
       const weightGrams = parseFloat(document.getElementById('formWeightGrams').value) || 0;
       const filamentCostPerKg = parseFloat(document.getElementById('formFilamentCostPerKg').value) || 21000;
+      const multiplierVal = document.getElementById('formMultiplier').value;
+      const multiplier = multiplierVal === "" ? 5 : (parseFloat(multiplierVal) || 5);
+
       const calculatedCost = (weightGrams > 0 && filamentCostPerKg > 0) ? Math.round((weightGrams * filamentCostPerKg) / 1000) : 0;
       const variants = getPriceVariantsFromForm();
 
@@ -436,7 +491,7 @@
         tags: selectedFormTags.length > 0 ? selectedFormTags : ["General"],
         material: document.getElementById('formMaterial').value,
         price: document.getElementById('formPrice').value.trim() || '$0.00',
-        variants: variants, // Guardamos la lista de múltiples precios
+        variants: variants,
         featured: document.getElementById('formFeatured').checked,
         tagline: document.getElementById('formTagline').value.trim(),
         description: document.getElementById('formDescription').value.trim(),
@@ -447,6 +502,7 @@
         },
         weightGrams,
         filamentCostPerKg,
+        multiplier,
         calculatedCost,
         updatedAt: Date.now(),
         images: formPhotos.length > 0 ? formPhotos : ["https://placehold.co/800x600?text=3D"]
@@ -500,12 +556,12 @@
         document.getElementById('formFeatured').checked = !!prod.featured;
         document.getElementById('formWeightGrams').value = prod.weightGrams || '';
         document.getElementById('formFilamentCostPerKg').value = prod.filamentCostPerKg || 21000;
+        document.getElementById('formMultiplier').value = prod.multiplier !== undefined ? prod.multiplier : 5;
         calculateCostAndPrice();
 
         selectedFormTags = Array.isArray(prod.tags) ? [...prod.tags] : [prod.category || 'General'];
         formPhotos = Array.isArray(prod.images) ? [...prod.images] : [];
 
-        // Cargar variantes existentes
         if (Array.isArray(prod.variants) && prod.variants.length > 0) {
           prod.variants.forEach(v => addPriceVariantRow(v.name, v.price));
         }
@@ -518,6 +574,9 @@
         document.getElementById('formModalTitle').textContent = 'Agregar Nueva Pieza';
         document.getElementById('formProductId').value = '';
         document.getElementById('productEditForm').reset();
+        document.getElementById('formWeightGrams').value = '';
+        document.getElementById('formFilamentCostPerKg').value = 21000;
+        document.getElementById('formMultiplier').value = 5;
         selectedFormTags = ["Decoración"];
         formPhotos = ["https://placehold.co/800x600?text=3D"];
         calculateCostAndPrice();
@@ -573,6 +632,7 @@
     window.addPhotoFromUrl = addPhotoFromUrl;
     window.handleLocalImageUpload = handleLocalImageUpload;
     window.calculateCostAndPrice = calculateCostAndPrice;
+    window.applySuggestedPrice = applySuggestedPrice;
     window.addPriceVariantRow = addPriceVariantRow;
   </script>
 </body>
