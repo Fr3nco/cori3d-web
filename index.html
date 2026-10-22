@@ -2,18 +2,14 @@
 <html lang="es" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cori3D | Catálogo de Modelos & Impresiones 3D</title>
   
-  <!-- Google Fonts: Inter -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   
-  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-  
-  <!-- Phosphor Icons CDN -->
   <script src="https://unpkg.com/@phosphor-icons/web"></script>
 
   <script>
@@ -40,8 +36,8 @@
 
   <style>
     ::-webkit-scrollbar {
-      width: 7px;
-      height: 7px;
+      width: 5px;
+      height: 5px;
     }
     ::-webkit-scrollbar-track {
       background: #f8fafc;
@@ -50,51 +46,49 @@
       background: #cbd5e1;
       border-radius: 9999px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #94a3b8;
-    }
     .carousel-slide {
-      transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1), transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
     }
-    .aspect-product {
-      aspect-ratio: 4 / 3;
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
     }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
 
-  <!-- Header -->
-  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200 transition-all duration-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+  <!-- Header Responsive -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
       
-      <!-- Brand & Print Volume -->
-      <div class="flex items-center gap-4">
-        <a href="#" class="flex items-center gap-3 group">
-          <div class="w-10 h-10 rounded-2xl bg-slate-950 text-white flex items-center justify-center font-bold text-xl shadow-md group-hover:scale-105 transition-transform duration-200">
-            <i class="ph-bold ph-cube text-brand-500 text-2xl"></i>
+      <div class="flex items-center gap-2 sm:gap-4">
+        <a href="#" class="flex items-center gap-2 sm:gap-3 group">
+          <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-bold text-lg shadow-sm">
+            <i class="ph-bold ph-cube text-brand-500 text-xl sm:text-2xl"></i>
           </div>
           <div>
-            <span class="text-xl font-black tracking-tight text-slate-900">Cori<span class="text-brand-600">3D</span></span>
-            <span class="block text-[10px] font-semibold uppercase tracking-wider text-slate-400">Additive Design</span>
+            <span class="text-lg sm:text-xl font-black tracking-tight text-slate-900 leading-none">Cori<span class="text-brand-600">3D</span></span>
+            <span class="block text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Additive Design</span>
           </div>
         </a>
 
-        <!-- Indicador de tamaño de impresión -->
-        <div class="hidden lg:flex items-center gap-2 pl-4 border-l border-slate-200 text-xs text-slate-600">
+        <div class="hidden md:flex items-center gap-2 pl-3 border-l border-slate-200 text-xs text-slate-600">
           <span class="flex h-2 w-2 relative">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
           </span>
-          <span class="font-medium text-slate-500">Tamaño Máximo de Impresión :</span>
+          <span class="font-medium text-slate-500">Área máx:</span>
           <span class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">180 × 180 × 180 mm</span>
         </div>
       </div>
 
-      <!-- Quick Action -->
-      <div class="flex items-center gap-3">
-        <a href="#catalogo" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-900 text-white text-xs sm:text-sm font-semibold hover:bg-slate-800 transition-all shadow-sm active:scale-95">
-          <span>Ver Catálogo</span>
+      <div class="flex items-center gap-2">
+        <a href="#catalogo" class="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900 text-white text-xs sm:text-sm font-semibold active:scale-95 transition-all">
+          <span>Catálogo</span>
           <i class="ph-bold ph-arrow-down"></i>
         </a>
       </div>
@@ -102,288 +96,188 @@
     </div>
   </header>
 
-  <!-- Hero Carousel -->
-  <section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-10 w-full">
-    <div class="relative bg-slate-950 rounded-3xl overflow-hidden shadow-2xl min-h-[380px] sm:min-h-[420px] md:min-h-[480px] flex items-center">
+  <!-- Hero Carousel (Adaptable en móvil para no tapar la pantalla) -->
+  <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-6 w-full">
+    <div class="relative bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl aspect-[16/10] sm:aspect-[21/9] min-h-[260px] sm:min-h-[380px] flex items-center">
       
-      <div id="carouselContainer" class="relative w-full h-full min-h-[380px] sm:min-h-[420px] md:min-h-[480px]">
+      <div id="carouselContainer" class="relative w-full h-full">
         <!-- Inyectado por JS -->
       </div>
 
-      <!-- Controles de navegación -->
-      <button onclick="prevSlide()" aria-label="Anterior" class="absolute left-3 sm:left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 active:scale-95 transition-all shadow-lg">
-        <i class="ph-bold ph-caret-left text-xl"></i>
+      <button onclick="prevSlide()" aria-label="Anterior" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all">
+        <i class="ph-bold ph-caret-left text-lg"></i>
       </button>
-      <button onclick="nextSlide()" aria-label="Siguiente" class="absolute right-3 sm:right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-white/20 backdrop-blur-md text-white flex items-center justify-center hover:bg-white/40 active:scale-95 transition-all shadow-lg">
-        <i class="ph-bold ph-caret-right text-xl"></i>
+      <button onclick="nextSlide()" aria-label="Siguiente" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all">
+        <i class="ph-bold ph-caret-right text-lg"></i>
       </button>
 
-      <div id="carouselDots" class="absolute bottom-5 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2 bg-black/35 backdrop-blur-md px-4 py-2 rounded-full">
-        <!-- Dots inyectados por JS -->
+      <div id="carouselDots" class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full">
+        <!-- Dots JS -->
       </div>
     </div>
   </section>
 
-  <!-- Catálogo -->
-  <main id="catalogo" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 w-full flex-grow">
+  <!-- Catálogo Principal -->
+  <main id="catalogo" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-16 w-full flex-grow">
     
-    <!-- Barra Principal: Título, Buscador y Botón de Filtros -->
-    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-200">
+    <!-- Barra superior de búsqueda y filtros -->
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
       <div>
         <div class="flex items-center gap-2">
-          <h2 class="text-3xl font-extrabold text-slate-900 tracking-tight">Catálogo de Piezas 3D</h2>
-          <span id="productCounterBadge" class="bg-slate-200 text-slate-700 text-xs font-bold px-2.5 py-1 rounded-full">0</span>
+          <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Piezas Disponibles</h2>
+          <span id="productCounterBadge" class="bg-brand-100 text-brand-800 text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
         </div>
-        <p class="text-sm text-slate-500 mt-1">Explora modelos fabricados en PLA, PETG y materiales técnicos listos para producción.</p>
+        <p class="text-xs text-slate-400 mt-0.5">Primero los artículos con entrega y precio inmediato.</p>
       </div>
 
-      <div class="flex items-center gap-3 w-full md:w-auto">
+      <div class="flex items-center gap-2 w-full sm:w-auto">
         <!-- Buscador -->
-        <div class="relative flex-grow md:w-72">
-          <span class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
-            <i class="ph-bold ph-magnifying-glass text-lg"></i>
+        <div class="relative flex-grow sm:w-64">
+          <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
+            <i class="ph-bold ph-magnifying-glass text-base"></i>
           </span>
           <input 
             type="text" 
             id="searchInput" 
-            placeholder="Buscar pieza o material..." 
-            class="w-full pl-10 pr-10 py-2.5 rounded-2xl bg-white border border-slate-200 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
+            placeholder="Buscar piezas..." 
+            class="w-full pl-9 pr-8 py-2 rounded-xl bg-white border border-slate-200 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900"
             oninput="handleSearch(this.value)"
           >
           <button 
             id="clearSearchBtn" 
             onclick="clearSearch()" 
-            class="hidden absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-400 hover:text-slate-600 transition-colors">
-            <i class="ph-bold ph-x-circle text-lg"></i>
+            class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400">
+            <i class="ph-bold ph-x-circle text-base"></i>
           </button>
         </div>
 
-        <!-- Botón Desplegable de Filtros -->
+        <!-- Botón Filtros -->
         <button 
           id="toggleFiltersBtn"
           onclick="toggleFilterPanel()" 
-          class="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 text-slate-800 text-sm font-bold shadow-sm transition-all active:scale-95 flex-shrink-0">
-          <i class="ph-bold ph-sliders-horizontal text-brand-600 text-base"></i>
+          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-800 text-xs font-bold shadow-sm active:scale-95 flex-shrink-0">
+          <i class="ph-bold ph-sliders-horizontal text-brand-600 text-sm"></i>
           <span>Filtros</span>
-          <span id="activeFiltersBadge" class="hidden w-5 h-5 rounded-full bg-brand-600 text-white text-[10px] items-center justify-center font-bold">0</span>
-          <i id="filtersCaretIcon" class="ph-bold ph-caret-down text-xs transition-transform duration-200"></i>
+          <span id="activeFiltersBadge" class="hidden w-4 h-4 rounded-full bg-brand-600 text-white text-[9px] items-center justify-center font-bold">0</span>
+          <i id="filtersCaretIcon" class="ph-bold ph-caret-down text-[10px] transition-transform duration-200"></i>
         </button>
       </div>
     </div>
 
-    <!-- PANEL DESPLEGABLE DE FILTROS -->
-    <div id="filterPanel" class="hidden mt-4 p-5 bg-white rounded-3xl border border-slate-200 shadow-md space-y-5 transition-all">
-      <div class="flex items-center justify-between pb-3 border-b border-slate-100">
-        <div class="flex items-center gap-2">
-          <i class="ph-bold ph-funnel text-slate-700"></i>
-          <h3 class="text-sm font-black text-slate-900 uppercase tracking-wider">Configurar Filtros</h3>
-        </div>
-        <button onclick="resetFilters()" class="text-xs font-bold text-red-600 hover:text-red-700 flex items-center gap-1 transition-colors">
-          <i class="ph-bold ph-trash"></i>
-          <span>Limpiar filtros</span>
-        </button>
+    <!-- Panel de Filtros -->
+    <div id="filterPanel" class="hidden mt-3 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4">
+      <div class="flex items-center justify-between pb-2 border-b border-slate-100">
+        <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider">Ajustar Filtros</h3>
+        <button onclick="resetFilters()" class="text-[11px] font-bold text-red-600 hover:underline">Limpiar todo</button>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
-        
-        <!-- Bloque 1: Filtros de Precio -->
-        <div class="md:col-span-4 space-y-3">
-          <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
-            <i class="ph-bold ph-currency-dollar text-brand-600"></i>
-            <span>Filtros de Precio</span>
-          </label>
-
-          <!-- Orden -->
-          <div>
-            <span class="text-[11px] text-slate-400 font-bold block mb-1">Ordenar por:</span>
-            <select 
-              id="priceOrderSelect" 
-              onchange="handlePriceOrderChange(this.value)" 
-              class="w-full px-3 py-2 rounded-xl bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700 outline-none focus:ring-2 focus:ring-slate-900">
-              <option value="all">Por defecto</option>
-              <option value="low-to-high">Menor a Mayor ($)</option>
-              <option value="high-to-low">Mayor a Menor ($)</option>
-            </select>
+      <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+        <div class="sm:col-span-5 space-y-2.5">
+          <span class="text-[11px] font-bold text-slate-700 uppercase block">Rango de Precio ($)</span>
+          <div class="flex items-center gap-2">
+            <input 
+              type="number" 
+              id="minPriceInput" 
+              placeholder="Mín" 
+              oninput="handleCustomPriceRange()"
+              class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono"
+            >
+            <span class="text-slate-400 font-bold">-</span>
+            <input 
+              type="number" 
+              id="maxPriceInput" 
+              placeholder="Máx" 
+              oninput="handleCustomPriceRange()"
+              class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono"
+            >
           </div>
-
-          <!-- Rango personalizado -->
-          <div>
-            <span class="text-[11px] text-slate-400 font-bold block mb-1">Rango personalizado ($):</span>
-            <div class="flex items-center gap-2">
-              <input 
-                type="number" 
-                id="minPriceInput" 
-                placeholder="Mínimo (ej: 5000)" 
-                oninput="handleCustomPriceRange()"
-                class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none font-mono focus:ring-2 focus:ring-slate-900"
-              >
-              <span class="text-slate-300 font-bold">-</span>
-              <input 
-                type="number" 
-                id="maxPriceInput" 
-                placeholder="Máximo (ej: 7000)" 
-                oninput="handleCustomPriceRange()"
-                class="w-full px-3 py-2 text-xs rounded-xl bg-slate-50 border border-slate-200 outline-none font-mono focus:ring-2 focus:ring-slate-900"
-              >
-            </div>
-          </div>
+          <select 
+            id="priceOrderSelect" 
+            onchange="handlePriceOrderChange(this.value)" 
+            class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+            <option value="all">Ordenar: Relevancia</option>
+            <option value="low-to-high">Precio: Menor a Mayor</option>
+            <option value="high-to-low">Precio: Mayor a Menor</option>
+          </select>
         </div>
 
-        <!-- Bloque 2: Filtro por Varias Etiquetas -->
-        <div class="md:col-span-8 space-y-2 border-t md:border-t-0 md:border-l border-slate-100 md:pl-6 pt-4 md:pt-0">
-          <div class="flex items-center justify-between mb-1">
-            <label class="block text-xs font-extrabold text-slate-700 uppercase tracking-wide flex items-center gap-1.5">
-              <i class="ph-bold ph-tag text-brand-600"></i>
-              <span>Filtrar por Etiquetas (Podés marcar varias)</span>
-            </label>
-            <span id="selectedTagsCountLabel" class="text-[10px] font-bold text-slate-400">0 seleccionadas</span>
-          </div>
-
-          <!-- Grilla de Chips de Etiquetas -->
-          <div id="filterTagsGrid" class="flex flex-wrap gap-1.5 max-h-56 overflow-y-auto p-2 bg-slate-50 rounded-2xl border border-slate-100">
-            <!-- Inyectado por JS -->
+        <div class="sm:col-span-7 sm:border-l sm:border-slate-100 sm:pl-4">
+          <span class="text-[11px] font-bold text-slate-700 uppercase block mb-1.5">Filtrar por Etiquetas</span>
+          <div id="filterTagsGrid" class="flex flex-wrap gap-1 max-h-44 overflow-y-auto p-1.5 bg-slate-50 rounded-xl border border-slate-100">
+            <!-- Chips JS -->
           </div>
         </div>
-
       </div>
     </div>
 
-    <!-- Barra de Filtros Activos -->
-    <div id="activeFiltersSummary" class="hidden py-3 flex items-center gap-2 flex-wrap text-xs">
-      <span class="text-slate-400 font-bold uppercase text-[10px]">Filtros aplicados:</span>
+    <!-- Resumen de Filtros Activos -->
+    <div id="activeFiltersSummary" class="hidden py-2 flex items-center gap-1.5 flex-wrap text-xs">
       <div id="activeChipsContainer" class="flex items-center gap-1.5 flex-wrap"></div>
-      <button onclick="resetFilters()" class="text-[11px] font-bold text-slate-500 hover:text-slate-800 underline ml-2">Borrar todos</button>
+      <button onclick="resetFilters()" class="text-[11px] font-bold text-slate-500 hover:text-slate-800 underline ml-1">Restablecer</button>
     </div>
 
-    <!-- Mensaje sin resultados -->
-    <div id="noResultsNotice" class="hidden py-16 text-center">
-      <div class="w-16 h-16 bg-slate-100 text-slate-400 rounded-full flex items-center justify-center mx-auto mb-3">
-        <i class="ph-duotone ph-cube text-3xl"></i>
-      </div>
-      <h3 class="text-base font-bold text-slate-800">No encontramos coincidencias</h3>
-      <p class="text-xs text-slate-500 mt-1">Prueba quitando alguna etiqueta o modificando el rango de precio.</p>
-      <button onclick="resetFilters()" class="mt-4 px-4 py-2 text-xs font-bold bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all">
-        Restablecer filtros
-      </button>
+    <!-- Grilla de Productos (2 columnas compactas en móvil, 3 en tablet, 4 en PC) -->
+    <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 pt-3">
+      <!-- Cards JS -->
     </div>
 
-    <!-- Grilla de productos -->
-    <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 pt-4">
-      <!-- Renderizado por JS -->
+    <div id="noResultsNotice" class="hidden py-12 text-center">
+      <i class="ph-duotone ph-cube text-3xl text-slate-400 block mb-2"></i>
+      <h3 class="text-sm font-bold text-slate-800">No encontramos modelos con esos criterios</h3>
+      <button onclick="resetFilters()" class="mt-3 px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg">Ver catálogo completo</button>
     </div>
   </main>
 
-  <!-- Modal de Detalle de Producto -->
-  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 opacity-0 pointer-events-none transition-all duration-300" role="dialog" aria-modal="true">
-    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm transition-opacity" onclick="closeDetailModal()"></div>
+  <!-- Modal Detalle -->
+  <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 opacity-0 pointer-events-none transition-all duration-200">
+    <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onclick="closeDetailModal()"></div>
 
-    <div class="relative w-full max-w-4xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh] transform scale-95 transition-transform duration-300" id="detailModalBox">
+    <div class="relative w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]" id="detailModalBox">
       <button 
         type="button" 
         onclick="closeDetailModal()" 
-        aria-label="Cerrar modal" 
-        class="absolute top-4 right-4 z-30 w-11 h-11 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 hover:text-slate-900 flex items-center justify-center backdrop-blur-md transition-all active:scale-95 shadow-md border border-slate-200">
-        <i class="ph-bold ph-x text-xl pointer-events-none"></i>
+        class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow">
+        <i class="ph-bold ph-x text-base pointer-events-none"></i>
       </button>
 
-      <div class="overflow-y-auto p-4 sm:p-8 grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8">
-        
-        <!-- Galería izquierda -->
-        <div class="md:col-span-6 flex flex-col gap-3">
-          <div class="relative w-full aspect-product sm:aspect-square bg-slate-100 rounded-2xl overflow-hidden border border-slate-200 shadow-inner group">
-            <img 
-              id="modalMainImage" 
-              src="" 
-              alt="Vista del producto 3D" 
-              class="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-            >
-            <div id="modalCategoryTag" class="absolute top-3 left-3 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-white/90 text-slate-800 shadow-sm backdrop-blur-md">
-              Categoría
-            </div>
-            <div id="modalMaterialBadge" class="absolute bottom-3 left-3 px-3 py-1 rounded-full text-xs font-black tracking-wider bg-brand-500 text-white shadow-sm">
-              PLA
-            </div>
+      <div class="overflow-y-auto p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div>
+          <div class="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+            <img id="modalMainImage" src="" class="w-full h-full object-cover">
+            <span id="modalMaterialBadge" class="absolute bottom-2 left-2 px-2 py-0.5 rounded text-[10px] font-black bg-brand-500 text-white">PLA</span>
           </div>
-
-          <div id="modalThumbnails" class="grid grid-cols-4 gap-2.5 pt-1">
-            <!-- Renderizado por JS -->
-          </div>
+          <div id="modalThumbnails" class="grid grid-cols-4 gap-1.5 mt-2"></div>
         </div>
 
-        <!-- Información derecha -->
-        <div class="md:col-span-6 flex flex-col justify-between">
+        <div class="flex flex-col justify-between">
           <div>
-            <div class="flex items-center justify-between gap-2">
-              <span id="modalSku" class="text-xs font-mono font-medium text-slate-400">SKU-0000</span>
-            </div>
-
-            <h3 id="modalTitle" class="text-2xl sm:text-3xl font-black text-slate-900 mt-2 tracking-tight">
-              Nombre de la Pieza
-            </h3>
-
-            <div class="mt-2 text-2xl font-extrabold text-slate-900 flex items-baseline gap-2">
-              <span id="modalPrice">$0.00</span>
-              <span class="text-xs font-normal text-slate-400 uppercase">Cotización estimada</span>
-            </div>
-
-            <p id="modalDescription" class="mt-3 text-sm text-slate-600 leading-relaxed whitespace-pre-line">
-              Descripción del producto.
-            </p>
-
-            <!-- Etiquetas asignadas en el modal -->
-            <div class="mt-4 pt-3 border-t border-slate-100">
-              <span class="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-2">Etiquetas del producto:</span>
-              <div class="flex flex-wrap gap-1.5" id="modalTagsContainer">
-                <!-- Renderizado por JS -->
-              </div>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-slate-100">
-              <h4 class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 flex items-center gap-1.5">
-                <i class="ph-bold ph-sliders"></i>
-                <span>Parámetros & Dimensiones</span>
-              </h4>
-              <div id="modalSpecs" class="grid grid-cols-2 gap-2 text-xs">
-                <!-- Badges inyectados por JS -->
-              </div>
-            </div>
+            <span id="modalSku" class="text-[11px] font-mono text-slate-400">SKU</span>
+            <h3 id="modalTitle" class="text-lg sm:text-xl font-black text-slate-900 mt-1">Nombre</h3>
+            <div id="modalPrice" class="text-xl font-extrabold text-slate-900 mt-1.5 font-mono">$0</div>
+            <p id="modalDescription" class="mt-2 text-xs text-slate-600 leading-relaxed whitespace-pre-line"></p>
+            
+            <div class="mt-3 flex flex-wrap gap-1" id="modalTagsContainer"></div>
+            
+            <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs" id="modalSpecs"></div>
           </div>
 
-          <!-- Botones de acción -->
-          <div class="mt-6 pt-4 border-t border-slate-100 flex flex-col sm:flex-row items-center gap-3">
-            <button onclick="handleInquireAction()" class="w-full sm:flex-1 py-3 px-5 rounded-2xl bg-slate-900 hover:bg-slate-800 text-white font-semibold text-sm transition-all shadow-md active:scale-98 flex items-center justify-center gap-2">
-              <i class="ph-bold ph-whatsapp-logo text-lg text-brand-400"></i>
-              <span>Consultar por WhatsApp</span>
+          <div class="mt-4 pt-3 border-t border-slate-100 flex gap-2">
+            <button onclick="handleInquireAction()" class="flex-grow py-2.5 px-3 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+              <i class="ph-bold ph-whatsapp-logo text-brand-400 text-base"></i>
+              <span>Consultar WhatsApp</span>
             </button>
-            <button onclick="copyProductLink()" class="w-full sm:w-auto p-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-700 transition-colors flex items-center justify-center" title="Copiar enlace">
-              <i class="ph-bold ph-share-network text-lg"></i>
+            <button onclick="copyProductLink()" class="p-2.5 rounded-xl bg-slate-100 text-slate-700">
+              <i class="ph-bold ph-share-network text-base"></i>
             </button>
           </div>
-
         </div>
-
       </div>
     </div>
   </div>
 
-  <!-- Toast de notificación -->
-  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl flex items-center gap-3 text-sm">
-    <i id="toastIcon" class="ph-bold ph-check-circle text-brand-400 text-lg"></i>
-    <span id="toastMessage">Operación exitosa</span>
+  <div id="toast" class="fixed bottom-4 right-4 z-50 transform translate-y-16 opacity-0 transition-all pointer-events-none bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-lg text-xs font-bold">
+    <span id="toastMessage">Enlace copiado</span>
   </div>
-
-  <!-- Footer -->
-  <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-slate-500">
-      <div class="flex items-center gap-2 font-medium">
-        <i class="ph-fill ph-cube text-slate-700"></i>
-        <span>Cori3D — Catálogo de Piezas & Fabricación Aditiva.</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <span>Tamaño Máximo de Impresión : 180 × 180 × 180 mm</span>
-      </div>
-    </div>
-  </footer>
 
   <!-- Firebase Modular SDK -->
   <script type="module">
@@ -404,7 +298,6 @@
     const db = getFirestore(app);
     const productsCol = collection(db, "products");
 
-    // Lista oficial de etiquetas completa con las nuevas agregadas
     const ALL_TAGS = [
       "Antiestrés", "Maquillaje", "ASMR", "Personal", "Juegos de Mesa", "Artístico",
       "Decoración", "Accesorios", "Organización", "Utilidades", "Repuestos",
@@ -426,9 +319,13 @@
     let activeProductInModal = null;
     let activeModalImageIndex = 0;
 
+    // Parser seguro: si no tiene precio o dice "Consultar", devuelve 0
     function parseNumericPrice(priceStr) {
       if (!priceStr) return 0;
-      let clean = String(priceStr).replace(/[^0-9,\.]/g, '').trim();
+      const str = String(priceStr).toLowerCase().trim();
+      if (str.includes("consultar") || str.includes("pedido") || str === "$0" || str === "$0.00") return 0;
+      
+      let clean = str.replace(/[^0-9,\.]/g, '').trim();
       if (clean.includes('.')) {
         if (clean.includes(',')) {
           clean = clean.replace(/\./g, '').replace(',', '.');
@@ -441,24 +338,22 @@
       return parseFloat(clean) || 0;
     }
 
+    function isAvailableForDirectPurchase(priceStr) {
+      return parseNumericPrice(priceStr) > 0;
+    }
+
     function getFormattedDimensions(dims) {
-      if (!dims) return "Sin especificar";
+      if (!dims) return "Sin esp.";
       const l = String(dims.length || "").trim();
       const w = String(dims.width || "").trim();
       const h = String(dims.height || "").trim();
-      if (!l || !w || !h || l === "-" || w === "-" || h === "-" || l.toLowerCase() === "sin especificar") {
-        return "Sin especificar";
-      }
+      if (!l || !w || !h || l === "-" || l.toLowerCase() === "sin especificar") return "Sin esp.";
       return `${l}×${w}×${h} mm`;
     }
 
     function getProductTags(prod) {
-      if (Array.isArray(prod.tags) && prod.tags.length > 0) {
-        return prod.tags;
-      }
-      if (prod.category) {
-        return [prod.category];
-      }
+      if (Array.isArray(prod.tags) && prod.tags.length > 0) return prod.tags;
+      if (prod.category) return [prod.category];
       return ["General"];
     }
 
@@ -466,9 +361,7 @@
       onSnapshot(productsCol, (snapshot) => {
         products = snapshot.docs.map(doc => doc.data());
         refreshAllViews();
-      }, (error) => {
-        console.error("Error al escuchar Firestore:", error);
-      });
+      }, (err) => console.error(err));
     }
 
     function initCarousel() {
@@ -479,57 +372,39 @@
       container.innerHTML = '';
       dotsContainer.innerHTML = '';
 
-      const featured = products.filter(p => p.featured);
-      const displaySlides = featured.length > 0 ? featured : products.slice(0, 3);
+      const featured = products.filter(p => p.featured && isAvailableForDirectPurchase(p.price));
+      const displaySlides = featured.length > 0 ? featured : products.filter(p => isAvailableForDirectPurchase(p.price)).slice(0, 3);
 
       if (displaySlides.length === 0) {
-        container.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400">Sin piezas disponibles actualmente</div>';
+        container.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400 text-xs">Modelos listos para producción</div>';
         return;
       }
 
       displaySlides.forEach((prod, idx) => {
         const slide = document.createElement('div');
-        slide.className = `carousel-slide absolute inset-0 w-full h-full flex flex-col justify-end p-6 sm:p-12 md:p-16 ${
+        slide.className = `carousel-slide absolute inset-0 w-full h-full flex flex-col justify-end p-4 sm:p-8 ${
           idx === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0 pointer-events-none'
         }`;
-        slide.id = `hero-slide-${idx}`;
-        
-        const tags = getProductTags(prod);
         
         slide.innerHTML = `
           <div class="absolute inset-0 z-0">
-            <img src="${(prod.images && prod.images[0]) || 'https://placehold.co/1200x800/1e293b/ffffff?text=Pieza+3D'}" alt="${prod.title}" class="w-full h-full object-cover object-center filter brightness-[0.62]">
-            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/45 to-transparent"></div>
+            <img src="${(prod.images && prod.images[0]) || 'https://placehold.co/800x600?text=3D'}" class="w-full h-full object-cover filter brightness-[0.55]">
+            <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/30 to-transparent"></div>
           </div>
-
-          <div class="relative z-10 max-w-2xl text-white">
-            <div class="flex items-center gap-2 mb-2 flex-wrap">
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-black tracking-wider uppercase bg-brand-500 text-slate-950">
-                ${prod.material || 'PLA'}
-              </span>
-              <span class="px-2.5 py-0.5 rounded-full text-xs font-semibold bg-white/20 backdrop-blur-md text-white">
-                ${tags[0]}
-              </span>
-            </div>
-            <h1 class="text-2xl sm:text-4xl md:text-5xl font-black tracking-tight leading-tight">${prod.title}</h1>
-            <p class="mt-2 text-xs sm:text-sm text-slate-300 line-clamp-2 max-w-xl">${prod.tagline || prod.description}</p>
-            
-            <div class="mt-5 flex items-center gap-4">
-              <button onclick="openDetailModalById(${prod.id})" class="px-5 py-2.5 rounded-2xl bg-white text-slate-950 text-xs sm:text-sm font-bold hover:bg-slate-100 transition-all shadow-xl active:scale-95 flex items-center gap-2">
-                <span>Ver Detalles y Fotos</span>
-                <i class="ph-bold ph-arrow-right"></i>
-              </button>
-              <span class="text-lg sm:text-2xl font-extrabold text-white font-mono">${prod.price}</span>
+          <div class="relative z-10 text-white max-w-xl">
+            <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-brand-500 text-slate-950">${prod.material || 'PLA'}</span>
+            <h1 class="text-lg sm:text-2xl font-black mt-1 leading-tight line-clamp-1">${prod.title}</h1>
+            <div class="mt-2 flex items-center gap-3">
+              <span class="text-base sm:text-xl font-extrabold font-mono text-brand-400">${prod.price}</span>
+              <button onclick="openDetailModalById(${prod.id})" class="px-3 py-1 rounded-lg bg-white text-slate-950 text-xs font-bold">Ver pieza</button>
             </div>
           </div>
         `;
         container.appendChild(slide);
 
         const dot = document.createElement('button');
-        dot.className = `h-2 rounded-full transition-all duration-300 ${idx === 0 ? 'w-7 bg-brand-400' : 'w-2 bg-white/40 hover:bg-white'}`;
-        dot.setAttribute('aria-label', `Slide ${idx + 1}`);
+        dot.className = `h-1.5 rounded-full transition-all ${idx === 0 ? 'w-5 bg-brand-400' : 'w-1.5 bg-white/40'}`;
         dot.onclick = () => goToSlide(idx);
-        dot.id = `carousel-dot-${idx}`;
         dotsContainer.appendChild(dot);
       });
 
@@ -544,17 +419,11 @@
         if (idx === currentSlideIndex) {
           slide.classList.remove('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
           slide.classList.add('opacity-100', 'scale-100', 'z-10');
-          if (dot) {
-            dot.classList.remove('w-2', 'bg-white/40');
-            dot.classList.add('w-7', 'bg-brand-400');
-          }
+          if (dot) { dot.classList.remove('w-1.5', 'bg-white/40'); dot.classList.add('w-5', 'bg-brand-400'); }
         } else {
           slide.classList.remove('opacity-100', 'scale-100', 'z-10');
           slide.classList.add('opacity-0', 'scale-95', 'pointer-events-none', 'z-0');
-          if (dot) {
-            dot.classList.remove('w-7', 'bg-brand-400');
-            dot.classList.add('w-2', 'bg-white/40');
-          }
+          if (dot) { dot.classList.remove('w-5', 'bg-brand-400'); dot.classList.add('w-1.5', 'bg-white/40'); }
         }
       });
     }
@@ -564,7 +433,6 @@
       if (count <= 1) return;
       currentSlideIndex = (currentSlideIndex + 1) % count;
       updateSlideDisplay();
-      resetAutoSlide(count);
     }
 
     function prevSlide() {
@@ -572,14 +440,11 @@
       if (count <= 1) return;
       currentSlideIndex = (currentSlideIndex - 1 + count) % count;
       updateSlideDisplay();
-      resetAutoSlide(count);
     }
 
-    function goToSlide(index) {
-      currentSlideIndex = index;
+    function goToSlide(idx) {
+      currentSlideIndex = idx;
       updateSlideDisplay();
-      const count = document.querySelectorAll('.carousel-slide').length;
-      resetAutoSlide(count);
     }
 
     function startAutoSlide(count) {
@@ -588,49 +453,29 @@
       autoSlideInterval = setInterval(nextSlide, 5000);
     }
 
-    function resetAutoSlide(count) {
-      clearInterval(autoSlideInterval);
-      startAutoSlide(count);
-    }
-
     function toggleFilterPanel() {
       const panel = document.getElementById('filterPanel');
       const caret = document.getElementById('filtersCaretIcon');
       if (!panel) return;
-
-      const isHidden = panel.classList.contains('hidden');
-      if (isHidden) {
-        panel.classList.remove('hidden');
-        if (caret) caret.classList.add('rotate-180');
-      } else {
-        panel.classList.add('hidden');
-        if (caret) caret.classList.remove('rotate-180');
-      }
+      panel.classList.toggle('hidden');
+      if (caret) caret.classList.toggle('rotate-180');
     }
 
     function renderFilterTagsGrid() {
       const container = document.getElementById('filterTagsGrid');
-      const counterLabel = document.getElementById('selectedTagsCountLabel');
       if (!container) return;
-
       container.innerHTML = '';
-      if (counterLabel) counterLabel.textContent = `${selectedFilterTags.length} seleccionadas`;
 
       ALL_TAGS.forEach(tag => {
         const isSelected = selectedFilterTags.includes(tag);
-        const chip = document.createElement('button');
-        chip.type = "button";
-        chip.className = `px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 cursor-pointer ${
-          isSelected 
-            ? 'bg-slate-900 text-white shadow-sm ring-1 ring-slate-900' 
-            : 'bg-white text-slate-600 hover:bg-slate-200 border border-slate-200'
+        const btn = document.createElement('button');
+        btn.type = "button";
+        btn.className = `px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
+          isSelected ? 'bg-slate-900 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200'
         }`;
-        chip.innerHTML = `
-          <i class="ph-bold ${isSelected ? 'ph-check-circle text-brand-400' : 'ph-tag text-slate-300'} text-xs"></i>
-          <span>${tag}</span>
-        `;
-        chip.onclick = () => toggleFilterTag(tag);
-        container.appendChild(chip);
+        btn.textContent = tag;
+        btn.onclick = () => toggleFilterTag(tag);
+        container.appendChild(btn);
       });
 
       updateActiveFiltersBadge();
@@ -647,12 +492,6 @@
       renderProductGrid();
     }
 
-    function removeFilterTag(tag) {
-      selectedFilterTags = selectedFilterTags.filter(t => t !== tag);
-      renderFilterTagsGrid();
-      renderProductGrid();
-    }
-
     function renderActiveChipsBar() {
       const summaryBar = document.getElementById('activeFiltersSummary');
       const container = document.getElementById('activeChipsContainer');
@@ -664,32 +503,141 @@
       selectedFilterTags.forEach(tag => {
         hasFilters = true;
         const chip = document.createElement('span');
-        chip.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-slate-900 text-white font-bold text-xs";
-        chip.innerHTML = `
-          <span>${tag}</span>
-          <button type="button" onclick="removeFilterTag('${tag}')" class="hover:text-red-400 font-bold ml-1">×</button>
-        `;
+        chip.className = "inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-900 text-white font-bold text-[10px]";
+        chip.innerHTML = `${tag} <button onclick="toggleFilterTag('${tag}')">×</button>`;
         container.appendChild(chip);
       });
 
       if ((activeMinPrice !== null && !isNaN(activeMinPrice)) || (activeMaxPrice !== null && !isNaN(activeMaxPrice))) {
         hasFilters = true;
-        const priceChip = document.createElement('span');
-        priceChip.className = "inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-brand-50 text-brand-900 border border-brand-200 font-bold text-xs";
-        const minText = activeMinPrice !== null ? `$${activeMinPrice}` : '$0';
-        const maxText = activeMaxPrice !== null ? `$${activeMaxPrice}` : '∞';
-        priceChip.innerHTML = `
-          <span>${minText} - ${maxText}</span>
-          <button type="button" onclick="clearPriceRange()" class="hover:text-red-500 font-bold ml-1">×</button>
-        `;
-        container.appendChild(priceChip);
+        const chip = document.createElement('span');
+        chip.className = "inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-100 text-brand-900 font-bold text-[10px]";
+        chip.innerHTML = `Precio fijado <button onclick="clearPriceRange()">×</button>`;
+        container.appendChild(chip);
       }
 
-      if (hasFilters) {
-        summaryBar.classList.remove('hidden');
-      } else {
-        summaryBar.classList.add('hidden');
+      summaryBar.classList.toggle('hidden', !hasFilters);
+    }
+
+    function updateActiveFiltersBadge() {
+      const badge = document.getElementById('activeFiltersBadge');
+      if (!badge) return;
+      const count = selectedFilterTags.length + (activeMinPrice !== null || activeMaxPrice !== null ? 1 : 0);
+      badge.textContent = count;
+      badge.classList.toggle('hidden', count === 0);
+      badge.classList.toggle('flex', count > 0);
+    }
+
+    function renderProductGrid() {
+      const grid = document.getElementById('productGrid');
+      const emptyNotice = document.getElementById('noResultsNotice');
+      const counterBadge = document.getElementById('productCounterBadge');
+      if (!grid) return;
+
+      let filtered = products.filter(prod => {
+        const prodTags = getProductTags(prod);
+        let matchesTags = selectedFilterTags.length === 0 || selectedFilterTags.some(t => prodTags.includes(t));
+
+        const q = activeSearchQuery.toLowerCase().trim();
+        let matchesQuery = !q || (prod.title && prod.title.toLowerCase().includes(q)) || prodTags.some(t => t.toLowerCase().includes(q));
+
+        const numPrice = parseNumericPrice(prod.price);
+        let matchesMin = activeMinPrice === null || isNaN(activeMinPrice) || numPrice >= activeMinPrice;
+        let matchesMax = activeMaxPrice === null || isNaN(activeMaxPrice) || numPrice <= activeMaxPrice;
+
+        return matchesTags && matchesQuery && matchesMin && matchesMax;
+      });
+
+      // ORDENAMIENTO ESTRICTO:
+      // 1. Productos con precio comprable primero
+      // 2. Productos "Consultar", precio 0 o vacíos SIEMPRE AL FINAL
+      filtered.sort((a, b) => {
+        const canBuyA = isAvailableForDirectPurchase(a.price);
+        const canBuyB = isAvailableForDirectPurchase(b.price);
+
+        if (canBuyA && !canBuyB) return -1;
+        if (!canBuyA && canBuyB) return 1;
+
+        if (activePriceOrder === 'low-to-high') return parseNumericPrice(a.price) - parseNumericPrice(b.price);
+        if (activePriceOrder === 'high-to-low') return parseNumericPrice(b.price) - parseNumericPrice(a.price);
+
+        return (b.id || 0) - (a.id || 0);
+      });
+
+      if (counterBadge) counterBadge.textContent = filtered.length;
+      grid.innerHTML = '';
+
+      if (filtered.length === 0) {
+        if (emptyNotice) emptyNotice.classList.remove('hidden');
+        return;
       }
+      if (emptyNotice) emptyNotice.classList.add('hidden');
+
+      filtered.forEach(prod => {
+        const card = document.createElement('article');
+        card.className = "group bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-xs flex flex-col cursor-pointer";
+        card.onclick = () => openDetailModalById(prod.id);
+
+        const photo = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://placehold.co/400x400?text=3D';
+        const canBuy = isAvailableForDirectPurchase(prod.price);
+        const displayPrice = canBuy ? prod.price : 'Consultar';
+
+        card.innerHTML = `
+          <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
+            <img src="${photo}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
+            <div class="absolute top-2 left-2 flex flex-col gap-1">
+              <span class="px-1.5 py-0.5 rounded text-[9px] font-black uppercase ${canBuy ? 'bg-brand-500 text-white' : 'bg-slate-700 text-white'}">
+                ${prod.material || 'PLA'}
+              </span>
+            </div>
+            ${!canBuy ? '<div class="absolute inset-x-0 bottom-0 py-1 bg-slate-900/80 text-center text-[10px] text-white font-bold backdrop-blur-xs">A pedido / Personalizado</div>' : ''}
+          </div>
+
+          <div class="p-2.5 sm:p-3 flex flex-col flex-grow justify-between">
+            <div>
+              <span class="text-[9px] font-mono text-slate-400 block">${prod.sku || '3D'}</span>
+              <h3 class="font-bold text-slate-900 text-xs sm:text-sm line-clamp-1 mt-0.5 group-hover:text-brand-600 transition-colors">${prod.title}</h3>
+            </div>
+
+            <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between">
+              <div>
+                <span class="text-[12px] sm:text-sm font-black font-mono ${canBuy ? 'text-slate-900' : 'text-slate-500'}">${displayPrice}</span>
+              </div>
+              <div class="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                <i class="ph-bold ph-arrow-right text-xs"></i>
+              </div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function handleSearch(val) {
+      activeSearchQuery = val;
+      const clearBtn = document.getElementById('clearSearchBtn');
+      if (clearBtn) clearBtn.classList.toggle('hidden', val.trim().length === 0);
+      renderProductGrid();
+    }
+
+    function clearSearch() {
+      const input = document.getElementById('searchInput');
+      if (input) { input.value = ''; handleSearch(''); }
+    }
+
+    function handlePriceOrderChange(val) {
+      activePriceOrder = val;
+      renderProductGrid();
+    }
+
+    function handleCustomPriceRange() {
+      const minVal = document.getElementById('minPriceInput').value.trim();
+      const maxVal = document.getElementById('maxPriceInput').value.trim();
+      activeMinPrice = minVal !== "" ? parseFloat(minVal) : null;
+      activeMaxPrice = maxVal !== "" ? parseFloat(maxVal) : null;
+      updateActiveFiltersBadge();
+      renderActiveChipsBar();
+      renderProductGrid();
     }
 
     function clearPriceRange() {
@@ -702,208 +650,14 @@
       renderProductGrid();
     }
 
-    function updateActiveFiltersBadge() {
-      const badge = document.getElementById('activeFiltersBadge');
-      if (!badge) return;
-
-      let count = selectedFilterTags.length;
-      if ((activeMinPrice !== null && !isNaN(activeMinPrice)) || (activeMaxPrice !== null && !isNaN(activeMaxPrice))) {
-        count += 1;
-      }
-
-      if (count > 0) {
-        badge.textContent = count;
-        badge.classList.remove('hidden');
-        badge.classList.add('flex');
-      } else {
-        badge.classList.add('hidden');
-        badge.classList.remove('flex');
-      }
-    }
-
-    function renderProductGrid() {
-      const grid = document.getElementById('productGrid');
-      const emptyNotice = document.getElementById('noResultsNotice');
-      const counterBadge = document.getElementById('productCounterBadge');
-      if (!grid) return;
-
-      let filtered = products.filter(prod => {
-        const prodTags = getProductTags(prod);
-        
-        let matchesTags = true;
-        if (selectedFilterTags.length > 0) {
-          matchesTags = selectedFilterTags.some(t => prodTags.includes(t));
-        }
-
-        const q = activeSearchQuery.toLowerCase().trim();
-        const matchesQuery = !q || 
-          (prod.title && prod.title.toLowerCase().includes(q)) || 
-          (prod.description && prod.description.toLowerCase().includes(q)) ||
-          (prod.material && prod.material.toLowerCase().includes(q)) ||
-          prodTags.some(t => t.toLowerCase().includes(q));
-
-        const numPrice = parseNumericPrice(prod.price);
-        let matchesMin = true;
-        let matchesMax = true;
-
-        if (activeMinPrice !== null && !isNaN(activeMinPrice)) {
-          matchesMin = numPrice >= activeMinPrice;
-        }
-        if (activeMaxPrice !== null && !isNaN(activeMaxPrice)) {
-          matchesMax = numPrice <= activeMaxPrice;
-        }
-
-        return matchesTags && matchesQuery && matchesMin && matchesMax;
-      });
-
-      if (activePriceOrder === 'low-to-high') {
-        filtered.sort((a, b) => parseNumericPrice(a.price) - parseNumericPrice(b.price));
-      } else if (activePriceOrder === 'high-to-low') {
-        filtered.sort((a, b) => parseNumericPrice(b.price) - parseNumericPrice(a.price));
-      }
-
-      if (counterBadge) counterBadge.textContent = filtered.length;
-
-      if (filtered.length === 0) {
-        grid.innerHTML = '';
-        if (emptyNotice) emptyNotice.classList.remove('hidden');
-        return;
-      }
-
-      if (emptyNotice) emptyNotice.classList.add('hidden');
-      grid.innerHTML = '';
-
-      filtered.forEach(prod => {
-        const card = document.createElement('article');
-        card.className = "group bg-white rounded-3xl overflow-hidden border border-slate-200 hover:border-slate-300 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col";
-
-        const mainPhoto = (prod.images && prod.images.length > 0) 
-          ? prod.images[0] 
-          : 'https://placehold.co/600x450/e2e8f0/475569?text=Sin+Foto';
-
-        const dims = getFormattedDimensions(prod.dimensions);
-        const tags = getProductTags(prod);
-
-        const tagsHtml = tags.slice(0, 3).map(t => `
-          <button 
-            type="button" 
-            onclick="event.stopPropagation(); toggleFilterTag('${t}')" 
-            class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/95 hover:bg-slate-900 hover:text-white text-slate-800 shadow-sm flex items-center gap-1 transition-colors">
-            <i class="ph-bold ph-tag text-[9px] text-brand-600"></i>
-            ${t}
-          </button>
-        `).join('');
-
-        const extraTagsCount = tags.length > 3 ? `<span class="px-1.5 py-0.5 rounded-full text-[10px] font-bold bg-white/90 text-slate-600 shadow-sm">+${tags.length - 3}</span>` : '';
-
-        card.innerHTML = `
-          <div class="relative w-full aspect-product overflow-hidden bg-slate-100 cursor-pointer" onclick="openDetailModalById(${prod.id})">
-            <img 
-              src="${mainPhoto}" 
-              alt="${prod.title}" 
-              loading="lazy"
-              class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out"
-            >
-            <div class="absolute top-3 left-3 flex gap-1.5 flex-wrap max-w-[85%] z-10">
-              ${tagsHtml}
-              ${extraTagsCount}
-              <span class="px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-brand-500 text-slate-950 shadow-sm">
-                ${prod.material || 'PLA'}
-              </span>
-            </div>
-
-            <div class="absolute inset-0 bg-slate-950/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-              <span class="px-3.5 py-1.5 rounded-xl bg-white/95 text-slate-900 font-bold text-xs shadow-lg flex items-center gap-1.5 transform translate-y-2 group-hover:translate-y-0 transition-transform">
-                <i class="ph-bold ph-eye text-brand-600"></i>
-                Ver Detalles y Medidas
-              </span>
-            </div>
-          </div>
-
-          <div class="p-5 flex flex-col flex-grow justify-between cursor-pointer" onclick="openDetailModalById(${prod.id})">
-            <div>
-              <div class="flex items-center justify-between text-xs text-slate-400 font-medium mb-1">
-                <span>${prod.sku || '3D-MODEL'}</span>
-                <span class="text-slate-600 font-medium text-[11px] bg-slate-100 px-2 py-0.5 rounded-md">
-                  <i class="ph-bold ph-arrows-out-cardinal text-slate-400"></i> ${dims}
-                </span>
-              </div>
-              <h3 class="font-extrabold text-slate-900 group-hover:text-brand-600 transition-colors text-base line-clamp-1">
-                ${prod.title}
-              </h3>
-              <p class="text-xs text-slate-500 mt-1 line-clamp-2 leading-relaxed">
-                ${prod.tagline || prod.description}
-              </p>
-            </div>
-
-            <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between">
-              <div>
-                <span class="block text-[10px] uppercase font-bold text-slate-400">Cotización</span>
-                <span class="text-lg font-extrabold text-slate-900">${prod.price || '$0.00'}</span>
-              </div>
-              <div class="w-8 h-8 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
-                <i class="ph-bold ph-arrow-right text-sm"></i>
-              </div>
-            </div>
-          </div>
-        `;
-        grid.appendChild(card);
-      });
-    }
-
-    function handleSearch(val) {
-      activeSearchQuery = val;
-      const clearBtn = document.getElementById('clearSearchBtn');
-      if (clearBtn) {
-        if (val.trim().length > 0) {
-          clearBtn.classList.remove('hidden');
-        } else {
-          clearBtn.classList.add('hidden');
-        }
-      }
-      renderProductGrid();
-    }
-
-    function handlePriceOrderChange(val) {
-      activePriceOrder = val;
-      renderProductGrid();
-    }
-
-    function handleCustomPriceRange() {
-      const minVal = document.getElementById('minPriceInput').value.trim();
-      const maxVal = document.getElementById('maxPriceInput').value.trim();
-
-      activeMinPrice = minVal !== "" ? parseFloat(minVal) : null;
-      activeMaxPrice = maxVal !== "" ? parseFloat(maxVal) : null;
-
-      updateActiveFiltersBadge();
-      renderActiveChipsBar();
-      renderProductGrid();
-    }
-
-    function clearSearch() {
-      const input = document.getElementById('searchInput');
-      if (input) {
-        input.value = '';
-        handleSearch('');
-        input.focus();
-      }
-    }
-
     function resetFilters() {
       selectedFilterTags = [];
       activePriceOrder = "all";
       activeMinPrice = null;
       activeMaxPrice = null;
-
       const orderSelect = document.getElementById('priceOrderSelect');
       if (orderSelect) orderSelect.value = "all";
-
-      const minInput = document.getElementById('minPriceInput');
-      const maxInput = document.getElementById('maxPriceInput');
-      if (minInput) minInput.value = "";
-      if (maxInput) maxInput.value = "";
-
+      clearPriceRange();
       clearSearch();
       renderFilterTagsGrid();
       renderProductGrid();
@@ -916,117 +670,60 @@
       activeProductInModal = product;
       activeModalImageIndex = 0;
 
-      const tags = getProductTags(product);
+      const canBuy = isAvailableForDirectPurchase(product.price);
 
-      document.getElementById('modalSku').textContent = product.sku || '3D-PIECE';
+      document.getElementById('modalSku').textContent = product.sku || '3D';
       document.getElementById('modalTitle').textContent = product.title;
-      document.getElementById('modalPrice').textContent = product.price || '$0.00';
-      document.getElementById('modalDescription').textContent = product.description || 'Sin descripción detallada.';
-      document.getElementById('modalCategoryTag').textContent = tags[0];
+      document.getElementById('modalPrice').textContent = canBuy ? product.price : 'Cotización / Consultar';
+      document.getElementById('modalDescription').textContent = product.description || 'Sin descripción adicional.';
       document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
 
       const tagsContainer = document.getElementById('modalTagsContainer');
       tagsContainer.innerHTML = '';
-      tags.forEach(t => {
-        const badge = document.createElement('button');
-        badge.type = "button";
-        badge.className = "px-2.5 py-1 rounded-xl bg-slate-100 hover:bg-slate-900 hover:text-white text-slate-700 text-xs font-bold flex items-center gap-1 border border-slate-200 transition-colors cursor-pointer";
-        badge.innerHTML = `<i class="ph-bold ph-tag text-[10px] text-brand-600"></i> <span>${t}</span>`;
-        badge.onclick = () => {
-          closeDetailModal();
-          if (!selectedFilterTags.includes(t)) {
-            selectedFilterTags.push(t);
-            renderFilterTagsGrid();
-            renderProductGrid();
-          }
-        };
+      getProductTags(product).forEach(t => {
+        const badge = document.createElement('span');
+        badge.className = "px-2 py-0.5 rounded bg-slate-100 text-slate-600 text-[10px] font-bold";
+        badge.textContent = t;
         tagsContainer.appendChild(badge);
       });
 
       const specsContainer = document.getElementById('modalSpecs');
-      specsContainer.innerHTML = '';
-
-      const dimItem = document.createElement('div');
-      dimItem.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col';
-      dimItem.innerHTML = `
-        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Dimensiones (L × An × Al)</span>
-        <span class="text-xs font-extrabold text-slate-800 mt-0.5">${getFormattedDimensions(product.dimensions)}</span>
+      specsContainer.innerHTML = `
+        <div class="p-2 bg-slate-50 rounded-lg">
+          <span class="text-[9px] uppercase font-bold text-slate-400 block">Medidas</span>
+          <span class="text-xs font-bold text-slate-700">${getFormattedDimensions(product.dimensions)}</span>
+        </div>
+        <div class="p-2 bg-slate-50 rounded-lg">
+          <span class="text-[9px] uppercase font-bold text-slate-400 block">Material</span>
+          <span class="text-xs font-bold text-slate-700">${product.material || 'PLA'}</span>
+        </div>
       `;
-      specsContainer.appendChild(dimItem);
-
-      const matItem = document.createElement('div');
-      matItem.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col';
-      matItem.innerHTML = `
-        <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">Material</span>
-        <span class="text-xs font-extrabold text-slate-800 mt-0.5">${product.material || 'PLA'}</span>
-      `;
-      specsContainer.appendChild(matItem);
-
-      if (product.specs && Array.isArray(product.specs)) {
-        product.specs.forEach(spec => {
-          const item = document.createElement('div');
-          item.className = 'p-2.5 rounded-xl bg-slate-50 border border-slate-100 flex flex-col';
-          item.innerHTML = `
-            <span class="text-[10px] uppercase tracking-wider text-slate-400 font-bold">${spec.label}</span>
-            <span class="text-xs font-bold text-slate-800 mt-0.5 truncate">${spec.value}</span>
-          `;
-          specsContainer.appendChild(item);
-        });
-      }
 
       updateModalGallery();
-
-      const modal = document.getElementById('detailModal');
-      const box = document.getElementById('detailModalBox');
-
-      modal.classList.remove('opacity-0', 'pointer-events-none');
-      modal.classList.add('opacity-100', 'pointer-events-auto');
-      box.classList.remove('scale-95');
-      box.classList.add('scale-100');
-
-      document.body.style.overflow = 'hidden';
+      document.getElementById('detailModal').classList.remove('opacity-0', 'pointer-events-none');
     }
 
     function updateModalGallery() {
       if (!activeProductInModal) return;
-
       const images = (activeProductInModal.images && activeProductInModal.images.length > 0)
         ? activeProductInModal.images
-        : ['https://placehold.co/800x800/e2e8f0/475569?text=Sin+Foto'];
+        : ['https://placehold.co/400x400?text=3D'];
 
-      const mainImg = document.getElementById('modalMainImage');
-      mainImg.src = images[activeModalImageIndex] || images[0];
-
+      document.getElementById('modalMainImage').src = images[activeModalImageIndex] || images[0];
       const thumbsContainer = document.getElementById('modalThumbnails');
       thumbsContainer.innerHTML = '';
 
       images.forEach((imgUrl, index) => {
-        const thumbBtn = document.createElement('button');
-        const isSelected = index === activeModalImageIndex;
-        thumbBtn.className = `relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${
-          isSelected 
-            ? 'border-slate-900 ring-2 ring-slate-900/20 scale-95' 
-            : 'border-transparent opacity-60 hover:opacity-100'
-        }`;
-        thumbBtn.onclick = () => {
-          activeModalImageIndex = index;
-          updateModalGallery();
-        };
-        thumbBtn.innerHTML = `<img src="${imgUrl}" alt="Vista ${index + 1}" class="w-full h-full object-cover">`;
-        thumbsContainer.appendChild(thumbBtn);
+        const btn = document.createElement('button');
+        btn.className = `aspect-square rounded-lg overflow-hidden border ${index === activeModalImageIndex ? 'border-slate-900' : 'border-transparent opacity-60'}`;
+        btn.onclick = () => { activeModalImageIndex = index; updateModalGallery(); };
+        btn.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover">`;
+        thumbsContainer.appendChild(btn);
       });
     }
 
     function closeDetailModal() {
-      const modal = document.getElementById('detailModal');
-      const box = document.getElementById('detailModalBox');
-
-      modal.classList.remove('opacity-100', 'pointer-events-auto');
-      modal.classList.add('opacity-0', 'pointer-events-none');
-      box.classList.remove('scale-100');
-      box.classList.add('scale-95');
-
-      document.body.style.overflow = '';
+      document.getElementById('detailModal').classList.add('opacity-0', 'pointer-events-none');
       activeProductInModal = null;
     }
 
@@ -1036,25 +733,10 @@
       renderProductGrid();
     }
 
-    function showToast(message) {
-      const toast = document.getElementById('toast');
-      const toastMsg = document.getElementById('toastMessage');
-      if (!toast || !toastMsg) return;
-      toastMsg.textContent = message;
-      
-      toast.classList.remove('translate-y-20', 'opacity-0');
-      toast.classList.add('translate-y-0', 'opacity-100');
-
-      setTimeout(() => {
-        toast.classList.remove('translate-y-0', 'opacity-100');
-        toast.classList.add('translate-y-20', 'opacity-0');
-      }, 3200);
-    }
-
     function handleInquireAction() {
       if (!activeProductInModal) return;
       const dims = getFormattedDimensions(activeProductInModal.dimensions);
-      const text = encodeURIComponent(`Hola! Quiero consultar disponibilidad para imprimir: "${activeProductInModal.title}" (${activeProductInModal.material}, Medidas: ${dims})`);
+      const text = encodeURIComponent(`Hola! Quiero consultar por: "${activeProductInModal.title}" (${activeProductInModal.material}, ${dims})`);
       window.open(`https://wa.me/5491123539321?text=${text}`, '_blank');
     }
 
@@ -1067,34 +749,25 @@
       document.execCommand('copy');
       document.body.removeChild(dummy);
 
-      showToast("Enlace copiado al portapapeles");
+      const toast = document.getElementById('toast');
+      toast.classList.remove('translate-y-16', 'opacity-0');
+      setTimeout(() => toast.classList.add('translate-y-16', 'opacity-0'), 2500);
     }
 
     window.nextSlide = nextSlide;
     window.prevSlide = prevSlide;
-    window.goToSlide = goToSlide;
     window.toggleFilterPanel = toggleFilterPanel;
     window.toggleFilterTag = toggleFilterTag;
-    window.removeFilterTag = removeFilterTag;
     window.clearPriceRange = clearPriceRange;
     window.handleSearch = handleSearch;
+    window.clearSearch = clearSearch;
     window.handlePriceOrderChange = handlePriceOrderChange;
     window.handleCustomPriceRange = handleCustomPriceRange;
-    window.clearSearch = clearSearch;
     window.resetFilters = resetFilters;
     window.openDetailModalById = openDetailModalById;
     window.closeDetailModal = closeDetailModal;
     window.handleInquireAction = handleInquireAction;
     window.copyProductLink = copyProductLink;
-
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') {
-        const detailModal = document.getElementById('detailModal');
-        if (detailModal && detailModal.classList.contains('opacity-100')) {
-          closeDetailModal();
-        }
-      }
-    });
 
     initRealtimeListener();
   </script>
