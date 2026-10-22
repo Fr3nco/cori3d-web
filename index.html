@@ -35,36 +35,20 @@
   </script>
 
   <style>
-    ::-webkit-scrollbar {
-      width: 5px;
-      height: 5px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #f8fafc;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #cbd5e1;
-      border-radius: 9999px;
-    }
-    .carousel-slide {
-      transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
-    }
-    .no-scrollbar::-webkit-scrollbar {
-      display: none;
-    }
-    .no-scrollbar {
-      -ms-overflow-style: none;
-      scrollbar-width: none;
-    }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
+    ::-webkit-scrollbar-track { background: #f8fafc; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 9999px; }
+    .carousel-slide { transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out; }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
 
 <body class="bg-slate-50 text-slate-800 antialiased min-h-screen flex flex-col font-sans selection:bg-brand-500 selection:text-white">
 
-  <!-- Header Responsive -->
+  <!-- Header -->
   <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
     <div class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 sm:h-20 flex items-center justify-between gap-2">
-      
       <div class="flex items-center gap-2 sm:gap-4">
         <a href="#" class="flex items-center gap-2 sm:gap-3 group">
           <div class="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-slate-950 text-white flex items-center justify-center font-bold text-lg shadow-sm">
@@ -75,63 +59,42 @@
             <span class="block text-[9px] sm:text-[10px] font-semibold uppercase tracking-wider text-slate-400 mt-0.5">Additive Design</span>
           </div>
         </a>
-
-        <div class="hidden md:flex items-center gap-2 pl-3 border-l border-slate-200 text-xs text-slate-600">
-          <span class="flex h-2 w-2 relative">
-            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-brand-400 opacity-75"></span>
-            <span class="relative inline-flex rounded-full h-2 w-2 bg-brand-500"></span>
-          </span>
-          <span class="font-medium text-slate-500">Área máx:</span>
-          <span class="font-bold text-slate-800 bg-slate-100 px-2 py-0.5 rounded-md border border-slate-200">180 × 180 × 180 mm</span>
-        </div>
       </div>
-
       <div class="flex items-center gap-2">
         <a href="#catalogo" class="flex items-center gap-1.5 px-3 py-1.5 sm:px-4 sm:py-2 rounded-xl bg-slate-900 text-white text-xs sm:text-sm font-semibold active:scale-95 transition-all">
           <span>Catálogo</span>
           <i class="ph-bold ph-arrow-down"></i>
         </a>
       </div>
-
     </div>
   </header>
 
-  <!-- Hero Carousel (Adaptable en móvil para no tapar la pantalla) -->
+  <!-- Carrusel -->
   <section class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pt-3 sm:pt-6 pb-6 w-full">
-    <div class="relative bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl aspect-[16/10] sm:aspect-[21/9] min-h-[260px] sm:min-h-[380px] flex items-center">
-      
-      <div id="carouselContainer" class="relative w-full h-full">
-        <!-- Inyectado por JS -->
-      </div>
-
-      <button onclick="prevSlide()" aria-label="Anterior" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all">
+    <div class="relative bg-slate-950 rounded-2xl sm:rounded-3xl overflow-hidden shadow-xl aspect-[16/10] sm:aspect-[21/9] min-h-[260px] sm:min-h-[360px] flex items-center">
+      <div id="carouselContainer" class="relative w-full h-full"></div>
+      <button onclick="prevSlide()" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all">
         <i class="ph-bold ph-caret-left text-lg"></i>
       </button>
-      <button onclick="nextSlide()" aria-label="Siguiente" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all">
+      <button onclick="nextSlide()" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-20 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-black/40 backdrop-blur-md text-white flex items-center justify-center active:scale-90 transition-all">
         <i class="ph-bold ph-caret-right text-lg"></i>
       </button>
-
-      <div id="carouselDots" class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full">
-        <!-- Dots JS -->
-      </div>
+      <div id="carouselDots" class="absolute bottom-3 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1.5 bg-black/40 backdrop-blur-md px-3 py-1.5 rounded-full"></div>
     </div>
   </section>
 
-  <!-- Catálogo Principal -->
+  <!-- Catálogo -->
   <main id="catalogo" class="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 pb-16 w-full flex-grow">
-    
-    <!-- Barra superior de búsqueda y filtros -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-slate-200">
       <div>
         <div class="flex items-center gap-2">
           <h2 class="text-xl sm:text-2xl font-black text-slate-900 tracking-tight">Piezas Disponibles</h2>
           <span id="productCounterBadge" class="bg-brand-100 text-brand-800 text-[11px] font-bold px-2 py-0.5 rounded-full">0</span>
         </div>
-        <p class="text-xs text-slate-400 mt-0.5">Primero los artículos con entrega y precio inmediato.</p>
+        <p class="text-xs text-slate-400 mt-0.5">Precios claros y actualizados para compra directa.</p>
       </div>
 
       <div class="flex items-center gap-2 w-full sm:w-auto">
-        <!-- Buscador -->
         <div class="relative flex-grow sm:w-64">
           <span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400">
             <i class="ph-bold ph-magnifying-glass text-base"></i>
@@ -143,58 +106,35 @@
             class="w-full pl-9 pr-8 py-2 rounded-xl bg-white border border-slate-200 text-xs placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-900"
             oninput="handleSearch(this.value)"
           >
-          <button 
-            id="clearSearchBtn" 
-            onclick="clearSearch()" 
-            class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400">
+          <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute inset-y-0 right-0 pr-2.5 flex items-center text-slate-400">
             <i class="ph-bold ph-x-circle text-base"></i>
           </button>
         </div>
 
-        <!-- Botón Filtros -->
-        <button 
-          id="toggleFiltersBtn"
-          onclick="toggleFilterPanel()" 
-          class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 hover:border-slate-300 text-slate-800 text-xs font-bold shadow-sm active:scale-95 flex-shrink-0">
+        <button onclick="toggleFilterPanel()" class="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white border border-slate-200 text-slate-800 text-xs font-bold shadow-xs active:scale-95 flex-shrink-0">
           <i class="ph-bold ph-sliders-horizontal text-brand-600 text-sm"></i>
           <span>Filtros</span>
           <span id="activeFiltersBadge" class="hidden w-4 h-4 rounded-full bg-brand-600 text-white text-[9px] items-center justify-center font-bold">0</span>
-          <i id="filtersCaretIcon" class="ph-bold ph-caret-down text-[10px] transition-transform duration-200"></i>
         </button>
       </div>
     </div>
 
-    <!-- Panel de Filtros -->
+    <!-- Panel Filtros -->
     <div id="filterPanel" class="hidden mt-3 p-4 bg-white rounded-2xl border border-slate-200 shadow-sm space-y-4">
       <div class="flex items-center justify-between pb-2 border-b border-slate-100">
-        <h3 class="text-xs font-black text-slate-900 uppercase tracking-wider">Ajustar Filtros</h3>
+        <h3 class="text-xs font-black text-slate-900 uppercase">Filtros Avanzados</h3>
         <button onclick="resetFilters()" class="text-[11px] font-bold text-red-600 hover:underline">Limpiar todo</button>
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
-        <div class="sm:col-span-5 space-y-2.5">
+        <div class="sm:col-span-5 space-y-2">
           <span class="text-[11px] font-bold text-slate-700 uppercase block">Rango de Precio ($)</span>
           <div class="flex items-center gap-2">
-            <input 
-              type="number" 
-              id="minPriceInput" 
-              placeholder="Mín" 
-              oninput="handleCustomPriceRange()"
-              class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono"
-            >
-            <span class="text-slate-400 font-bold">-</span>
-            <input 
-              type="number" 
-              id="maxPriceInput" 
-              placeholder="Máx" 
-              oninput="handleCustomPriceRange()"
-              class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono"
-            >
+            <input type="number" id="minPriceInput" placeholder="Mín" oninput="handleCustomPriceRange()" class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono">
+            <span class="text-slate-400">-</span>
+            <input type="number" id="maxPriceInput" placeholder="Máx" oninput="handleCustomPriceRange()" class="w-full px-2.5 py-1.5 text-xs rounded-lg bg-slate-50 border border-slate-200 font-mono">
           </div>
-          <select 
-            id="priceOrderSelect" 
-            onchange="handlePriceOrderChange(this.value)" 
-            class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
+          <select id="priceOrderSelect" onchange="handlePriceOrderChange(this.value)" class="w-full px-2.5 py-1.5 rounded-lg bg-slate-50 border border-slate-200 text-xs font-semibold text-slate-700">
             <option value="all">Ordenar: Relevancia</option>
             <option value="low-to-high">Precio: Menor a Mayor</option>
             <option value="high-to-low">Precio: Mayor a Menor</option>
@@ -202,47 +142,34 @@
         </div>
 
         <div class="sm:col-span-7 sm:border-l sm:border-slate-100 sm:pl-4">
-          <span class="text-[11px] font-bold text-slate-700 uppercase block mb-1.5">Filtrar por Etiquetas</span>
-          <div id="filterTagsGrid" class="flex flex-wrap gap-1 max-h-44 overflow-y-auto p-1.5 bg-slate-50 rounded-xl border border-slate-100">
-            <!-- Chips JS -->
-          </div>
+          <span class="text-[11px] font-bold text-slate-700 uppercase block mb-1.5">Etiquetas</span>
+          <div id="filterTagsGrid" class="flex flex-wrap gap-1 max-h-44 overflow-y-auto p-1.5 bg-slate-50 rounded-xl border border-slate-100"></div>
         </div>
       </div>
     </div>
 
-    <!-- Resumen de Filtros Activos -->
-    <div id="activeFiltersSummary" class="hidden py-2 flex items-center gap-1.5 flex-wrap text-xs">
-      <div id="activeChipsContainer" class="flex items-center gap-1.5 flex-wrap"></div>
-      <button onclick="resetFilters()" class="text-[11px] font-bold text-slate-500 hover:text-slate-800 underline ml-1">Restablecer</button>
-    </div>
-
-    <!-- Grilla de Productos (2 columnas compactas en móvil, 3 en tablet, 4 en PC) -->
-    <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 pt-3">
-      <!-- Cards JS -->
-    </div>
+    <!-- Grilla de productos -->
+    <div id="productGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-5 pt-4"></div>
 
     <div id="noResultsNotice" class="hidden py-12 text-center">
       <i class="ph-duotone ph-cube text-3xl text-slate-400 block mb-2"></i>
-      <h3 class="text-sm font-bold text-slate-800">No encontramos modelos con esos criterios</h3>
+      <h3 class="text-sm font-bold text-slate-800">No encontramos coincidencias</h3>
       <button onclick="resetFilters()" class="mt-3 px-3 py-1.5 text-xs font-bold bg-slate-900 text-white rounded-lg">Ver catálogo completo</button>
     </div>
   </main>
 
-  <!-- Modal Detalle -->
+  <!-- Modal Detalle con Selector Limpio de Variantes -->
   <div id="detailModal" class="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 opacity-0 pointer-events-none transition-all duration-200">
     <div class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm" onclick="closeDetailModal()"></div>
 
-    <div class="relative w-full max-w-3xl bg-white rounded-2xl sm:rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[90vh]" id="detailModalBox">
-      <button 
-        type="button" 
-        onclick="closeDetailModal()" 
-        class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-slate-100 text-slate-700 flex items-center justify-center shadow">
+    <div class="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[92vh]">
+      <button type="button" onclick="closeDetailModal()" class="absolute top-3 right-3 z-30 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-700 flex items-center justify-center shadow-xs">
         <i class="ph-bold ph-x text-base pointer-events-none"></i>
       </button>
 
-      <div class="overflow-y-auto p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="overflow-y-auto p-4 sm:p-6 grid grid-cols-1 sm:grid-cols-2 gap-5">
         <div>
-          <div class="relative aspect-square bg-slate-100 rounded-xl overflow-hidden border border-slate-200">
+          <div class="relative aspect-square bg-slate-100 rounded-2xl overflow-hidden border border-slate-200">
             <img id="modalMainImage" src="" class="w-full h-full object-cover">
             <span id="modalMaterialBadge" class="absolute bottom-2 left-2 px-2 py-0.5 rounded text-[10px] font-black bg-brand-500 text-white">PLA</span>
           </div>
@@ -253,20 +180,33 @@
           <div>
             <span id="modalSku" class="text-[11px] font-mono text-slate-400">SKU</span>
             <h3 id="modalTitle" class="text-lg sm:text-xl font-black text-slate-900 mt-1">Nombre</h3>
-            <div id="modalPrice" class="text-xl font-extrabold text-slate-900 mt-1.5 font-mono">$0</div>
-            <p id="modalDescription" class="mt-2 text-xs text-slate-600 leading-relaxed whitespace-pre-line"></p>
             
+            <!-- PRECIO DINÁMICO DEL MODAL -->
+            <div class="mt-1.5 flex items-baseline gap-2">
+              <span id="modalPrice" class="text-2xl font-black font-mono text-slate-900">$0</span>
+              <span id="modalSelectedVariantLabel" class="text-xs font-semibold text-brand-600 hidden"></span>
+            </div>
+
+            <!-- SELECTOR LIMPIO DE VARIANTES (Si el producto tiene múltiples precios) -->
+            <div id="modalVariantsWrapper" class="mt-3 hidden">
+              <label class="block text-[11px] font-extrabold uppercase tracking-wide text-slate-500 mb-1.5">
+                Seleccioná una opción:
+              </label>
+              <div id="modalVariantsList" class="space-y-1.5 max-h-40 overflow-y-auto pr-1">
+                <!-- Inyectado por JS -->
+              </div>
+            </div>
+
+            <p id="modalDescription" class="mt-2.5 text-xs text-slate-600 leading-relaxed whitespace-pre-line"></p>
             <div class="mt-3 flex flex-wrap gap-1" id="modalTagsContainer"></div>
-            
-            <div class="mt-4 pt-3 border-t border-slate-100 grid grid-cols-2 gap-2 text-xs" id="modalSpecs"></div>
           </div>
 
           <div class="mt-4 pt-3 border-t border-slate-100 flex gap-2">
-            <button onclick="handleInquireAction()" class="flex-grow py-2.5 px-3 rounded-xl bg-slate-900 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow">
+            <button onclick="handleInquireAction()" class="flex-grow py-2.5 px-4 rounded-xl bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-all">
               <i class="ph-bold ph-whatsapp-logo text-brand-400 text-base"></i>
-              <span>Consultar WhatsApp</span>
+              <span>Consultar / Pedir</span>
             </button>
-            <button onclick="copyProductLink()" class="p-2.5 rounded-xl bg-slate-100 text-slate-700">
+            <button onclick="copyProductLink()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700">
               <i class="ph-bold ph-share-network text-base"></i>
             </button>
           </div>
@@ -310,7 +250,6 @@
 
     let products = [];
     let currentSlideIndex = 0;
-    let autoSlideInterval = null;
     let selectedFilterTags = [];
     let activeSearchQuery = "";
     let activePriceOrder = "all";
@@ -318,37 +257,32 @@
     let activeMaxPrice = null;
     let activeProductInModal = null;
     let activeModalImageIndex = 0;
+    let currentSelectedVariant = null; // Variante elegida por el usuario en el modal
 
-    // Parser seguro: si no tiene precio o dice "Consultar", devuelve 0
     function parseNumericPrice(priceStr) {
       if (!priceStr) return 0;
       const str = String(priceStr).toLowerCase().trim();
       if (str.includes("consultar") || str.includes("pedido") || str === "$0" || str === "$0.00") return 0;
-      
       let clean = str.replace(/[^0-9,\.]/g, '').trim();
       if (clean.includes('.')) {
-        if (clean.includes(',')) {
-          clean = clean.replace(/\./g, '').replace(',', '.');
-        } else {
-          clean = clean.replace(/\./g, '');
-        }
+        clean = clean.includes(',') ? clean.replace(/\./g, '').replace(',', '.') : clean.replace(/\./g, '');
       } else if (clean.includes(',')) {
         clean = clean.replace(',', '.');
       }
       return parseFloat(clean) || 0;
     }
 
-    function isAvailableForDirectPurchase(priceStr) {
-      return parseNumericPrice(priceStr) > 0;
+    // Calcula el precio menor o de inicio para productos con múltiples opciones
+    function getProductStartingPrice(prod) {
+      if (Array.isArray(prod.variants) && prod.variants.length > 0) {
+        const numericValues = prod.variants.map(v => parseNumericPrice(v.price)).filter(p => p > 0);
+        if (numericValues.length > 0) return Math.min(...numericValues);
+      }
+      return parseNumericPrice(prod.price);
     }
 
-    function getFormattedDimensions(dims) {
-      if (!dims) return "Sin esp.";
-      const l = String(dims.length || "").trim();
-      const w = String(dims.width || "").trim();
-      const h = String(dims.height || "").trim();
-      if (!l || !w || !h || l === "-" || l.toLowerCase() === "sin especificar") return "Sin esp.";
-      return `${l}×${w}×${h} mm`;
+    function isAvailableForDirectPurchase(prod) {
+      return getProductStartingPrice(prod) > 0;
     }
 
     function getProductTags(prod) {
@@ -361,7 +295,7 @@
       onSnapshot(productsCol, (snapshot) => {
         products = snapshot.docs.map(doc => doc.data());
         refreshAllViews();
-      }, (err) => console.error(err));
+      });
     }
 
     function initCarousel() {
@@ -372,11 +306,11 @@
       container.innerHTML = '';
       dotsContainer.innerHTML = '';
 
-      const featured = products.filter(p => p.featured && isAvailableForDirectPurchase(p.price));
-      const displaySlides = featured.length > 0 ? featured : products.filter(p => isAvailableForDirectPurchase(p.price)).slice(0, 3);
+      const featured = products.filter(p => p.featured && isAvailableForDirectPurchase(p));
+      const displaySlides = featured.length > 0 ? featured : products.filter(p => isAvailableForDirectPurchase(p)).slice(0, 3);
 
       if (displaySlides.length === 0) {
-        container.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400 text-xs">Modelos listos para producción</div>';
+        container.innerHTML = '<div class="flex items-center justify-center h-full text-slate-400 text-xs">Catálogo de Impresiones 3D</div>';
         return;
       }
 
@@ -386,6 +320,9 @@
           idx === 0 ? 'opacity-100 scale-100 z-10' : 'opacity-0 scale-95 z-0 pointer-events-none'
         }`;
         
+        const hasVariants = Array.isArray(prod.variants) && prod.variants.length > 0;
+        const displayPrice = hasVariants ? `Desde $${getProductStartingPrice(prod)}` : prod.price;
+
         slide.innerHTML = `
           <div class="absolute inset-0 z-0">
             <img src="${(prod.images && prod.images[0]) || 'https://placehold.co/800x600?text=3D'}" class="w-full h-full object-cover filter brightness-[0.55]">
@@ -395,8 +332,8 @@
             <span class="px-2 py-0.5 rounded text-[9px] font-black uppercase bg-brand-500 text-slate-950">${prod.material || 'PLA'}</span>
             <h1 class="text-lg sm:text-2xl font-black mt-1 leading-tight line-clamp-1">${prod.title}</h1>
             <div class="mt-2 flex items-center gap-3">
-              <span class="text-base sm:text-xl font-extrabold font-mono text-brand-400">${prod.price}</span>
-              <button onclick="openDetailModalById(${prod.id})" class="px-3 py-1 rounded-lg bg-white text-slate-950 text-xs font-bold">Ver pieza</button>
+              <span class="text-base sm:text-xl font-extrabold font-mono text-brand-400">${displayPrice}</span>
+              <button onclick="openDetailModalById(${prod.id})" class="px-3 py-1 rounded-lg bg-white text-slate-950 text-xs font-bold">Ver opciones</button>
             </div>
           </div>
         `;
@@ -407,8 +344,6 @@
         dot.onclick = () => goToSlide(idx);
         dotsContainer.appendChild(dot);
       });
-
-      startAutoSlide(displaySlides.length);
     }
 
     function updateSlideDisplay() {
@@ -447,18 +382,9 @@
       updateSlideDisplay();
     }
 
-    function startAutoSlide(count) {
-      if (count <= 1) return;
-      clearInterval(autoSlideInterval);
-      autoSlideInterval = setInterval(nextSlide, 5000);
-    }
-
     function toggleFilterPanel() {
       const panel = document.getElementById('filterPanel');
-      const caret = document.getElementById('filtersCaretIcon');
-      if (!panel) return;
-      panel.classList.toggle('hidden');
-      if (caret) caret.classList.toggle('rotate-180');
+      if (panel) panel.classList.toggle('hidden');
     }
 
     function renderFilterTagsGrid() {
@@ -471,61 +397,17 @@
         const btn = document.createElement('button');
         btn.type = "button";
         btn.className = `px-2 py-1 rounded-lg text-[11px] font-bold transition-all ${
-          isSelected ? 'bg-slate-900 text-white shadow-xs' : 'bg-white text-slate-600 border border-slate-200'
+          isSelected ? 'bg-slate-900 text-white' : 'bg-white text-slate-600 border border-slate-200'
         }`;
         btn.textContent = tag;
-        btn.onclick = () => toggleFilterTag(tag);
+        btn.onclick = () => {
+          if (selectedFilterTags.includes(tag)) selectedFilterTags = selectedFilterTags.filter(t => t !== tag);
+          else selectedFilterTags.push(tag);
+          renderFilterTagsGrid();
+          renderProductGrid();
+        };
         container.appendChild(btn);
       });
-
-      updateActiveFiltersBadge();
-      renderActiveChipsBar();
-    }
-
-    function toggleFilterTag(tag) {
-      if (selectedFilterTags.includes(tag)) {
-        selectedFilterTags = selectedFilterTags.filter(t => t !== tag);
-      } else {
-        selectedFilterTags.push(tag);
-      }
-      renderFilterTagsGrid();
-      renderProductGrid();
-    }
-
-    function renderActiveChipsBar() {
-      const summaryBar = document.getElementById('activeFiltersSummary');
-      const container = document.getElementById('activeChipsContainer');
-      if (!summaryBar || !container) return;
-
-      container.innerHTML = '';
-      let hasFilters = false;
-
-      selectedFilterTags.forEach(tag => {
-        hasFilters = true;
-        const chip = document.createElement('span');
-        chip.className = "inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-slate-900 text-white font-bold text-[10px]";
-        chip.innerHTML = `${tag} <button onclick="toggleFilterTag('${tag}')">×</button>`;
-        container.appendChild(chip);
-      });
-
-      if ((activeMinPrice !== null && !isNaN(activeMinPrice)) || (activeMaxPrice !== null && !isNaN(activeMaxPrice))) {
-        hasFilters = true;
-        const chip = document.createElement('span');
-        chip.className = "inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-brand-100 text-brand-900 font-bold text-[10px]";
-        chip.innerHTML = `Precio fijado <button onclick="clearPriceRange()">×</button>`;
-        container.appendChild(chip);
-      }
-
-      summaryBar.classList.toggle('hidden', !hasFilters);
-    }
-
-    function updateActiveFiltersBadge() {
-      const badge = document.getElementById('activeFiltersBadge');
-      if (!badge) return;
-      const count = selectedFilterTags.length + (activeMinPrice !== null || activeMaxPrice !== null ? 1 : 0);
-      badge.textContent = count;
-      badge.classList.toggle('hidden', count === 0);
-      badge.classList.toggle('flex', count > 0);
     }
 
     function renderProductGrid() {
@@ -537,30 +419,25 @@
       let filtered = products.filter(prod => {
         const prodTags = getProductTags(prod);
         let matchesTags = selectedFilterTags.length === 0 || selectedFilterTags.some(t => prodTags.includes(t));
-
         const q = activeSearchQuery.toLowerCase().trim();
         let matchesQuery = !q || (prod.title && prod.title.toLowerCase().includes(q)) || prodTags.some(t => t.toLowerCase().includes(q));
 
-        const numPrice = parseNumericPrice(prod.price);
-        let matchesMin = activeMinPrice === null || isNaN(activeMinPrice) || numPrice >= activeMinPrice;
-        let matchesMax = activeMaxPrice === null || isNaN(activeMaxPrice) || numPrice <= activeMaxPrice;
+        const effectivePrice = getProductStartingPrice(prod);
+        let matchesMin = activeMinPrice === null || isNaN(activeMinPrice) || effectivePrice >= activeMinPrice;
+        let matchesMax = activeMaxPrice === null || isNaN(activeMaxPrice) || effectivePrice <= activeMaxPrice;
 
         return matchesTags && matchesQuery && matchesMin && matchesMax;
       });
 
-      // ORDENAMIENTO ESTRICTO:
-      // 1. Productos con precio comprable primero
-      // 2. Productos "Consultar", precio 0 o vacíos SIEMPRE AL FINAL
+      // ORDEN: Productos comprables primero, luego precios definidos, y finalmente "Consultar" o sin precio
       filtered.sort((a, b) => {
-        const canBuyA = isAvailableForDirectPurchase(a.price);
-        const canBuyB = isAvailableForDirectPurchase(b.price);
-
+        const canBuyA = isAvailableForDirectPurchase(a);
+        const canBuyB = isAvailableForDirectPurchase(b);
         if (canBuyA && !canBuyB) return -1;
         if (!canBuyA && canBuyB) return 1;
 
-        if (activePriceOrder === 'low-to-high') return parseNumericPrice(a.price) - parseNumericPrice(b.price);
-        if (activePriceOrder === 'high-to-low') return parseNumericPrice(b.price) - parseNumericPrice(a.price);
-
+        if (activePriceOrder === 'low-to-high') return getProductStartingPrice(a) - getProductStartingPrice(b);
+        if (activePriceOrder === 'high-to-low') return getProductStartingPrice(b) - getProductStartingPrice(a);
         return (b.id || 0) - (a.id || 0);
       });
 
@@ -579,8 +456,22 @@
         card.onclick = () => openDetailModalById(prod.id);
 
         const photo = (prod.images && prod.images.length > 0) ? prod.images[0] : 'https://placehold.co/400x400?text=3D';
-        const canBuy = isAvailableForDirectPurchase(prod.price);
-        const displayPrice = canBuy ? prod.price : 'Consultar';
+        const canBuy = isAvailableForDirectPurchase(prod);
+        const hasVariants = Array.isArray(prod.variants) && prod.variants.length > 0;
+
+        let priceHtml = '';
+        if (!canBuy) {
+          priceHtml = '<span class="text-xs font-bold text-slate-400">A pedido</span>';
+        } else if (hasVariants) {
+          priceHtml = `
+            <div>
+              <span class="text-[9px] uppercase font-bold text-slate-400 block leading-tight">Desde</span>
+              <span class="text-sm font-black font-mono text-slate-900">$${getProductStartingPrice(prod)}</span>
+            </div>
+          `;
+        } else {
+          priceHtml = `<span class="text-sm font-black font-mono text-slate-900">${prod.price}</span>`;
+        }
 
         card.innerHTML = `
           <div class="relative w-full aspect-square bg-slate-100 overflow-hidden">
@@ -590,7 +481,7 @@
                 ${prod.material || 'PLA'}
               </span>
             </div>
-            ${!canBuy ? '<div class="absolute inset-x-0 bottom-0 py-1 bg-slate-900/80 text-center text-[10px] text-white font-bold backdrop-blur-xs">A pedido / Personalizado</div>' : ''}
+            ${hasVariants ? '<div class="absolute bottom-2 left-2 px-2 py-0.5 rounded-full bg-slate-900/80 backdrop-blur-xs text-[9px] text-white font-bold flex items-center gap-1"><i class="ph-bold ph-stack"></i> Varios tamaños</div>' : ''}
           </div>
 
           <div class="p-2.5 sm:p-3 flex flex-col flex-grow justify-between">
@@ -600,9 +491,7 @@
             </div>
 
             <div class="mt-2.5 pt-2 border-t border-slate-100 flex items-center justify-between">
-              <div>
-                <span class="text-[12px] sm:text-sm font-black font-mono ${canBuy ? 'text-slate-900' : 'text-slate-500'}">${displayPrice}</span>
-              </div>
+              <div>${priceHtml}</div>
               <div class="w-6 h-6 rounded-lg bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
                 <i class="ph-bold ph-arrow-right text-xs"></i>
               </div>
@@ -635,18 +524,6 @@
       const maxVal = document.getElementById('maxPriceInput').value.trim();
       activeMinPrice = minVal !== "" ? parseFloat(minVal) : null;
       activeMaxPrice = maxVal !== "" ? parseFloat(maxVal) : null;
-      updateActiveFiltersBadge();
-      renderActiveChipsBar();
-      renderProductGrid();
-    }
-
-    function clearPriceRange() {
-      activeMinPrice = null;
-      activeMaxPrice = null;
-      document.getElementById('minPriceInput').value = '';
-      document.getElementById('maxPriceInput').value = '';
-      renderActiveChipsBar();
-      updateActiveFiltersBadge();
       renderProductGrid();
     }
 
@@ -657,27 +534,76 @@
       activeMaxPrice = null;
       const orderSelect = document.getElementById('priceOrderSelect');
       if (orderSelect) orderSelect.value = "all";
-      clearPriceRange();
+      document.getElementById('minPriceInput').value = '';
+      document.getElementById('maxPriceInput').value = '';
       clearSearch();
       renderFilterTagsGrid();
       renderProductGrid();
     }
 
+    // ABRIR DETALLE CON SELECTOR DE VARIANTES
     function openDetailModalById(productId) {
       const product = products.find(p => p.id === productId);
       if (!product) return;
 
       activeProductInModal = product;
       activeModalImageIndex = 0;
+      currentSelectedVariant = null;
 
-      const canBuy = isAvailableForDirectPurchase(product.price);
+      const hasVariants = Array.isArray(product.variants) && product.variants.length > 0;
+      const canBuy = isAvailableForDirectPurchase(product);
 
       document.getElementById('modalSku').textContent = product.sku || '3D';
       document.getElementById('modalTitle').textContent = product.title;
-      document.getElementById('modalPrice').textContent = canBuy ? product.price : 'Cotización / Consultar';
       document.getElementById('modalDescription').textContent = product.description || 'Sin descripción adicional.';
       document.getElementById('modalMaterialBadge').textContent = product.material || 'PLA';
 
+      const priceDisplay = document.getElementById('modalPrice');
+      const variantLabel = document.getElementById('modalSelectedVariantLabel');
+      const variantsWrapper = document.getElementById('modalVariantsWrapper');
+      const variantsList = document.getElementById('modalVariantsList');
+
+      if (hasVariants) {
+        variantsWrapper.classList.remove('hidden');
+        variantLabel.classList.remove('hidden');
+        variantsList.innerHTML = '';
+
+        // Seleccionamos la primera variante por defecto
+        currentSelectedVariant = product.variants[0];
+        priceDisplay.textContent = currentSelectedVariant.price;
+        variantLabel.textContent = `(${currentSelectedVariant.name})`;
+
+        product.variants.forEach((v, idx) => {
+          const btn = document.createElement('button');
+          btn.type = "button";
+          btn.className = `w-full px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between border transition-all ${
+            idx === 0 ? 'bg-slate-900 text-white border-slate-900' : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100'
+          }`;
+          btn.innerHTML = `
+            <span>${v.name}</span>
+            <span class="font-mono text-xs ${idx === 0 ? 'text-brand-400' : 'text-slate-900'}">${v.price}</span>
+          `;
+          btn.onclick = () => {
+            currentSelectedVariant = v;
+            priceDisplay.textContent = v.price;
+            variantLabel.textContent = `(${v.name})`;
+            // Actualizar estilo visual
+            Array.from(variantsList.children).forEach(c => {
+              c.className = "w-full px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between border transition-all bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100";
+              c.querySelector('span:last-child').className = "font-mono text-xs text-slate-900";
+            });
+            btn.className = "w-full px-3 py-2 rounded-xl text-xs font-bold flex items-center justify-between border transition-all bg-slate-900 text-white border-slate-900";
+            btn.querySelector('span:last-child').className = "font-mono text-xs text-brand-400";
+          };
+          variantsList.appendChild(btn);
+        });
+      } else {
+        variantsWrapper.classList.add('hidden');
+        variantLabel.classList.add('hidden');
+        priceDisplay.textContent = canBuy ? product.price : 'Consultar';
+      }
+
+      // Tags
       const tagsContainer = document.getElementById('modalTagsContainer');
       tagsContainer.innerHTML = '';
       getProductTags(product).forEach(t => {
@@ -686,18 +612,6 @@
         badge.textContent = t;
         tagsContainer.appendChild(badge);
       });
-
-      const specsContainer = document.getElementById('modalSpecs');
-      specsContainer.innerHTML = `
-        <div class="p-2 bg-slate-50 rounded-lg">
-          <span class="text-[9px] uppercase font-bold text-slate-400 block">Medidas</span>
-          <span class="text-xs font-bold text-slate-700">${getFormattedDimensions(product.dimensions)}</span>
-        </div>
-        <div class="p-2 bg-slate-50 rounded-lg">
-          <span class="text-[9px] uppercase font-bold text-slate-400 block">Material</span>
-          <span class="text-xs font-bold text-slate-700">${product.material || 'PLA'}</span>
-        </div>
-      `;
 
       updateModalGallery();
       document.getElementById('detailModal').classList.remove('opacity-0', 'pointer-events-none');
@@ -725,6 +639,7 @@
     function closeDetailModal() {
       document.getElementById('detailModal').classList.add('opacity-0', 'pointer-events-none');
       activeProductInModal = null;
+      currentSelectedVariant = null;
     }
 
     function refreshAllViews() {
@@ -735,9 +650,13 @@
 
     function handleInquireAction() {
       if (!activeProductInModal) return;
-      const dims = getFormattedDimensions(activeProductInModal.dimensions);
-      const text = encodeURIComponent(`Hola! Quiero consultar por: "${activeProductInModal.title}" (${activeProductInModal.material}, ${dims})`);
-      window.open(`https://wa.me/5491123539321?text=${text}`, '_blank');
+      let text = '';
+      if (currentSelectedVariant) {
+        text = `Hola! Quiero pedir la pieza "${activeProductInModal.title}" en la opción: ${currentSelectedVariant.name} (${currentSelectedVariant.price}).`;
+      } else {
+        text = `Hola! Quiero consultar por: "${activeProductInModal.title}" (${activeProductInModal.price || 'A pedido'}).`;
+      }
+      window.open(`https://wa.me/5491123539321?text=${encodeURIComponent(text)}`, '_blank');
     }
 
     function copyProductLink() {
@@ -757,8 +676,6 @@
     window.nextSlide = nextSlide;
     window.prevSlide = prevSlide;
     window.toggleFilterPanel = toggleFilterPanel;
-    window.toggleFilterTag = toggleFilterTag;
-    window.clearPriceRange = clearPriceRange;
     window.handleSearch = handleSearch;
     window.clearSearch = clearSearch;
     window.handlePriceOrderChange = handlePriceOrderChange;
