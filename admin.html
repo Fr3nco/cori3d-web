@@ -51,7 +51,7 @@
           <input type="password" id="loginPassword" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="••••••••">
         </div>
 
-        <button type="submit" id="loginBtn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all active:scale-95 flex items-center justify-center gap-2">
+        <button type="submit" id="loginBtn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
           <i class="ph-bold ph-sign-in text-base"></i>
           <span>Iniciar Sesión</span>
         </button>
@@ -72,7 +72,7 @@
         </div>
       </div>
       <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
-        <button onclick="openProductFormModal(null)" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-2 shadow-md transition-all active:scale-95">
+        <button onclick="openProductFormModal(null)" class="px-4 py-2.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold flex items-center gap-2 shadow-md transition-all active:scale-95 cursor-pointer">
           <i class="ph-bold ph-plus-circle text-base"></i>
           <span>Agregar Nueva Pieza</span>
         </button>
@@ -84,7 +84,7 @@
           <i class="ph-bold ph-arrow-square-out"></i>
           <span>Ver Tienda</span>
         </a>
-        <button onclick="handleLogout()" class="px-3.5 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold flex items-center gap-1.5 transition-all">
+        <button onclick="handleLogout()" class="px-3.5 py-2.5 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer">
           <i class="ph-bold ph-sign-out"></i>
           <span>Salir</span>
         </button>
@@ -110,7 +110,7 @@
     <div class="relative w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden z-10 flex flex-col max-h-[94vh]">
       <div class="px-6 py-4 border-b border-slate-200 flex items-center justify-between bg-white">
         <h3 id="formModalTitle" class="text-base font-bold text-slate-900">Editar Pieza</h3>
-        <button onclick="closeProductFormModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center">
+        <button onclick="closeProductFormModal()" class="w-8 h-8 rounded-full bg-slate-100 text-slate-600 flex items-center justify-center cursor-pointer">
           <i class="ph-bold ph-x text-base"></i>
         </button>
       </div>
@@ -192,7 +192,7 @@
               </div>
               <div class="h-6 w-px bg-slate-200"></div>
               <div>
-                <span class="text-[10px] text-slate-400 uppercase font-bold block" id="suggestedPriceLabel">Venta Sugerida (Redondeada)</span>
+                <span class="text-[10px] text-slate-400 uppercase font-bold block" id="suggestedPriceLabel">Venta Sugerida (x5 Redondeado)</span>
                 <span id="displaySuggestedPrice" class="text-sm font-black text-brand-600 font-mono">$0</span>
               </div>
             </div>
@@ -245,7 +245,7 @@
           <label class="block font-bold text-slate-700 uppercase mb-1">Fotos</label>
           <div class="flex gap-2">
             <input type="url" id="newPhotoUrlInput" placeholder="https://..." class="flex-grow px-3 py-1.5 rounded-xl border border-slate-200 bg-white text-xs outline-none">
-            <button type="button" onclick="addPhotoFromUrl()" class="px-3 py-1.5 bg-slate-900 text-white rounded-xl font-bold">+ URL</button>
+            <button type="button" onclick="addPhotoFromUrl()" class="px-3 py-1.5 bg-slate-900 text-white rounded-xl font-bold cursor-pointer">+ URL</button>
             <label class="px-3 py-1.5 bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold cursor-pointer">
               Subir
               <input type="file" id="localPhotoUploadInput" accept="image/*" class="hidden" onchange="handleLocalImageUpload(event)">
@@ -333,7 +333,6 @@
       });
     }
 
-    // CALCULADORA DE COSTO Y PRECIO CON REDONDEO
     function calculateCostAndPrice() {
       const grams = parseFloat(document.getElementById('formWeightGrams').value) || 0;
       const costKg = parseFloat(document.getElementById('formFilamentCostPerKg').value) || 0;
@@ -374,7 +373,6 @@
       }
     }
 
-    // GESTIÓN DE FILAS DE VARIANTES DE PRECIOS
     function addPriceVariantRow(name = '', price = '') {
       const container = document.getElementById('priceVariantsContainer');
       if (!container) return;
@@ -505,7 +503,7 @@
         multiplier,
         calculatedCost,
         updatedAt: Date.now(),
-        images: formPhotos.length > 0 ? formPhotos : ["https://placehold.co/800x600?text=3D"]
+        images: formPhotos
       };
 
       try {
@@ -578,7 +576,7 @@
         document.getElementById('formFilamentCostPerKg').value = 21000;
         document.getElementById('formMultiplier').value = 5;
         selectedFormTags = ["Decoración"];
-        formPhotos = ["https://placehold.co/800x600?text=3D"];
+        formPhotos = []; // Lista de fotos vacía por defecto
         calculateCostAndPrice();
       }
 
@@ -597,7 +595,7 @@
       formPhotos.forEach((imgUrl, i) => {
         const item = document.createElement('div');
         item.className = "relative aspect-square rounded-xl overflow-hidden border border-slate-200";
-        item.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover"><button type="button" onclick="formPhotos.splice(${i}, 1); renderFormPhotos();" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-xs">×</button>`;
+        item.innerHTML = `<img src="${imgUrl}" class="w-full h-full object-cover"><button type="button" onclick="formPhotos.splice(${i}, 1); renderFormPhotos();" class="absolute top-1 right-1 w-4 h-4 rounded-full bg-red-600 text-white flex items-center justify-center text-xs cursor-pointer">×</button>`;
         container.appendChild(item);
       });
     }
