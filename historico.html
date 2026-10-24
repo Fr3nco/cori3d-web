@@ -2,7 +2,7 @@
 <html lang="es" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Cori3D | Histórico & Ganancias</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,22 +26,22 @@
   </script>
 </head>
 
-<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-4 sm:p-8">
+<body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-3 sm:p-8">
 
   <div class="max-w-5xl mx-auto w-full">
     <!-- Barra Superior -->
-    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-5 sm:p-6 rounded-3xl shadow-xl">
       <div class="flex items-center gap-3">
-        <div class="w-12 h-12 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-2xl font-bold">
+        <div class="w-11 h-11 sm:w-12 sm:h-12 rounded-2xl bg-brand-500/20 text-brand-400 flex items-center justify-center text-xl sm:text-2xl font-bold">
           <i class="ph-bold ph-chart-line-up"></i>
         </div>
         <div>
-          <h1 class="text-xl font-black">Cori<span class="text-brand-500">3D</span> — Control Financiero</h1>
-          <p class="text-xs text-slate-400">Seguimiento de pedidos, balance de ganancias y ventas manuales</p>
+          <h1 class="text-lg sm:text-xl font-black leading-tight">Cori<span class="text-brand-500">3D</span> — Control Financiero</h1>
+          <p class="text-[11px] sm:text-xs text-slate-400">Seguimiento de pedidos, balance y ventas manuales</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
-        <a href="/admin" class="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all">
+        <a href="/admin" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-all">
           <i class="ph-bold ph-wrench"></i>
           <span>Volver al Admin</span>
         </a>
@@ -49,11 +49,11 @@
     </div>
 
     <!-- Navegación por Solapas -->
-    <div class="flex items-center gap-2 mt-6">
+    <div class="flex items-center gap-2 mt-4 sm:mt-6">
       <button 
         id="tabBtnHistory" 
         onclick="switchTab('history')" 
-        class="px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2">
+        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer">
         <i class="ph-bold ph-clock-counter-clockwise text-sm"></i>
         <span>Histórico de Pedidos</span>
       </button>
@@ -61,18 +61,18 @@
       <button 
         id="tabBtnProfits" 
         onclick="switchTab('profits')" 
-        class="px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2">
+        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer">
         <i class="ph-bold ph-currency-dollar text-sm text-brand-600"></i>
         <span>Ganancias</span>
       </button>
     </div>
 
-    <!-- ==================== CONTENIDO SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
-    <div id="sectionHistory" class="bg-white rounded-3xl p-6 mt-4 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+    <!-- ==================== SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
+    <div id="sectionHistory" class="bg-white rounded-3xl p-4 sm:p-6 mt-3 sm:mt-4 shadow-sm border border-slate-200">
+      <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
         <div>
-          <h2 class="text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
-          <p class="text-xs text-slate-400">Podés agregar una nota o nombre de cliente en cada pedido</p>
+          <h2 class="text-sm sm:text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
+          <p class="text-[11px] text-slate-400">Detalla quién te encargó cada modelo</p>
         </div>
         <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
       </div>
@@ -82,67 +82,63 @@
       </div>
     </div>
 
-    <!-- ==================== CONTENIDO SOLAPA 2: GANANCIAS ==================== -->
-    <div id="sectionProfits" class="hidden mt-4 space-y-4">
+    <!-- ==================== SOLAPA 2: GANANCIAS ==================== -->
+    <div id="sectionProfits" class="hidden mt-3 sm:mt-4 space-y-4">
       
-      <!-- Tarjetas de Resumen Financiero -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        
-        <!-- Ganancia Neta -->
-        <div class="bg-emerald-600 text-white p-5 rounded-3xl shadow-sm border border-emerald-500">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Ganancia Neta Total</span>
-          <span id="displayNetProfit" class="text-2xl font-black font-mono block mt-1">$0</span>
-          <span class="text-[10px] text-emerald-100 mt-1 block">Total Venta cobrada menos Costo de Filamento</span>
+      <!-- Resumen Financiero -->
+      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <div class="bg-emerald-600 text-white p-4 sm:p-5 rounded-3xl shadow-sm border border-emerald-500">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Ganancia Neta Total</span>
+          <span id="displayNetProfit" class="text-2xl font-black font-mono block mt-0.5">$0</span>
+          <span class="text-[10px] text-emerald-100 mt-0.5 block">Total cobrado menos Costo de filamento</span>
         </div>
 
-        <!-- Total Ventas Cobradas -->
-        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
-          <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-1">$0</span>
-          <span class="text-[10px] text-slate-500 mt-1 block">Suma del precio cobrado en todas las piezas</span>
+        <div class="bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-200">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
+          <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-0.5">$0</span>
+          <span class="text-[10px] text-slate-500 mt-0.5 block">Suma de venta de piezas completadas</span>
         </div>
 
-        <!-- Total Costo de Material -->
-        <div class="bg-white p-5 rounded-3xl shadow-sm border border-slate-200">
-          <span class="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Costo Filamento Invertido</span>
-          <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-1">$0</span>
-          <span class="text-[10px] text-slate-500 mt-1 block">Gasto de material en piezas completadas</span>
+        <div class="bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-200">
+          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Costo Filamento Invertido</span>
+          <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-0.5">$0</span>
+          <span class="text-[10px] text-slate-500 mt-0.5 block">Gasto de material en piezas entregadas</span>
         </div>
       </div>
 
       <!-- FORMULARIO DE VENTA MANUAL -->
-      <div class="bg-amber-50/60 rounded-3xl p-6 border border-amber-200 shadow-sm">
+      <div class="bg-amber-50/70 rounded-3xl p-4 sm:p-6 border border-amber-200 shadow-sm">
         <div class="flex items-center gap-2 mb-3">
           <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold">
             <i class="ph-bold ph-plus-circle text-lg"></i>
           </div>
           <div>
-            <h3 class="text-sm font-black text-amber-950 uppercase tracking-wide">Cargar Venta Manual / Fuera de Catálogo</h3>
-            <p class="text-xs text-amber-800">Para trabajos personalizados, impresiones a medida o precios especiales</p>
+            <h3 class="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">Cargar Venta Manual / Fuera de Catálogo</h3>
+            <p class="text-[11px] text-amber-800">Para trabajos a medida, impresiones de terceros o precios especiales</p>
           </div>
         </div>
 
-        <form id="manualSaleForm" onsubmit="handleManualSaleSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-3 text-xs pt-1">
+        <form id="manualSaleForm" onsubmit="handleManualSaleSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs pt-1">
           <div class="sm:col-span-4">
-            <label class="block font-bold text-slate-700 uppercase mb-1">Nombre o descripción del artículo *</label>
+            <label class="block font-bold text-slate-700 uppercase mb-1">Nombre o descripción *</label>
             <input type="text" id="manualTitle" required placeholder="Ej: Soporte especial para auricular" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
           </div>
 
           <div class="sm:col-span-2">
             <label class="block font-bold text-slate-700 uppercase mb-1">Precio Cobrado ($) *</label>
-            <input type="number" step="any" id="manualPrice" required placeholder="Ej: 4500" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
+            <input type="number" step="any" id="manualPrice" required placeholder="4500" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
           </div>
 
           <div class="sm:col-span-2">
             <label class="block font-bold text-slate-700 uppercase mb-1">Costo Filamento ($)</label>
-            <input type="number" step="any" id="manualCost" placeholder="Ej: 750" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
+            <input type="number" step="any" id="manualCost" placeholder="750" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
           </div>
 
           <div class="sm:col-span-4">
             <label class="block font-bold text-slate-700 uppercase mb-1">Cliente / Nota</label>
             <div class="flex gap-2">
-              <input type="text" id="manualNote" placeholder="Ej: Yamila - pago en mano" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
-              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 flex-shrink-0 transition-all">
+              <input type="text" id="manualNote" placeholder="Ej: Juan Perez" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
+              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 flex-shrink-0 cursor-pointer">
                 <i class="ph-bold ph-check"></i>
                 <span>Cargar</span>
               </button>
@@ -151,12 +147,12 @@
         </form>
       </div>
 
-      <!-- Tabla Detallada de Ganancias por Pieza -->
-      <div class="bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+      <!-- Desglose de Ganancias -->
+      <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
           <div>
-            <h2 class="text-base font-bold text-slate-900">Desglose de Ganancias por Pieza Terminada</h2>
-            <p class="text-xs text-slate-400">Detalle individual de cada trabajo completado</p>
+            <h2 class="text-sm sm:text-base font-bold text-slate-900">Desglose de Ganancias por Pieza</h2>
+            <p class="text-[11px] text-slate-400">Detalle de cada pieza cobrada</p>
           </div>
           <span id="completedCountBadge" class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">0 piezas</span>
         </div>
@@ -241,7 +237,7 @@
 
       historyRecords.forEach(item => {
         const row = document.createElement('div');
-        row.className = "py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3";
+        row.className = "py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5";
 
         const isDone = item.status === "completed";
         const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', {
@@ -253,29 +249,29 @@
         const isManual = item.isManual === true;
 
         row.innerHTML = `
-          <div class="flex items-start gap-3 min-w-0 flex-grow">
-            <div class="w-10 h-10 rounded-xl flex items-center justify-center text-lg font-bold flex-shrink-0 mt-0.5 ${
+          <div class="flex items-start gap-2.5 min-w-0 flex-grow">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold flex-shrink-0 mt-0.5 ${
               isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
             }">
               <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
             </div>
-            <div class="truncate flex-grow">
-              <div class="flex items-center gap-2 flex-wrap">
-                <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
+            <div class="min-w-0 flex-grow">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h4 class="text-xs sm:text-sm font-bold text-slate-900 break-words">${item.title}</h4>
                 <span class="text-xs font-black text-slate-900 font-mono">${item.price}</span>
-                ${isManual ? '<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[10px] font-bold">Venta Manual</span>' : ''}
+                ${isManual ? '<span class="bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Manual</span>' : ''}
               </div>
-              <div class="flex items-center gap-2 text-xs text-slate-500 mt-0.5 flex-wrap">
-                <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[11px]">${item.sku}</span>
+              <div class="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5 flex-wrap">
+                <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[10px] text-slate-600">${item.sku}</span>
                 <span>•</span>
                 <span>${dateStr}</span>
                 ${itemCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${itemCost}</span>` : ''}
                 ${isDone 
-                  ? '<span class="bg-emerald-100 text-emerald-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Terminado & Cobrado</span>' 
-                  : '<span class="bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full text-[10px] font-bold">Pendiente</span>'}
+                  ? '<span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Cobrado</span>' 
+                  : '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Pendiente</span>'}
               </div>
 
-              <!-- Campo de Nota / Cliente -->
+              <!-- Input editable de Cliente / Nota -->
               <div class="mt-2 flex items-center gap-1.5 max-w-md">
                 <i class="ph-bold ph-user text-slate-400 text-xs"></i>
                 <input 
@@ -293,7 +289,7 @@
           <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
             ${
               !isDone 
-                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-2 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 transition-all" title="Marcar como Terminado y Cobrado">
+                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition-all cursor-pointer">
                      <i class="ph-bold ph-check"></i>
                      <span>Listo</span>
                    </button>`
@@ -302,7 +298,7 @@
                      <span>Cobrado</span>
                    </span>`
             }
-            <button onclick="deleteHistoryRecord('${item.id}')" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all" title="Eliminar registro">
+            <button onclick="deleteHistoryRecord('${item.id}')" class="p-1.5 sm:p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all cursor-pointer" title="Eliminar registro">
               <i class="ph-bold ph-trash text-base pointer-events-none"></i>
             </button>
           </div>
@@ -311,6 +307,7 @@
       });
     }
 
+    // RENDER DE GANANCIAS RESPONSIVO (NUNCA CORTA EL NOMBRE DEL CLIENTE EN MÓVIL)
     function renderProfitsDashboard() {
       const container = document.getElementById('profitsListContainer');
       const badgeCompleted = document.getElementById('completedCountBadge');
@@ -325,7 +322,7 @@
       let totalCost = 0;
 
       if (completedItems.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay ventas marcadas como "Listo" todavía. Al completar pedidos en el histórico o cargar una venta manual, aparecerán aquí.</p>';
+        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay ventas cobradas todavía.</p>';
         document.getElementById('displayNetProfit').textContent = "$0";
         document.getElementById('displayGrossRevenue').textContent = "$0";
         document.getElementById('displayTotalCost').textContent = "$0";
@@ -341,40 +338,50 @@
         }
 
         const itemProfit = salePrice - itemCost;
-
         totalGross += salePrice;
         totalCost += itemCost;
 
         const dateDone = item.finishedAt ? new Date(item.finishedAt).toLocaleDateString('es-AR', {
-          day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+          day: '2-digit', month: '2-digit'
         }) : (item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }) : 'Hoy');
 
-        const clientInfo = item.note ? `<span class="text-slate-700 font-semibold">• Cliente: ${item.note}</span>` : '';
+        // Pastilla destacada para el cliente
+        const clientBadge = item.note ? `
+          <div class="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold max-w-full break-words">
+            <i class="ph-bold ph-user text-[11px] text-indigo-600 flex-shrink-0"></i>
+            <span class="break-words">${item.note}</span>
+          </div>
+        ` : '';
+
         const isManual = item.isManual === true;
 
         const row = document.createElement('div');
-        row.className = "py-3 flex items-center justify-between gap-4";
+        row.className = "py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5";
+        
         row.innerHTML = `
-          <div class="truncate">
-            <div class="flex items-center gap-2">
-              <h4 class="text-sm font-bold text-slate-800 truncate">${item.title}</h4>
-              ${isManual ? '<span class="bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full text-[10px] font-bold">Manual</span>' : ''}
+          <div class="min-w-0 flex-1">
+            <div class="flex items-center gap-1.5 flex-wrap">
+              <h4 class="text-xs sm:text-sm font-extrabold text-slate-900 break-words">${item.title}</h4>
+              ${isManual ? '<span class="bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Manual</span>' : ''}
             </div>
-            <div class="flex items-center gap-2 text-xs text-slate-400 mt-0.5 flex-wrap">
-              <span class="font-mono">${item.sku}</span>
+            
+            <div class="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5 flex-wrap">
+              <span class="font-mono text-slate-600">${item.sku}</span>
               <span>•</span>
               <span>Cobrado el ${dateDone}</span>
-              ${clientInfo}
             </div>
+
+            <!-- Muestra el nombre completo en su propia línea -->
+            ${clientBadge}
           </div>
 
-          <div class="flex items-center gap-3 flex-shrink-0">
-            <div class="text-right">
-              <span class="text-sm font-extrabold text-emerald-600 font-mono block">+$${itemProfit}</span>
-              <span class="text-[11px] text-slate-400 font-mono block">Venta: $${salePrice} | Costo: $${itemCost}</span>
+          <div class="flex items-center justify-between sm:justify-end gap-3 flex-shrink-0 pt-1 sm:pt-0 border-t sm:border-t-0 border-slate-50">
+            <div class="text-left sm:text-right">
+              <span class="text-sm sm:text-base font-black text-emerald-600 font-mono block">+$${itemProfit}</span>
+              <span class="text-[10px] text-slate-400 font-mono block">Venta: $${salePrice} | Costo: $${itemCost}</span>
             </div>
-            <button onclick="deleteHistoryRecord('${item.id}')" class="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all" title="Eliminar registro">
-              <i class="ph-bold ph-trash text-base pointer-events-none"></i>
+            <button onclick="deleteHistoryRecord('${item.id}')" class="p-1.5 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all cursor-pointer" title="Eliminar registro">
+              <i class="ph-bold ph-trash text-sm pointer-events-none"></i>
             </button>
           </div>
         `;
@@ -382,13 +389,11 @@
       });
 
       const netProfit = totalGross - totalCost;
-
       document.getElementById('displayNetProfit').textContent = `$${netProfit}`;
       document.getElementById('displayGrossRevenue').textContent = `$${totalGross}`;
       document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
     }
 
-    // Guardar venta manual
     async function handleManualSaleSubmit(e) {
       e.preventDefault();
 
@@ -412,7 +417,7 @@
         calculatedCost: costRaw,
         note: note,
         isManual: true,
-        status: "completed", // Las ventas manuales entran directamente como cobradas
+        status: "completed",
         createdAt: now,
         finishedAt: now
       };
@@ -447,10 +452,12 @@
     }
 
     async function deleteHistoryRecord(recordId) {
-      try {
-        await deleteDoc(doc(db, "sales_history", String(recordId)));
-      } catch (err) {
-        console.error("Error al borrar del histórico:", err);
+      if (confirm("¿Borrar este registro del historial?")) {
+        try {
+          await deleteDoc(doc(db, "sales_history", String(recordId)));
+        } catch (err) {
+          console.error("Error al borrar:", err);
+        }
       }
     }
 
@@ -462,13 +469,13 @@
       const sectionProfits = document.getElementById('sectionProfits');
 
       if (tab === 'history') {
-        tabHistory.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2";
-        tabProfits.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2";
+        tabHistory.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer";
+        tabProfits.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer";
         sectionHistory.classList.remove('hidden');
         sectionProfits.classList.add('hidden');
       } else {
-        tabProfits.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2";
-        tabHistory.className = "px-5 py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2";
+        tabProfits.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer";
+        tabHistory.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer";
         sectionProfits.classList.remove('hidden');
         sectionHistory.classList.add('hidden');
       }
