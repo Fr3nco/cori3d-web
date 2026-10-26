@@ -28,7 +28,7 @@
 
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-3 sm:p-8">
 
-  <div class="max-w-5xl mx-auto w-full">
+  <div class="max-w-7xl mx-auto w-full">
     <!-- Barra Superior -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-5 sm:p-6 rounded-3xl shadow-xl">
       <div class="flex items-center gap-3">
@@ -37,7 +37,7 @@
         </div>
         <div>
           <h1 class="text-lg sm:text-xl font-black leading-tight">Cori<span class="text-brand-500">3D</span> — Control Financiero</h1>
-          <p class="text-[11px] sm:text-xs text-slate-400">Seguimiento de pedidos, balance y ventas manuales</p>
+          <p class="text-[11px] sm:text-xs text-slate-400">Seguimiento de pedidos, balance y notas rápidas</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -67,102 +67,143 @@
       </button>
     </div>
 
-    <!-- ==================== SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
-    <div id="sectionHistory" class="bg-white rounded-3xl p-4 sm:p-6 mt-3 sm:mt-4 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
-        <div>
-          <h2 class="text-sm sm:text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
-          <p class="text-[11px] text-slate-400">Detalla quién te encargó cada modelo</p>
-        </div>
-        <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
-      </div>
-
-      <div id="historyListContainer" class="divide-y divide-slate-100 mt-2">
-        <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
-      </div>
-    </div>
-
-    <!-- ==================== SOLAPA 2: GANANCIAS ==================== -->
-    <div id="sectionProfits" class="hidden mt-3 sm:mt-4 space-y-4">
+    <!-- Layout en 2 Columnas: Gestión (Izquierda) + Bloc de Notas (Derecha) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-3 sm:mt-4">
       
-      <!-- Resumen Financiero -->
-      <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
-        <div class="bg-emerald-600 text-white p-4 sm:p-5 rounded-3xl shadow-sm border border-emerald-500">
-          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Ganancia Neta Total</span>
-          <span id="displayNetProfit" class="text-2xl font-black font-mono block mt-0.5">$0</span>
-          <span class="text-[10px] text-emerald-100 mt-0.5 block">Total cobrado menos Costo de filamento</span>
-        </div>
+      <!-- Columna Principal -->
+      <div class="lg:col-span-8 space-y-4">
 
-        <div class="bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-200">
-          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
-          <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-0.5">$0</span>
-          <span class="text-[10px] text-slate-500 mt-0.5 block">Suma de venta de piezas completadas</span>
-        </div>
-
-        <div class="bg-white p-4 sm:p-5 rounded-3xl shadow-sm border border-slate-200">
-          <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Costo Filamento Invertido</span>
-          <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-0.5">$0</span>
-          <span class="text-[10px] text-slate-500 mt-0.5 block">Gasto de material en piezas entregadas</span>
-        </div>
-      </div>
-
-      <!-- FORMULARIO DE VENTA MANUAL -->
-      <div class="bg-amber-50/70 rounded-3xl p-4 sm:p-6 border border-amber-200 shadow-sm">
-        <div class="flex items-center gap-2 mb-3">
-          <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold">
-            <i class="ph-bold ph-plus-circle text-lg"></i>
+        <!-- ==================== SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
+        <div id="sectionHistory" class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
+            <div>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
+              <p class="text-[11px] text-slate-400">Detalla quién te encargó cada modelo</p>
+            </div>
+            <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
           </div>
-          <div>
-            <h3 class="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">Cargar Venta Manual / Fuera de Catálogo</h3>
-            <p class="text-[11px] text-amber-800">Para trabajos a medida, impresiones de terceros o precios especiales</p>
+
+          <div id="historyListContainer" class="divide-y divide-slate-100 mt-2">
+            <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
           </div>
         </div>
 
-        <form id="manualSaleForm" onsubmit="handleManualSaleSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs pt-1">
-          <div class="sm:col-span-4">
-            <label class="block font-bold text-slate-700 uppercase mb-1">Nombre o descripción *</label>
-            <input type="text" id="manualTitle" required placeholder="Ej: Soporte especial para auricular" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
-          </div>
+        <!-- ==================== SOLAPA 2: GANANCIAS ==================== -->
+        <div id="sectionProfits" class="hidden space-y-4">
+          
+          <!-- Resumen Financiero -->
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div class="bg-emerald-600 text-white p-4 rounded-3xl shadow-sm border border-emerald-500">
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Ganancia Neta Total</span>
+              <span id="displayNetProfit" class="text-2xl font-black font-mono block mt-0.5">$0</span>
+              <span class="text-[10px] text-emerald-100 mt-0.5 block">Total cobrado menos Costo de filamento</span>
+            </div>
 
-          <div class="sm:col-span-2">
-            <label class="block font-bold text-slate-700 uppercase mb-1">Precio Cobrado ($) *</label>
-            <input type="number" step="any" id="manualPrice" required placeholder="4500" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
-          </div>
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200">
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
+              <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-0.5">$0</span>
+              <span class="text-[10px] text-slate-500 mt-0.5 block">Suma de venta de piezas completadas</span>
+            </div>
 
-          <div class="sm:col-span-2">
-            <label class="block font-bold text-slate-700 uppercase mb-1">Costo Filamento ($)</label>
-            <input type="number" step="any" id="manualCost" placeholder="750" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
-          </div>
-
-          <div class="sm:col-span-4">
-            <label class="block font-bold text-slate-700 uppercase mb-1">Cliente / Nota</label>
-            <div class="flex gap-2">
-              <input type="text" id="manualNote" placeholder="Ej: Juan Perez" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
-              <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 flex-shrink-0 cursor-pointer">
-                <i class="ph-bold ph-check"></i>
-                <span>Cargar</span>
-              </button>
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200">
+              <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Costo Filamento Invertido</span>
+              <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-0.5">$0</span>
+              <span class="text-[10px] text-slate-500 mt-0.5 block">Gasto de material en piezas entregadas</span>
             </div>
           </div>
-        </form>
-      </div>
 
-      <!-- Desglose de Ganancias -->
-      <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
-        <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
-          <div>
-            <h2 class="text-sm sm:text-base font-bold text-slate-900">Desglose de Ganancias por Pieza</h2>
-            <p class="text-[11px] text-slate-400">Detalle de cada pieza cobrada</p>
+          <!-- FORMULARIO DE VENTA MANUAL -->
+          <div class="bg-amber-50/70 rounded-3xl p-4 sm:p-5 border border-amber-200 shadow-sm">
+            <div class="flex items-center gap-2 mb-3">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-800 flex items-center justify-center font-bold">
+                <i class="ph-bold ph-plus-circle text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">Cargar Venta Manual / Fuera de Catálogo</h3>
+                <p class="text-[11px] text-amber-800">Para trabajos a medida, impresiones de terceros o precios especiales</p>
+              </div>
+            </div>
+
+            <form id="manualSaleForm" onsubmit="handleManualSaleSubmit(event)" class="grid grid-cols-1 sm:grid-cols-12 gap-2.5 text-xs pt-1">
+              <div class="sm:col-span-4">
+                <label class="block font-bold text-slate-700 uppercase mb-1">Nombre o descripción *</label>
+                <input type="text" id="manualTitle" required placeholder="Ej: Soporte especial para auricular" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-slate-700 uppercase mb-1">Precio Cobrado ($) *</label>
+                <input type="number" step="any" id="manualPrice" required placeholder="4500" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
+              </div>
+
+              <div class="sm:col-span-2">
+                <label class="block font-bold text-slate-700 uppercase mb-1">Costo Filamento ($)</label>
+                <input type="number" step="any" id="manualCost" placeholder="750" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs font-mono focus:ring-2 focus:ring-slate-900">
+              </div>
+
+              <div class="sm:col-span-4">
+                <label class="block font-bold text-slate-700 uppercase mb-1">Cliente / Nota</label>
+                <div class="flex gap-2">
+                  <input type="text" id="manualNote" placeholder="Ej: Juan Perez" class="w-full px-3 py-2 rounded-xl bg-white border border-amber-200 outline-none text-xs focus:ring-2 focus:ring-slate-900">
+                  <button type="submit" class="px-4 py-2 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-extrabold text-xs flex items-center gap-1.5 shadow-sm active:scale-95 flex-shrink-0 cursor-pointer">
+                    <i class="ph-bold ph-check"></i>
+                    <span>Cargar</span>
+                  </button>
+                </div>
+              </div>
+            </form>
           </div>
-          <span id="completedCountBadge" class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">0 piezas</span>
+
+          <!-- Desglose de Ganancias -->
+          <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
+              <div>
+                <h2 class="text-sm sm:text-base font-bold text-slate-900">Desglose de Ganancias por Pieza</h2>
+                <p class="text-[11px] text-slate-400">Detalle de cada pieza cobrada</p>
+              </div>
+              <span id="completedCountBadge" class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">0 piezas</span>
+            </div>
+
+            <div id="profitsListContainer" class="divide-y divide-slate-100 mt-2">
+              <p class="text-xs text-slate-400 py-8 text-center">Calculando balances...</p>
+            </div>
+          </div>
         </div>
 
-        <div id="profitsListContainer" class="divide-y divide-slate-100 mt-2">
-          <p class="text-xs text-slate-400 py-8 text-center">Calculando balances...</p>
+      </div>
+
+      <!-- Columna Lateral: Bloc de Notas Compartido -->
+      <div class="lg:col-span-4">
+        <div class="sticky top-6 bg-amber-50/80 rounded-3xl p-5 border border-amber-200/90 shadow-sm flex flex-col h-[560px]">
+          <div class="flex items-center justify-between pb-3 border-b border-amber-200/60">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-900 flex items-center justify-center font-bold">
+                <i class="ph-bold ph-notepad text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-xs font-black text-amber-950 uppercase tracking-wide">Bloc de Notas</h3>
+                <span id="noteSaveStatus" class="text-[10px] text-amber-700 font-medium">Sincronizado en la nube</span>
+              </div>
+            </div>
+            <button onclick="saveNoteImmediately()" class="p-1.5 rounded-xl bg-amber-200/60 hover:bg-amber-200 text-amber-900 text-xs font-bold active:scale-95 transition-all cursor-pointer" title="Guardar ahora">
+              <i class="ph-bold ph-floppy-disk text-base"></i>
+            </button>
+          </div>
+
+          <textarea 
+            id="adminScratchpad" 
+            oninput="handleNoteInput()"
+            placeholder="Anotá acá lo que necesites recordar: pedidos pendientes de cotizar, colores de filamento que faltan comprar, medidas a chequear, etc..."
+            class="flex-grow w-full bg-transparent text-xs text-slate-800 placeholder-amber-900/40 p-2 mt-2 outline-none resize-none leading-relaxed font-sans"
+          ></textarea>
+
+          <div class="pt-2 border-t border-amber-200/60 flex items-center justify-between text-[10px] text-amber-900/60">
+            <span id="noteCharCount">0 caracteres</span>
+            <span id="noteLastUpdated">Listo</span>
+          </div>
         </div>
       </div>
-    </div>
 
+    </div>
   </div>
 
   <!-- Firebase Modular SDK -->
@@ -191,9 +232,69 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const historyCol = collection(db, "sales_history");
+    const scratchpadDocRef = doc(db, "app_settings", "scratchpad");
 
     let historyRecords = [];
     let currentTab = "history";
+    let noteDebounceTimer = null;
+
+    // SINCRONIZACIÓN DEL BLOC DE NOTAS
+    function initScratchpadListener() {
+      const textarea = document.getElementById('adminScratchpad');
+      const charCount = document.getElementById('noteCharCount');
+      const lastUpdated = document.getElementById('noteLastUpdated');
+
+      onSnapshot(scratchpadDocRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          if (document.activeElement !== textarea) {
+            textarea.value = data.content || '';
+            if (charCount) charCount.textContent = `${(data.content || '').length} caracteres`;
+            if (lastUpdated && data.updatedAt) {
+              const d = new Date(data.updatedAt);
+              lastUpdated.textContent = `Guardado: ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+            }
+          }
+        }
+      });
+    }
+
+    function handleNoteInput() {
+      const textarea = document.getElementById('adminScratchpad');
+      const charCount = document.getElementById('noteCharCount');
+      const status = document.getElementById('noteSaveStatus');
+
+      if (charCount) charCount.textContent = `${textarea.value.length} caracteres`;
+      if (status) status.textContent = "Guardando cambios...";
+
+      clearTimeout(noteDebounceTimer);
+      noteDebounceTimer = setTimeout(() => {
+        saveNoteImmediately();
+      }, 800);
+    }
+
+    async function saveNoteImmediately() {
+      const textarea = document.getElementById('adminScratchpad');
+      const status = document.getElementById('noteSaveStatus');
+      const lastUpdated = document.getElementById('noteLastUpdated');
+      const now = Date.now();
+
+      try {
+        await setDoc(scratchpadDocRef, {
+          content: textarea.value,
+          updatedAt: now
+        }, { merge: true });
+
+        if (status) status.textContent = "Sincronizado en la nube";
+        if (lastUpdated) {
+          const d = new Date(now);
+          lastUpdated.textContent = `Guardado: ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+        }
+      } catch (err) {
+        console.error("Error al guardar nota:", err);
+        if (status) status.textContent = "Error al sincronizar";
+      }
+    }
 
     function parseCurrency(str) {
       if (!str) return 0;
@@ -307,7 +408,6 @@
       });
     }
 
-    // RENDER DE GANANCIAS RESPONSIVO (NUNCA CORTA EL NOMBRE DEL CLIENTE EN MÓVIL)
     function renderProfitsDashboard() {
       const container = document.getElementById('profitsListContainer');
       const badgeCompleted = document.getElementById('completedCountBadge');
@@ -345,7 +445,6 @@
           day: '2-digit', month: '2-digit'
         }) : (item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }) : 'Hoy');
 
-        // Pastilla destacada para el cliente
         const clientBadge = item.note ? `
           <div class="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold max-w-full break-words">
             <i class="ph-bold ph-user text-[11px] text-indigo-600 flex-shrink-0"></i>
@@ -371,7 +470,6 @@
               <span>Cobrado el ${dateDone}</span>
             </div>
 
-            <!-- Muestra el nombre completo en su propia línea -->
             ${clientBadge}
           </div>
 
@@ -486,6 +584,10 @@
     window.markAsCompleted = markAsCompleted;
     window.deleteHistoryRecord = deleteHistoryRecord;
     window.switchTab = switchTab;
+    window.handleNoteInput = handleNoteInput;
+    window.saveNoteImmediately = saveNoteImmediately;
+
+    initScratchpadListener();
   </script>
 </body>
 </html>
