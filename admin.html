@@ -60,7 +60,8 @@
   </div>
 
   <!-- PANEL PRINCIPAL -->
-  <div id="adminPanelSection" class="hidden max-w-5xl mx-auto w-full">
+  <div id="adminPanelSection" class="hidden max-w-7xl mx-auto w-full">
+    <!-- Barra Superior -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-6 rounded-3xl shadow-xl">
       <div class="flex items-center gap-3">
         <div class="w-12 h-12 rounded-2xl bg-amber-500/20 text-amber-400 flex items-center justify-center text-2xl">
@@ -91,15 +92,52 @@
       </div>
     </div>
 
-    <!-- Lista de Piezas -->
-    <div class="bg-white rounded-3xl p-6 mt-6 shadow-sm border border-slate-200">
-      <div class="flex items-center justify-between pb-4 border-b border-slate-100">
-        <h2 class="text-base font-bold text-slate-900">Piezas Activas en la Nube</h2>
-        <span id="adminCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 piezas</span>
+    <!-- Layout en 2 Columnas: Catálogo (Izquierda) + Bloc de Notas (Derecha) -->
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+      
+      <!-- Columna Principal: Piezas Activas -->
+      <div class="lg:col-span-8 bg-white rounded-3xl p-6 shadow-sm border border-slate-200">
+        <div class="flex items-center justify-between pb-4 border-b border-slate-100">
+          <h2 class="text-base font-bold text-slate-900">Piezas Activas en la Nube</h2>
+          <span id="adminCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 piezas</span>
+        </div>
+        <div id="adminProductTable" class="divide-y divide-slate-100 mt-2">
+          <p class="text-xs text-slate-400 py-8 text-center">Cargando catálogo...</p>
+        </div>
       </div>
-      <div id="adminProductTable" class="divide-y divide-slate-100 mt-2">
-        <p class="text-xs text-slate-400 py-8 text-center">Cargando catálogo...</p>
+
+      <!-- Columna Lateral: Bloc de Notas -->
+      <div class="lg:col-span-4">
+        <div class="sticky top-6 bg-amber-50/80 rounded-3xl p-5 border border-amber-200/90 shadow-sm flex flex-col h-[560px]">
+          <div class="flex items-center justify-between pb-3 border-b border-amber-200/60">
+            <div class="flex items-center gap-2">
+              <div class="w-8 h-8 rounded-xl bg-amber-500/20 text-amber-900 flex items-center justify-center font-bold">
+                <i class="ph-bold ph-notepad text-lg"></i>
+              </div>
+              <div>
+                <h3 class="text-xs font-black text-amber-950 uppercase tracking-wide">Bloc de Notas</h3>
+                <span id="noteSaveStatus" class="text-[10px] text-amber-700 font-medium">Sincronizado en la nube</span>
+              </div>
+            </div>
+            <button onclick="saveNoteImmediately()" class="p-1.5 rounded-xl bg-amber-200/60 hover:bg-amber-200 text-amber-900 text-xs font-bold active:scale-95 transition-all" title="Guardar ahora">
+              <i class="ph-bold ph-floppy-disk text-base"></i>
+            </button>
+          </div>
+
+          <textarea 
+            id="adminScratchpad" 
+            oninput="handleNoteInput()"
+            placeholder="Anotá acá lo que necesites recordar: pedidos pendientes de cotizar, colores de filamento que faltan comprar, medidas a chequear, etc..."
+            class="flex-grow w-full bg-transparent text-xs text-slate-800 placeholder-amber-900/40 p-2 mt-2 outline-none resize-none leading-relaxed font-sans"
+          ></textarea>
+
+          <div class="pt-2 border-t border-amber-200/60 flex items-center justify-between text-[10px] text-amber-900/60">
+            <span id="noteCharCount">0 caracteres</span>
+            <span id="noteLastUpdated">Listo</span>
+          </div>
+        </div>
       </div>
+
     </div>
   </div>
 
@@ -157,7 +195,7 @@
           </div>
         </div>
 
-        <!-- CALCULADORA DE COSTOS, MULTIPLICADOR Y REDONDEO -->
+        <!-- CALCULADORA DE COSTOS -->
         <div class="p-4 bg-amber-50/70 rounded-2xl border border-amber-200/80">
           <div class="flex items-center justify-between mb-2">
             <div class="flex items-center gap-2">
@@ -204,7 +242,7 @@
           </div>
         </div>
 
-        <!-- MÚLTIPLES PRECIOS Y VARIANTES -->
+        <!-- VARIANTES -->
         <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 space-y-3">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-1.5">
@@ -216,7 +254,6 @@
               <span>+ Agregar Variante</span>
             </button>
           </div>
-          <p class="text-[11px] text-slate-500">Agrega tamaños o versiones (ej: *Chico 10cm*, *Grande 20cm*). Los clientes podrán seleccionarlas de forma prolija en el catálogo.</p>
           <div id="priceVariantsContainer" class="space-y-2"></div>
         </div>
 
@@ -291,6 +328,7 @@
     const db = getFirestore(app);
     const auth = getAuth(app);
     const productsCol = collection(db, "products");
+    const scratchpadDocRef = doc(db, "app_settings", "scratchpad");
 
     const ALL_AVAILABLE_TAGS = [
       "Antiestrés", "Maquillaje", "ASMR", "Personal", "Juegos de Mesa", "Artístico",
@@ -306,7 +344,68 @@
     let formPhotos = [];
     let selectedFormTags = [];
     let unsubscribeSnapshot = null;
+    let unsubscribeScratchpad = null;
     let latestSuggestedPriceNumber = 0;
+    let noteDebounceTimer = null;
+
+    // SINCRONIZACIÓN DEL BLOC DE NOTAS
+    function initScratchpadListener() {
+      const textarea = document.getElementById('adminScratchpad');
+      const charCount = document.getElementById('noteCharCount');
+      const lastUpdated = document.getElementById('noteLastUpdated');
+
+      unsubscribeScratchpad = onSnapshot(scratchpadDocRef, (snap) => {
+        if (snap.exists()) {
+          const data = snap.data();
+          // Solo actualizamos si el usuario no tiene el foco actualmente en el textarea
+          if (document.activeElement !== textarea) {
+            textarea.value = data.content || '';
+            if (charCount) charCount.textContent = `${(data.content || '').length} caracteres`;
+            if (lastUpdated && data.updatedAt) {
+              const d = new Date(data.updatedAt);
+              lastUpdated.textContent = `Guardado: ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+            }
+          }
+        }
+      });
+    }
+
+    function handleNoteInput() {
+      const textarea = document.getElementById('adminScratchpad');
+      const charCount = document.getElementById('noteCharCount');
+      const status = document.getElementById('noteSaveStatus');
+
+      if (charCount) charCount.textContent = `${textarea.value.length} caracteres`;
+      if (status) status.textContent = "Guardando cambios...";
+
+      clearTimeout(noteDebounceTimer);
+      noteDebounceTimer = setTimeout(() => {
+        saveNoteImmediately();
+      }, 800);
+    }
+
+    async function saveNoteImmediately() {
+      const textarea = document.getElementById('adminScratchpad');
+      const status = document.getElementById('noteSaveStatus');
+      const lastUpdated = document.getElementById('noteLastUpdated');
+      const now = Date.now();
+
+      try {
+        await setDoc(scratchpadDocRef, {
+          content: textarea.value,
+          updatedAt: now
+        }, { merge: true });
+
+        if (status) status.textContent = "Sincronizado en la nube";
+        if (lastUpdated) {
+          const d = new Date(now);
+          lastUpdated.textContent = `Guardado: ${d.getHours().toString().padStart(2,'0')}:${d.getMinutes().toString().padStart(2,'0')}`;
+        }
+      } catch (err) {
+        console.error("Error al guardar nota:", err);
+        if (status) status.textContent = "Error al sincronizar";
+      }
+    }
 
     function renderTagsSelector() {
       const container = document.getElementById('tagsSelectionGrid');
@@ -415,9 +514,11 @@
             renderAdminProductTable();
             document.getElementById('adminCountBadge').textContent = `${products.length} piezas`;
           });
+          initScratchpadListener();
         }
       } else {
         if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+        if (unsubscribeScratchpad) { unsubscribeScratchpad(); unsubscribeScratchpad = null; }
         admin.classList.add('hidden');
         login.classList.remove('hidden');
       }
@@ -576,7 +677,7 @@
         document.getElementById('formFilamentCostPerKg').value = 21000;
         document.getElementById('formMultiplier').value = 5;
         selectedFormTags = ["Decoración"];
-        formPhotos = []; // Lista vacía
+        formPhotos = [];
         calculateCostAndPrice();
       }
 
@@ -654,6 +755,8 @@
     window.calculateCostAndPrice = calculateCostAndPrice;
     window.applySuggestedPrice = applySuggestedPrice;
     window.addPriceVariantRow = addPriceVariantRow;
+    window.handleNoteInput = handleNoteInput;
+    window.saveNoteImmediately = saveNoteImmediately;
   </script>
 </body>
 </html>
