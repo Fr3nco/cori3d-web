@@ -24,6 +24,17 @@
       }
     }
   </script>
+
+  <style>
+    .order-item-dragging {
+      opacity: 0.4;
+      transform: scale(0.98);
+    }
+    .order-item-drag-over {
+      border-color: #10b981 !important;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.3);
+    }
+  </style>
 </head>
 
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-3 sm:p-8">
@@ -78,12 +89,12 @@
           <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
             <div>
               <h2 class="text-sm sm:text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
-              <p class="text-[11px] text-slate-400">Detalla quién te encargó cada modelo</p>
+              <p class="text-[11px] text-slate-400">Arrastrá cada tarjeta desde los puntos para ordenarlas a tu gusto</p>
             </div>
             <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
           </div>
 
-          <div id="historyListContainer" class="divide-y divide-slate-100 mt-2">
+          <div id="historyListContainer" class="space-y-2 mt-3">
             <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
           </div>
         </div>
@@ -216,6 +227,7 @@
       doc, 
       updateDoc, 
       deleteDoc,
+      writeBatch,
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
@@ -237,6 +249,7 @@
     let historyRecords = [];
     let currentTab = "history";
     let noteDebounceTimer = null;
+    let draggedElement = null;
 
     // SINCRONIZACIÓN DEL BLOC DE NOTAS
     function initScratchpadListener() {
@@ -313,9 +326,17 @@
       return Math.round(parseFloat(clean)) || 0;
     }
 
+    // LISTENER EN TIEMPO REAL
     onSnapshot(historyCol, (snapshot) => {
       historyRecords = snapshot.docs.map(d => d.data());
-      historyRecords.sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+
+      // Ordenar respetando orderIndex manual primero; si no existe, por fecha descendente
+      historyRecords.sort((a, b) => {
+        const orderA = a.orderIndex !== undefined ? a.orderIndex : 999999;
+        const orderB = b.orderIndex !== undefined ? b.orderIndex : 999999;
+        if (orderA !== orderB) return orderA - orderB;
+        return (b.createdAt || 0) - (a.createdAt || 0);
+      });
 
       renderHistoryList();
       renderProfitsDashboard();
@@ -326,6 +347,7 @@
       console.error("Error al escuchar histórico:", err);
     });
 
+    // RENDER DEL HISTÓRICO CON SOPORTE DRAG & DROP
     function renderHistoryList() {
       const container = document.getElementById('historyListContainer');
       if (!container) return;
@@ -336,9 +358,12 @@
         return;
       }
 
-      historyRecords.forEach(item => {
-        const row = document.createElement('div');
-        row.className = "py-3.5 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5";
+      historyRecords.forEach((item, index) => {
+        const card = document.createElement('div');
+        card.className = "order-card p-3 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition-all";
+        card.setAttribute('draggable', 'true');
+        card.setAttribute('data-id', item.id);
+        card.setAttribute('data-index', index);
 
         const isDone = item.status === "completed";
         const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', {
@@ -349,13 +374,19 @@
         const currentNote = item.note || '';
         const isManual = item.isManual === true;
 
-        row.innerHTML = `
+        card.innerHTML = `
           <div class="flex items-start gap-2.5 min-w-0 flex-grow">
+            <!-- Agarrador para mover -->
+            <button type="button" class="drag-handle touch-none p-1 -ml-1 text-slate-300 hover:text-slate-600 cursor-grab active:cursor-grabbing flex items-center justify-center self-center" title="Arrastrar para ordenar">
+              <i class="ph-bold ph-dots-six-vertical text-xl pointer-events-none"></i>
+            </button>
+
             <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold flex-shrink-0 mt-0.5 ${
               isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
             }">
               <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
             </div>
+            
             <div class="min-w-0 flex-grow">
               <div class="flex items-center gap-1.5 flex-wrap">
                 <h4 class="text-xs sm:text-sm font-bold text-slate-900 break-words">${item.title}</h4>
@@ -372,7 +403,6 @@
                   : '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Pendiente</span>'}
               </div>
 
-              <!-- Input editable de Cliente / Nota -->
               <div class="mt-2 flex items-center gap-1.5 max-w-md">
                 <i class="ph-bold ph-user text-slate-400 text-xs"></i>
                 <input 
@@ -404,8 +434,116 @@
             </button>
           </div>
         `;
-        container.appendChild(row);
+
+        setupDragEvents(card);
+        container.appendChild(card);
       });
+    }
+
+    // CONFIGURACIÓN DE EVENTOS DRAG & DROP Y TOUCH
+    function setupDragEvents(card) {
+      // Eventos Desktop (Mouse)
+      card.addEventListener('dragstart', (e) => {
+        draggedElement = card;
+        card.classList.add('order-item-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('order-item-dragging');
+        document.querySelectorAll('.order-card').forEach(c => c.classList.remove('order-item-drag-over'));
+        saveReorderedPositions();
+      });
+
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        card.classList.add('order-item-drag-over');
+      });
+
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('order-item-drag-over');
+      });
+
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('order-item-drag-over');
+        if (draggedElement && draggedElement !== card) {
+          const container = document.getElementById('historyListContainer');
+          const cards = Array.from(container.children);
+          const draggedIdx = cards.indexOf(draggedElement);
+          const targetIdx = cards.indexOf(card);
+
+          if (draggedIdx < targetIdx) {
+            container.insertBefore(draggedElement, card.nextSibling);
+          } else {
+            container.insertBefore(draggedElement, card);
+          }
+        }
+      });
+
+      // Eventos Móviles (Touch en la manija)
+      const handle = card.querySelector('.drag-handle');
+      if (!handle) return;
+
+      let touchStartY = 0;
+      let activeCard = null;
+
+      handle.addEventListener('touchstart', (e) => {
+        touchStartY = e.touches[0].clientY;
+        activeCard = card;
+        card.classList.add('order-item-dragging');
+      }, { passive: true });
+
+      handle.addEventListener('touchmove', (e) => {
+        if (!activeCard) return;
+        const currentY = e.touches[0].clientY;
+        const targetElement = document.elementFromPoint(e.touches[0].clientX, currentY);
+        const targetCard = targetElement ? targetElement.closest('.order-card') : null;
+
+        if (targetCard && targetCard !== activeCard) {
+          const container = document.getElementById('historyListContainer');
+          const cards = Array.from(container.children);
+          const activeIdx = cards.indexOf(activeCard);
+          const targetIdx = cards.indexOf(targetCard);
+
+          if (activeIdx < targetIdx) {
+            container.insertBefore(activeCard, targetCard.nextSibling);
+          } else {
+            container.insertBefore(activeCard, targetCard);
+          }
+        }
+      }, { passive: true });
+
+      handle.addEventListener('touchend', () => {
+        if (activeCard) {
+          activeCard.classList.remove('order-item-dragging');
+          activeCard = null;
+          saveReorderedPositions();
+        }
+      });
+    }
+
+    // PERSISTIR EL NUEVO ORDEN EN FIRESTORE
+    async function saveReorderedPositions() {
+      const container = document.getElementById('historyListContainer');
+      const cards = Array.from(container.querySelectorAll('.order-card'));
+      if (cards.length === 0) return;
+
+      const batch = writeBatch(db);
+      cards.forEach((card, newIndex) => {
+        const docId = card.getAttribute('data-id');
+        if (docId) {
+          const docRef = doc(db, "sales_history", docId);
+          batch.update(docRef, { orderIndex: newIndex });
+        }
+      });
+
+      try {
+        await batch.commit();
+      } catch (err) {
+        console.error("Error al persistir orden de pedidos:", err);
+      }
     }
 
     function renderProfitsDashboard() {
@@ -516,6 +654,7 @@
         note: note,
         isManual: true,
         status: "completed",
+        orderIndex: 0,
         createdAt: now,
         finishedAt: now
       };
