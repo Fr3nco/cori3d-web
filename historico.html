@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Cori3D | Histórico & Ganancias</title>
+  <title>Cori3D | Pedidos, Historial & Ganancias</title>
   
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -27,7 +27,7 @@
 
   <style>
     .order-item-dragging {
-      opacity: 0.4;
+      opacity: 0.35;
       transform: scale(0.98);
     }
     .order-item-drag-over {
@@ -47,8 +47,8 @@
           <i class="ph-bold ph-chart-line-up"></i>
         </div>
         <div>
-          <h1 class="text-lg sm:text-xl font-black leading-tight">Cori<span class="text-brand-500">3D</span> — Control Financiero</h1>
-          <p class="text-[11px] sm:text-xs text-slate-400">Seguimiento de pedidos, balance y notas rápidas</p>
+          <h1 class="text-lg sm:text-xl font-black leading-tight">Cori<span class="text-brand-500">3D</span> — Control de Pedidos & Finanzas</h1>
+          <p class="text-[11px] sm:text-xs text-slate-400">Seguimiento de impresión, historial archivado y notas</p>
         </div>
       </div>
       <div class="flex items-center gap-3">
@@ -59,21 +59,34 @@
       </div>
     </div>
 
-    <!-- Navegación por Solapas -->
-    <div class="flex items-center gap-2 mt-4 sm:mt-6">
+    <!-- Navegación por 3 Solapas -->
+    <div class="flex items-center gap-2 mt-4 sm:mt-6 overflow-x-auto pb-1">
+      <!-- 1. Pedidos Activos -->
+      <button 
+        id="tabBtnPending" 
+        onclick="switchTab('pending')" 
+        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer flex-shrink-0">
+        <i class="ph-bold ph-hourglass text-sm text-amber-400"></i>
+        <span>Pedidos</span>
+        <span id="pendingBadgeCount" class="bg-amber-400 text-slate-950 px-1.5 py-0.2 rounded-full text-[10px] font-black">0</span>
+      </button>
+
+      <!-- 2. Historial de Pedidos Cobrados -->
       <button 
         id="tabBtnHistory" 
         onclick="switchTab('history')" 
-        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer">
-        <i class="ph-bold ph-clock-counter-clockwise text-sm"></i>
-        <span>Histórico de Pedidos</span>
+        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer flex-shrink-0">
+        <i class="ph-bold ph-clock-counter-clockwise text-sm text-brand-600"></i>
+        <span>Historial Pedidos</span>
+        <span id="historyBadgeCount" class="bg-slate-100 text-slate-700 px-1.5 py-0.2 rounded-full text-[10px] font-bold">0</span>
       </button>
 
+      <!-- 3. Ganancias -->
       <button 
         id="tabBtnProfits" 
         onclick="switchTab('profits')" 
-        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer">
-        <i class="ph-bold ph-currency-dollar text-sm text-brand-600"></i>
+        class="px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer flex-shrink-0">
+        <i class="ph-bold ph-currency-dollar text-sm text-emerald-600"></i>
         <span>Ganancias</span>
       </button>
     </div>
@@ -84,22 +97,37 @@
       <!-- Columna Principal -->
       <div class="lg:col-span-8 space-y-4">
 
-        <!-- ==================== SOLAPA 1: HISTÓRICO DE PEDIDOS ==================== -->
-        <div id="sectionHistory" class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
+        <!-- ==================== SOLAPA 1: PEDIDOS PENDIENTES ==================== -->
+        <div id="sectionPending" class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
           <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
             <div>
-              <h2 class="text-sm sm:text-base font-bold text-slate-900">Registro de Piezas Solicitadas</h2>
-              <p class="text-[11px] text-slate-400">Arrastrá cada tarjeta desde los puntos para ordenarlas a tu gusto</p>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900">Pedidos en Curso</h2>
+              <p class="text-[11px] text-slate-400">Piezas pendientes por imprimir o cobrar. Arrastrá para priorizar.</p>
             </div>
-            <span id="ordersCountBadge" class="text-xs font-semibold bg-slate-100 px-2.5 py-1 rounded-full text-slate-600">0 registros</span>
+            <span id="pendingListBadge" class="text-xs font-semibold bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-full">0 pendientes</span>
           </div>
 
-          <div id="historyListContainer" class="space-y-2 mt-3">
+          <div id="pendingListContainer" class="space-y-2 mt-3">
             <p class="text-xs text-slate-400 py-8 text-center">Cargando pedidos en tiempo real...</p>
           </div>
         </div>
 
-        <!-- ==================== SOLAPA 2: GANANCIAS ==================== -->
+        <!-- ==================== SOLAPA 2: HISTORIAL PEDIDOS (COBRADOS) ==================== -->
+        <div id="sectionHistory" class="hidden bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
+          <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
+            <div>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900">Historial de Pedidos Cobrados</h2>
+              <p class="text-[11px] text-slate-400">Registro histórico de todas las piezas entregadas y cobradas</p>
+            </div>
+            <span id="historyListBadge" class="text-xs font-semibold bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-1 rounded-full">0 cobrados</span>
+          </div>
+
+          <div id="historyListContainer" class="space-y-2 mt-3">
+            <p class="text-xs text-slate-400 py-8 text-center">Cargando historial...</p>
+          </div>
+        </div>
+
+        <!-- ==================== SOLAPA 3: GANANCIAS ==================== -->
         <div id="sectionProfits" class="hidden space-y-4">
           
           <!-- Resumen Financiero -->
@@ -107,19 +135,19 @@
             <div class="bg-emerald-600 text-white p-4 rounded-3xl shadow-sm border border-emerald-500">
               <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-emerald-200 block">Ganancia Neta Total</span>
               <span id="displayNetProfit" class="text-2xl font-black font-mono block mt-0.5">$0</span>
-              <span class="text-[10px] text-emerald-100 mt-0.5 block">Total cobrado menos Costo de filamento</span>
+              <span class="text-[10px] text-emerald-100 mt-0.5 block">Total cobrado menos costo de filamento</span>
             </div>
 
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200">
               <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Ingresos Brutos Cobrados</span>
               <span id="displayGrossRevenue" class="text-2xl font-black font-mono text-slate-900 block mt-0.5">$0</span>
-              <span class="text-[10px] text-slate-500 mt-0.5 block">Suma de venta de piezas completadas</span>
+              <span class="text-[10px] text-slate-500 mt-0.5 block">Suma cobrada en piezas terminadas</span>
             </div>
 
             <div class="bg-white p-4 rounded-3xl shadow-sm border border-slate-200">
               <span class="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-400 block">Costo Filamento Invertido</span>
               <span id="displayTotalCost" class="text-2xl font-black font-mono text-amber-700 block mt-0.5">$0</span>
-              <span class="text-[10px] text-slate-500 mt-0.5 block">Gasto de material en piezas entregadas</span>
+              <span class="text-[10px] text-slate-500 mt-0.5 block">Gasto de filamento de piezas cobradas</span>
             </div>
           </div>
 
@@ -131,7 +159,7 @@
               </div>
               <div>
                 <h3 class="text-xs sm:text-sm font-black text-amber-950 uppercase tracking-wide">Cargar Venta Manual / Fuera de Catálogo</h3>
-                <p class="text-[11px] text-amber-800">Para trabajos a medida, impresiones de terceros o precios especiales</p>
+                <p class="text-[11px] text-amber-800">Para trabajos a medida, piezas directas o encargos cobrados en mano</p>
               </div>
             </div>
 
@@ -169,7 +197,7 @@
             <div class="flex items-center justify-between pb-3 sm:pb-4 border-b border-slate-100">
               <div>
                 <h2 class="text-sm sm:text-base font-bold text-slate-900">Desglose de Ganancias por Pieza</h2>
-                <p class="text-[11px] text-slate-400">Detalle de cada pieza cobrada</p>
+                <p class="text-[11px] text-slate-400">Detalle de margen de ganancia de cada pieza cobrada</p>
               </div>
               <span id="completedCountBadge" class="text-xs font-semibold bg-emerald-50 text-emerald-700 px-2.5 py-1 rounded-full border border-emerald-200">0 piezas</span>
             </div>
@@ -223,11 +251,11 @@
     import { 
       getFirestore, 
       collection, 
-      setDoc,
+      setDoc, 
       doc, 
       updateDoc, 
-      deleteDoc,
-      writeBatch,
+      deleteDoc, 
+      writeBatch, 
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
@@ -247,7 +275,7 @@
     const scratchpadDocRef = doc(db, "app_settings", "scratchpad");
 
     let historyRecords = [];
-    let currentTab = "history";
+    let currentTab = "pending";
     let noteDebounceTimer = null;
     let draggedElement = null;
 
@@ -326,46 +354,72 @@
       return Math.round(parseFloat(clean)) || 0;
     }
 
-    // LISTENER EN TIEMPO REAL
+    // LISTENER PRINCIPAL
     onSnapshot(historyCol, (snapshot) => {
       historyRecords = snapshot.docs.map(d => d.data());
 
-      // Ordenar respetando orderIndex manual primero; si no existe, por fecha descendente
-      historyRecords.sort((a, b) => {
+      renderAllViews();
+    }, (err) => {
+      console.error("Error al escuchar ventas e historial:", err);
+    });
+
+    function renderAllViews() {
+      const pendingItems = historyRecords.filter(item => item.status !== "completed");
+      const completedItems = historyRecords.filter(item => item.status === "completed");
+
+      // Ordenar pendientes: por orderIndex manual primero, luego por fecha de creación descendente
+      pendingItems.sort((a, b) => {
         const orderA = a.orderIndex !== undefined ? a.orderIndex : 999999;
         const orderB = b.orderIndex !== undefined ? b.orderIndex : 999999;
         if (orderA !== orderB) return orderA - orderB;
         return (b.createdAt || 0) - (a.createdAt || 0);
       });
 
-      renderHistoryList();
-      renderProfitsDashboard();
+      // Ordenar cobrados: del más reciente al más antiguo
+      completedItems.sort((a, b) => (b.finishedAt || b.createdAt || 0) - (a.finishedAt || a.createdAt || 0));
 
-      const badge = document.getElementById('ordersCountBadge');
-      if (badge) badge.textContent = `${historyRecords.length} registros`;
-    }, (err) => {
-      console.error("Error al escuchar histórico:", err);
-    });
+      // Actualizar contadores de las solapas
+      const pendingBadgeCount = document.getElementById('pendingBadgeCount');
+      const historyBadgeCount = document.getElementById('historyBadgeCount');
+      const pendingListBadge = document.getElementById('pendingListBadge');
+      const historyListBadge = document.getElementById('historyListBadge');
 
-    // RENDER DEL HISTÓRICO CON SOPORTE DRAG & DROP
-    function renderHistoryList() {
-      const container = document.getElementById('historyListContainer');
+      if (pendingBadgeCount) pendingBadgeCount.textContent = pendingItems.length;
+      if (historyBadgeCount) historyBadgeCount.textContent = completedItems.length;
+      if (pendingListBadge) pendingListBadge.textContent = `${pendingItems.length} pendientes`;
+      if (historyListBadge) historyListBadge.textContent = `${completedItems.length} cobrados`;
+
+      renderPendingList(pendingItems);
+      renderHistoryList(completedItems);
+      renderProfitsDashboard(completedItems);
+    }
+
+    // SOLAPA 1: PEDIDOS PENDIENTES (CON ARRASTRE PARA ORDENAR)
+    function renderPendingList(items) {
+      const container = document.getElementById('pendingListContainer');
       if (!container) return;
       container.innerHTML = '';
 
-      if (historyRecords.length === 0) {
-        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">Aún no hay piezas registradas en el histórico.</p>';
+      if (items.length === 0) {
+        container.innerHTML = `
+          <div class="py-12 text-center">
+            <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center mx-auto mb-2 text-2xl font-bold">
+              <i class="ph-bold ph-check-circle"></i>
+            </div>
+            <p class="text-xs font-bold text-slate-700">¡Al día! No hay pedidos pendientes de entrega.</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">Podés agregar ventas manuales en la solapa "Ganancias" o pedidos desde el Admin.</p>
+          </div>
+        `;
         return;
       }
 
-      historyRecords.forEach((item, index) => {
+      items.forEach((item, index) => {
         const card = document.createElement('div');
         card.className = "order-card p-3 rounded-2xl bg-white border border-slate-200 hover:border-slate-300 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition-all";
         card.setAttribute('draggable', 'true');
         card.setAttribute('data-id', item.id);
         card.setAttribute('data-index', index);
 
-        const isDone = item.status === "completed";
         const dateStr = item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', {
           day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
         }) : '';
@@ -381,10 +435,8 @@
               <i class="ph-bold ph-dots-six-vertical text-xl pointer-events-none"></i>
             </button>
 
-            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold flex-shrink-0 mt-0.5 ${
-              isDone ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'
-            }">
-              <i class="ph-bold ${isDone ? 'ph-check-circle' : 'ph-hourglass'}"></i>
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold flex-shrink-0 mt-0.5 bg-amber-100 text-amber-700">
+              <i class="ph-bold ph-hourglass"></i>
             </div>
             
             <div class="min-w-0 flex-grow">
@@ -396,13 +448,11 @@
               <div class="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5 flex-wrap">
                 <span class="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-[10px] text-slate-600">${item.sku}</span>
                 <span>•</span>
-                <span>${dateStr}</span>
+                <span>Pedido el ${dateStr}</span>
                 ${itemCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${itemCost}</span>` : ''}
-                ${isDone 
-                  ? '<span class="bg-emerald-100 text-emerald-800 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Cobrado</span>' 
-                  : '<span class="bg-amber-100 text-amber-800 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Pendiente</span>'}
               </div>
 
+              <!-- Input de Cliente / Nota -->
               <div class="mt-2 flex items-center gap-1.5 max-w-md">
                 <i class="ph-bold ph-user text-slate-400 text-xs"></i>
                 <input 
@@ -417,19 +467,13 @@
             </div>
           </div>
 
+          <!-- Botones de Acción -->
           <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
-            ${
-              !isDone 
-                ? `<button onclick="markAsCompleted('${item.id}')" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition-all cursor-pointer">
-                     <i class="ph-bold ph-check"></i>
-                     <span>Listo</span>
-                   </button>`
-                : `<span class="text-xs font-bold text-emerald-600 flex items-center gap-1 px-1">
-                     <i class="ph-bold ph-check-double text-base"></i>
-                     <span>Cobrado</span>
-                   </span>`
-            }
-            <button onclick="deleteHistoryRecord('${item.id}')" class="p-1.5 sm:p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all cursor-pointer" title="Eliminar registro">
+            <button onclick="markAsCompleted('${item.id}')" class="px-3.5 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs flex items-center gap-1 shadow-sm active:scale-95 transition-all cursor-pointer" title="Marcar como listo y enviar al Historial">
+              <i class="ph-bold ph-check"></i>
+              <span>Listo</span>
+            </button>
+            <button onclick="deleteHistoryRecord('${item.id}')" class="p-1.5 sm:p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all cursor-pointer" title="Eliminar pedido">
               <i class="ph-bold ph-trash text-base pointer-events-none"></i>
             </button>
           </div>
@@ -440,126 +484,86 @@
       });
     }
 
-    // CONFIGURACIÓN DE EVENTOS DRAG & DROP Y TOUCH
-    function setupDragEvents(card) {
-      // Eventos Desktop (Mouse)
-      card.addEventListener('dragstart', (e) => {
-        draggedElement = card;
-        card.classList.add('order-item-dragging');
-        e.dataTransfer.effectAllowed = 'move';
-      });
-
-      card.addEventListener('dragend', () => {
-        card.classList.remove('order-item-dragging');
-        document.querySelectorAll('.order-card').forEach(c => c.classList.remove('order-item-drag-over'));
-        saveReorderedPositions();
-      });
-
-      card.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        card.classList.add('order-item-drag-over');
-      });
-
-      card.addEventListener('dragleave', () => {
-        card.classList.remove('order-item-drag-over');
-      });
-
-      card.addEventListener('drop', (e) => {
-        e.preventDefault();
-        card.classList.remove('order-item-drag-over');
-        if (draggedElement && draggedElement !== card) {
-          const container = document.getElementById('historyListContainer');
-          const cards = Array.from(container.children);
-          const draggedIdx = cards.indexOf(draggedElement);
-          const targetIdx = cards.indexOf(card);
-
-          if (draggedIdx < targetIdx) {
-            container.insertBefore(draggedElement, card.nextSibling);
-          } else {
-            container.insertBefore(draggedElement, card);
-          }
-        }
-      });
-
-      // Eventos Móviles (Touch en la manija)
-      const handle = card.querySelector('.drag-handle');
-      if (!handle) return;
-
-      let touchStartY = 0;
-      let activeCard = null;
-
-      handle.addEventListener('touchstart', (e) => {
-        touchStartY = e.touches[0].clientY;
-        activeCard = card;
-        card.classList.add('order-item-dragging');
-      }, { passive: true });
-
-      handle.addEventListener('touchmove', (e) => {
-        if (!activeCard) return;
-        const currentY = e.touches[0].clientY;
-        const targetElement = document.elementFromPoint(e.touches[0].clientX, currentY);
-        const targetCard = targetElement ? targetElement.closest('.order-card') : null;
-
-        if (targetCard && targetCard !== activeCard) {
-          const container = document.getElementById('historyListContainer');
-          const cards = Array.from(container.children);
-          const activeIdx = cards.indexOf(activeCard);
-          const targetIdx = cards.indexOf(targetCard);
-
-          if (activeIdx < targetIdx) {
-            container.insertBefore(activeCard, targetCard.nextSibling);
-          } else {
-            container.insertBefore(activeCard, targetCard);
-          }
-        }
-      }, { passive: true });
-
-      handle.addEventListener('touchend', () => {
-        if (activeCard) {
-          activeCard.classList.remove('order-item-dragging');
-          activeCard = null;
-          saveReorderedPositions();
-        }
-      });
-    }
-
-    // PERSISTIR EL NUEVO ORDEN EN FIRESTORE
-    async function saveReorderedPositions() {
+    // SOLAPA 2: HISTORIAL PEDIDOS (SOLO COBRADOS)
+    function renderHistoryList(items) {
       const container = document.getElementById('historyListContainer');
-      const cards = Array.from(container.querySelectorAll('.order-card'));
-      if (cards.length === 0) return;
+      if (!container) return;
+      container.innerHTML = '';
 
-      const batch = writeBatch(db);
-      cards.forEach((card, newIndex) => {
-        const docId = card.getAttribute('data-id');
-        if (docId) {
-          const docRef = doc(db, "sales_history", docId);
-          batch.update(docRef, { orderIndex: newIndex });
-        }
-      });
-
-      try {
-        await batch.commit();
-      } catch (err) {
-        console.error("Error al persistir orden de pedidos:", err);
+      if (items.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">Aún no hay pedidos en el historial de cobrados.</p>';
+        return;
       }
+
+      items.forEach(item => {
+        const row = document.createElement('div');
+        row.className = "p-3 rounded-2xl bg-slate-50/70 border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition-all";
+
+        const dateCobro = item.finishedAt ? new Date(item.finishedAt).toLocaleDateString('es-AR', {
+          day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit'
+        }) : (item.createdAt ? new Date(item.createdAt).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit' }) : 'Hoy');
+
+        const isManual = item.isManual === true;
+        const itemCost = item.calculatedCost || (item.weightGrams ? Math.round((item.weightGrams * 21000) / 1000) : 0);
+
+        const clientBadge = item.note ? `
+          <div class="mt-1 inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md bg-indigo-50 border border-indigo-200 text-indigo-900 text-xs font-bold max-w-full break-words">
+            <i class="ph-bold ph-user text-[11px] text-indigo-600 flex-shrink-0"></i>
+            <span class="break-words">${item.note}</span>
+          </div>
+        ` : '';
+
+        row.innerHTML = `
+          <div class="flex items-start gap-2.5 min-w-0 flex-grow">
+            <div class="w-9 h-9 rounded-xl flex items-center justify-center text-base font-bold flex-shrink-0 mt-0.5 bg-emerald-100 text-emerald-700">
+              <i class="ph-bold ph-check-circle"></i>
+            </div>
+            
+            <div class="min-w-0 flex-grow">
+              <div class="flex items-center gap-1.5 flex-wrap">
+                <h4 class="text-xs sm:text-sm font-bold text-slate-900 break-words">${item.title}</h4>
+                <span class="text-xs font-black text-slate-900 font-mono">${item.price}</span>
+                ${isManual ? '<span class="bg-amber-100 text-amber-900 px-1.5 py-0.2 rounded-full text-[9px] font-bold">Manual</span>' : ''}
+              </div>
+              <div class="flex items-center gap-1.5 text-[11px] text-slate-400 mt-0.5 flex-wrap">
+                <span class="font-mono bg-slate-200/70 px-1.5 py-0.5 rounded text-[10px] text-slate-700">${item.sku}</span>
+                <span>•</span>
+                <span>Cobrado el ${dateCobro}</span>
+                ${itemCost ? `<span>•</span><span class="text-slate-600 font-medium">Costo: $${itemCost}</span>` : ''}
+              </div>
+
+              ${clientBadge}
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-center">
+            <button onclick="reopenOrder('${item.id}')" class="px-3 py-1.5 rounded-xl bg-slate-200 hover:bg-slate-300 text-slate-700 text-xs font-bold flex items-center gap-1 transition-all cursor-pointer" title="Regresar a pedidos pendientes">
+              <i class="ph-bold ph-arrow-u-up-left"></i>
+              <span>Reabrir</span>
+            </button>
+            <button onclick="deleteHistoryRecord('${item.id}')" class="p-1.5 sm:p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 active:scale-95 transition-all cursor-pointer" title="Eliminar registro">
+              <i class="ph-bold ph-trash text-base pointer-events-none"></i>
+            </button>
+          </div>
+        `;
+
+        container.appendChild(row);
+      });
     }
 
-    function renderProfitsDashboard() {
+    // SOLAPA 3: GANANCIAS
+    function renderProfitsDashboard(items) {
       const container = document.getElementById('profitsListContainer');
       const badgeCompleted = document.getElementById('completedCountBadge');
       if (!container) return;
       container.innerHTML = '';
 
-      const completedItems = historyRecords.filter(item => item.status === "completed");
-
-      if (badgeCompleted) badgeCompleted.textContent = `${completedItems.length} piezas`;
+      if (badgeCompleted) badgeCompleted.textContent = `${items.length} piezas`;
 
       let totalGross = 0;
       let totalCost = 0;
 
-      if (completedItems.length === 0) {
+      if (items.length === 0) {
         container.innerHTML = '<p class="text-xs text-slate-400 py-8 text-center">No hay ventas cobradas todavía.</p>';
         document.getElementById('displayNetProfit').textContent = "$0";
         document.getElementById('displayGrossRevenue').textContent = "$0";
@@ -567,7 +571,7 @@
         return;
       }
 
-      completedItems.forEach(item => {
+      items.forEach(item => {
         const salePrice = parseCurrency(item.price);
         
         let itemCost = item.calculatedCost || 0;
@@ -630,6 +634,109 @@
       document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
     }
 
+    // CONFIGURACIÓN DE EVENTOS DRAG & DROP
+    function setupDragEvents(card) {
+      card.addEventListener('dragstart', (e) => {
+        draggedElement = card;
+        card.classList.add('order-item-dragging');
+        e.dataTransfer.effectAllowed = 'move';
+      });
+
+      card.addEventListener('dragend', () => {
+        card.classList.remove('order-item-dragging');
+        document.querySelectorAll('.order-card').forEach(c => c.classList.remove('order-item-drag-over'));
+        saveReorderedPositions();
+      });
+
+      card.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        card.classList.add('order-item-drag-over');
+      });
+
+      card.addEventListener('dragleave', () => {
+        card.classList.remove('order-item-drag-over');
+      });
+
+      card.addEventListener('drop', (e) => {
+        e.preventDefault();
+        card.classList.remove('order-item-drag-over');
+        if (draggedElement && draggedElement !== card) {
+          const container = document.getElementById('pendingListContainer');
+          const cards = Array.from(container.children);
+          const draggedIdx = cards.indexOf(draggedElement);
+          const targetIdx = cards.indexOf(card);
+
+          if (draggedIdx < targetIdx) {
+            container.insertBefore(draggedElement, card.nextSibling);
+          } else {
+            container.insertBefore(draggedElement, card);
+          }
+        }
+      });
+
+      // Manejo táctil para celulares
+      const handle = card.querySelector('.drag-handle');
+      if (!handle) return;
+
+      let activeCard = null;
+
+      handle.addEventListener('touchstart', (e) => {
+        activeCard = card;
+        card.classList.add('order-item-dragging');
+      }, { passive: true });
+
+      handle.addEventListener('touchmove', (e) => {
+        if (!activeCard) return;
+        const currentY = e.touches[0].clientY;
+        const targetElement = document.elementFromPoint(e.touches[0].clientX, currentY);
+        const targetCard = targetElement ? targetElement.closest('.order-card') : null;
+
+        if (targetCard && targetCard !== activeCard) {
+          const container = document.getElementById('pendingListContainer');
+          const cards = Array.from(container.children);
+          const activeIdx = cards.indexOf(activeCard);
+          const targetIdx = cards.indexOf(targetCard);
+
+          if (activeIdx < targetIdx) {
+            container.insertBefore(activeCard, targetCard.nextSibling);
+          } else {
+            container.insertBefore(activeCard, targetCard);
+          }
+        }
+      }, { passive: true });
+
+      handle.addEventListener('touchend', () => {
+        if (activeCard) {
+          activeCard.classList.remove('order-item-dragging');
+          activeCard = null;
+          saveReorderedPositions();
+        }
+      });
+    }
+
+    // PERSISTIR EL REORDENAMIENTO
+    async function saveReorderedPositions() {
+      const container = document.getElementById('pendingListContainer');
+      const cards = Array.from(container.querySelectorAll('.order-card'));
+      if (cards.length === 0) return;
+
+      const batch = writeBatch(db);
+      cards.forEach((card, newIndex) => {
+        const docId = card.getAttribute('data-id');
+        if (docId) {
+          const docRef = doc(db, "sales_history", docId);
+          batch.update(docRef, { orderIndex: newIndex });
+        }
+      });
+
+      try {
+        await batch.commit();
+      } catch (err) {
+        console.error("Error al persistir orden:", err);
+      }
+    }
+
     async function handleManualSaleSubmit(e) {
       e.preventDefault();
 
@@ -653,7 +760,7 @@
         calculatedCost: costRaw,
         note: note,
         isManual: true,
-        status: "completed",
+        status: "completed", // Las ventas manuales entran ya cobradas
         orderIndex: 0,
         createdAt: now,
         finishedAt: now
@@ -688,8 +795,19 @@
       }
     }
 
+    async function reopenOrder(recordId) {
+      try {
+        await updateDoc(doc(db, "sales_history", String(recordId)), {
+          status: "pending",
+          finishedAt: null
+        });
+      } catch (err) {
+        console.error("Error al reabrir pedido:", err);
+      }
+    }
+
     async function deleteHistoryRecord(recordId) {
-      if (confirm("¿Borrar este registro del historial?")) {
+      if (confirm("¿Borrar definitivamente este registro?")) {
         try {
           await deleteDoc(doc(db, "sales_history", String(recordId)));
         } catch (err) {
@@ -698,29 +816,44 @@
       }
     }
 
+    // CONTROLADOR DE SOLAPAS (PENDING / HISTORY / PROFITS)
     function switchTab(tab) {
       currentTab = tab;
-      const tabHistory = document.getElementById('tabBtnHistory');
-      const tabProfits = document.getElementById('tabBtnProfits');
-      const sectionHistory = document.getElementById('sectionHistory');
-      const sectionProfits = document.getElementById('sectionProfits');
+      const btnPending = document.getElementById('tabBtnPending');
+      const btnHistory = document.getElementById('tabBtnHistory');
+      const btnProfits = document.getElementById('tabBtnProfits');
 
-      if (tab === 'history') {
-        tabHistory.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer";
-        tabProfits.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer";
-        sectionHistory.classList.remove('hidden');
-        sectionProfits.classList.add('hidden');
-      } else {
-        tabProfits.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer";
-        tabHistory.className = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer";
-        sectionProfits.classList.remove('hidden');
-        sectionHistory.classList.add('hidden');
+      const secPending = document.getElementById('sectionPending');
+      const secHistory = document.getElementById('sectionHistory');
+      const secProfits = document.getElementById('sectionProfits');
+
+      const activeClass = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-slate-900 text-white shadow-md flex items-center gap-2 cursor-pointer flex-shrink-0";
+      const inactiveClass = "px-4 py-2 sm:px-5 sm:py-2.5 rounded-2xl text-xs font-extrabold transition-all duration-200 bg-white text-slate-600 hover:bg-slate-200 border border-slate-200 flex items-center gap-2 cursor-pointer flex-shrink-0";
+
+      btnPending.className = inactiveClass;
+      btnHistory.className = inactiveClass;
+      btnProfits.className = inactiveClass;
+
+      secPending.classList.add('hidden');
+      secHistory.classList.add('hidden');
+      secProfits.classList.add('hidden');
+
+      if (tab === 'pending') {
+        btnPending.className = activeClass;
+        secPending.classList.remove('hidden');
+      } else if (tab === 'history') {
+        btnHistory.className = activeClass;
+        secHistory.classList.remove('hidden');
+      } else if (tab === 'profits') {
+        btnProfits.className = activeClass;
+        secProfits.classList.remove('hidden');
       }
     }
 
     window.handleManualSaleSubmit = handleManualSaleSubmit;
     window.updateRecordNote = updateRecordNote;
     window.markAsCompleted = markAsCompleted;
+    window.reopenOrder = reopenOrder;
     window.deleteHistoryRecord = deleteHistoryRecord;
     window.switchTab = switchTab;
     window.handleNoteInput = handleNoteInput;
