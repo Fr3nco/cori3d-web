@@ -41,7 +41,39 @@
 
 <body class="bg-slate-100 text-slate-800 min-h-screen flex flex-col font-sans p-3 sm:p-8">
 
-  <div class="max-w-7xl mx-auto w-full">
+  <!-- ==================== PANTALLA DE LOGIN ==================== -->
+  <div id="loginSection" class="min-h-[80vh] flex items-center justify-center w-full">
+    <div class="bg-white p-8 rounded-3xl shadow-xl border border-slate-200 w-full max-w-md">
+      <div class="flex items-center gap-3 mb-6">
+        <div class="w-12 h-12 rounded-2xl bg-slate-900 text-brand-500 flex items-center justify-center text-2xl font-bold">
+          <i class="ph-bold ph-lock-key"></i>
+        </div>
+        <div>
+          <h2 class="text-xl font-black text-slate-900 leading-tight">Cori<span class="text-brand-600">3D</span></h2>
+          <p class="text-xs text-slate-400 font-semibold uppercase tracking-wider">Histórico & Finanzas</p>
+        </div>
+      </div>
+
+      <form id="loginForm" onsubmit="handleLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Correo Electrónico</label>
+          <input type="email" id="loginEmail" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="admin@cori3d.com">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-700 uppercase mb-1">Contraseña</label>
+          <input type="password" id="loginPassword" required class="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:ring-2 focus:ring-slate-900 outline-none" placeholder="••••••••">
+        </div>
+
+        <button type="submit" id="loginBtn" class="w-full py-3 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs uppercase tracking-wider shadow-md transition-all active:scale-95 flex items-center justify-center gap-2 cursor-pointer">
+          <i class="ph-bold ph-sign-in text-base"></i>
+          <span>Ingresar a Finanzas</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ==================== CONTENIDO PRIVADO (HISTÓRICO & GANANCIAS) ==================== -->
+  <div id="mainSection" class="hidden max-w-7xl mx-auto w-full">
     <!-- Barra Superior -->
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-slate-900 text-white p-5 sm:p-6 rounded-3xl shadow-xl">
       <div class="flex items-center gap-3">
@@ -50,14 +82,18 @@
         </div>
         <div>
           <h1 class="text-lg sm:text-xl font-black leading-tight">Cori<span class="text-brand-500">3D</span> — Control de Pedidos & Finanzas</h1>
-          <p class="text-[11px] sm:text-xs text-slate-400">Seguimiento de impresión, historial archivado y métricas temporales</p>
+          <p class="text-[11px] sm:text-xs text-slate-400" id="userEmailBadge">Sesión protegida</p>
         </div>
       </div>
-      <div class="flex items-center gap-3">
+      <div class="flex items-center gap-2 sm:gap-3 flex-wrap">
         <a href="/admin" class="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-1.5 transition-all">
           <i class="ph-bold ph-wrench"></i>
           <span>Volver al Admin</span>
         </a>
+        <button onclick="handleLogout()" class="px-3.5 py-2 rounded-xl bg-red-500/20 hover:bg-red-500/30 text-red-300 text-xs font-bold flex items-center gap-1.5 transition-all cursor-pointer" title="Cerrar sesión">
+          <i class="ph-bold ph-sign-out"></i>
+          <span>Salir</span>
+        </button>
       </div>
     </div>
 
@@ -89,7 +125,6 @@
         <span>Ganancias</span>
       </button>
 
-      <!-- Nueva Solapa Métricas & Evolución -->
       <button 
         id="tabBtnMetrics" 
         onclick="switchTab('metrics')" 
@@ -213,10 +248,9 @@
           </div>
         </div>
 
-        <!-- SOLAPA 4: MÉTRICAS & EVOLUCIÓN (GRÁFICO + TOTALES POR MES E INDIVIDUAL) -->
+        <!-- SOLAPA 4: MÉTRICAS & EVOLUCIÓN -->
         <div id="sectionMetrics" class="hidden space-y-4">
           
-          <!-- Tarjeta del Gráfico de Líneas -->
           <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pb-4 border-b border-slate-100">
               <div>
@@ -241,7 +275,6 @@
             </div>
           </div>
 
-          <!-- Bloque Totales por Mes -->
           <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
             <div class="pb-3 border-b border-slate-100">
               <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
@@ -256,7 +289,6 @@
             </div>
           </div>
 
-          <!-- Bloque Historial Individual Detallado -->
           <div class="bg-white rounded-3xl p-4 sm:p-6 shadow-sm border border-slate-200">
             <div class="flex items-center justify-between pb-3 border-b border-slate-100">
               <div>
@@ -313,6 +345,10 @@
     </div>
   </div>
 
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all pointer-events-none bg-slate-900 text-white px-5 py-3 rounded-2xl shadow-xl text-xs font-bold">
+    <span id="toastMessage">Operación exitosa</span>
+  </div>
+
   <!-- Firebase Modular SDK -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
@@ -326,6 +362,12 @@
       writeBatch, 
       onSnapshot 
     } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyCd-JtST4lQElUnldKjTVYJ7ytOmiH4Bok",
@@ -339,6 +381,7 @@
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
     const historyCol = collection(db, "sales_history");
     const scratchpadDocRef = doc(db, "app_settings", "scratchpad");
 
@@ -347,6 +390,8 @@
     let noteDebounceTimer = null;
     let draggedElement = null;
     let chartInstance = null;
+    let unsubscribeHistory = null;
+    let unsubscribeScratchpad = null;
 
     const PRIORITY_STATES = {
       yellow: {
@@ -366,12 +411,68 @@
       }
     };
 
+    // CONTROL DE AUTENTICACIÓN
+    onAuthStateChanged(auth, (user) => {
+      const loginSection = document.getElementById('loginSection');
+      const mainSection = document.getElementById('mainSection');
+      const emailBadge = document.getElementById('userEmailBadge');
+
+      if (user) {
+        loginSection.classList.add('hidden');
+        mainSection.classList.remove('hidden');
+        if (emailBadge) emailBadge.textContent = `Sesión: ${user.email}`;
+
+        if (!unsubscribeHistory) {
+          unsubscribeHistory = onSnapshot(historyCol, (snapshot) => {
+            historyRecords = snapshot.docs.map(d => d.data());
+            renderAllViews();
+          }, (err) => console.error("Error en histórico:", err));
+        }
+
+        initScratchpadListener();
+      } else {
+        if (unsubscribeHistory) { unsubscribeHistory(); unsubscribeHistory = null; }
+        if (unsubscribeScratchpad) { unsubscribeScratchpad(); unsubscribeScratchpad = null; }
+        historyRecords = [];
+        mainSection.classList.add('hidden');
+        loginSection.classList.remove('hidden');
+      }
+    });
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const email = document.getElementById('loginEmail').value.trim();
+      const pass = document.getElementById('loginPassword').value;
+      const btn = document.getElementById('loginBtn');
+
+      try {
+        btn.disabled = true;
+        btn.innerHTML = '<span>Verificando...</span>';
+        await signInWithEmailAndPassword(auth, email, pass);
+      } catch (err) {
+        console.error(err);
+        showToast("Credenciales inválidas");
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="ph-bold ph-sign-in text-base"></i><span>Ingresar a Finanzas</span>';
+      }
+    }
+
+    async function handleLogout() {
+      try {
+        await signOut(auth);
+      } catch (err) {
+        console.error(err);
+      }
+    }
+
+    // SINCRONIZACIÓN DEL BLOC DE NOTAS
     function initScratchpadListener() {
       const textarea = document.getElementById('adminScratchpad');
       const charCount = document.getElementById('noteCharCount');
       const lastUpdated = document.getElementById('noteLastUpdated');
 
-      onSnapshot(scratchpadDocRef, (snap) => {
+      unsubscribeScratchpad = onSnapshot(scratchpadDocRef, (snap) => {
         if (snap.exists()) {
           const data = snap.data();
           if (document.activeElement !== textarea) {
@@ -439,13 +540,6 @@
 
       return Math.round(parseFloat(clean)) || 0;
     }
-
-    onSnapshot(historyCol, (snapshot) => {
-      historyRecords = snapshot.docs.map(d => d.data());
-      renderAllViews();
-    }, (err) => {
-      console.error("Error al escuchar ventas e historial:", err);
-    });
 
     function renderAllViews() {
       const pendingItems = historyRecords.filter(item => item.status !== "completed");
@@ -734,7 +828,7 @@
       document.getElementById('displayTotalCost').textContent = `$${totalCost}`;
     }
 
-    // SOLAPA 4: MÉTRICAS TEMPORALES, GRÁFICO DE LÍNEAS Y RESÚMENES
+    // SOLAPA 4: MÉTRICAS
     function renderMetricsDashboard(items) {
       const monthlyContainer = document.getElementById('monthlyTotalsContainer');
       const individualContainer = document.getElementById('individualSalesContainer');
@@ -753,7 +847,6 @@
         return;
       }
 
-      // 1. Agrupamiento por Mes (YYYY-MM)
       const monthlyMap = {};
 
       items.forEach(item => {
@@ -761,7 +854,7 @@
         const dateObj = new Date(timestamp);
         const year = dateObj.getFullYear();
         const month = String(dateObj.getMonth() + 1).padStart(2, '0');
-        const key = `${year}-${month}`; // Ej: "2026-11"
+        const key = `${year}-${month}`;
 
         const monthName = dateObj.toLocaleDateString('es-AR', { month: 'long', year: 'numeric' });
 
@@ -789,16 +882,13 @@
         monthlyMap[key].count += 1;
       });
 
-      // Ordenar cronológicamente (Ene -> Dic) para el gráfico
       const sortedKeys = Object.keys(monthlyMap).sort();
       const chartLabels = sortedKeys.map(k => monthlyMap[k].label);
       const chartNetData = sortedKeys.map(k => monthlyMap[k].net);
       const chartGrossData = sortedKeys.map(k => monthlyMap[k].gross);
 
-      // Renderizar o actualizar gráfico de líneas
       renderLineChart(chartLabels, chartNetData, chartGrossData);
 
-      // 2. Renderizar Tarjetas de Totales por Mes (del más reciente al más antiguo)
       monthlyContainer.innerHTML = '';
       [...sortedKeys].reverse().forEach(key => {
         const m = monthlyMap[key];
@@ -822,7 +912,6 @@
         monthlyContainer.appendChild(card);
       });
 
-      // 3. Renderizar Lista Individual Detallada
       individualContainer.innerHTML = '';
       items.forEach(item => {
         const salePrice = parseCurrency(item.price);
@@ -855,7 +944,6 @@
       });
     }
 
-    // GENERADOR DE CHART.JS
     function renderLineChart(labels, netData, grossData) {
       const canvas = document.getElementById('timelineChart');
       if (!canvas) return;
@@ -934,7 +1022,7 @@
       });
     }
 
-    // DRAG & DROP
+    // EVENTOS DRAG & DROP
     function setupDragEvents(card) {
       card.addEventListener('dragstart', (e) => {
         draggedElement = card;
@@ -1152,13 +1240,23 @@
       } else if (tab === 'metrics') {
         btnMetrics.className = activeClass;
         secMetrics.classList.remove('hidden');
-        // Redibujar gráfico para ajustar tamaño al mostrar el contenedor
         if (chartInstance) {
           setTimeout(() => chartInstance.resize(), 50);
         }
       }
     }
 
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const msgElem = document.getElementById('toastMessage');
+      if (!toast || !msgElem) return;
+      msgElem.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      setTimeout(() => toast.classList.add('translate-y-20', 'opacity-0'), 2500);
+    }
+
+    window.handleLogin = handleLogin;
+    window.handleLogout = handleLogout;
     window.handleManualSaleSubmit = handleManualSaleSubmit;
     window.updateRecordNote = updateRecordNote;
     window.markAsCompleted = markAsCompleted;
@@ -1168,8 +1266,6 @@
     window.handleNoteInput = handleNoteInput;
     window.saveNoteImmediately = saveNoteImmediately;
     window.togglePriorityColor = togglePriorityColor;
-
-    initScratchpadListener();
   </script>
 </body>
 </html>
